@@ -2249,6 +2249,12 @@
       color: rgba(17,17,15,.52) !important;
     }
 
+    .section-head h2 {
+      font-family: var(--font-ui) !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.01em !important;
+    }
+
     .workspace-tab,
     .nav-btn {
       font-weight: 400 !important;
@@ -2273,6 +2279,8 @@
 
     /* ===== FINAL DESIGN: NARRATIVE LOOP FLOW ===== */
     .loop-flow-card {
+      --step-gap: 22px;
+      --edge-offset: calc(8.333333% - 9.1667px);
       position: relative;
       padding: 34px 38px 44px;
       border: 1px solid rgba(17,17,15,.12);
@@ -2353,16 +2361,16 @@
       position: relative;
       display: grid;
       grid-template-columns: repeat(6, minmax(158px, 1fr));
-      gap: 22px;
-      min-width: 1040px;
+      gap: var(--step-gap);
+      min-width: 1058px;
       padding-top: 48px;
     }
 
     .loop-flow-track::before {
       content: "";
       position: absolute;
-      left: calc(8.333% + 17px);
-      right: calc(8.333% + 17px);
+      left: var(--edge-offset);
+      right: var(--edge-offset);
       top: 17px;
       height: 1px;
       background: rgba(17,17,15,.28);
@@ -2385,7 +2393,7 @@
       content: attr(data-step);
       position: absolute;
       left: 50%;
-      top: calc(-48px - var(--step-size) / 2 + 17px);
+      top: -48px;
       transform: translateX(-50%);
       width: var(--step-size);
       height: var(--step-size);
@@ -2403,11 +2411,12 @@
     .loop-step-card:not(:last-child)::after {
       content: "›";
       position: absolute;
-      top: calc(-48px - 6px + 17px);
-      right: -15px;
+      top: -31px;
+      right: -16px;
       color: rgba(17,17,15,.5);
       font-size: 18px;
       line-height: 1;
+      transform: translateY(-50%);
       z-index: 3;
     }
 
@@ -2431,9 +2440,8 @@
 
     .loop-return-line {
       position: relative;
-      min-width: 1040px;
       height: 48px;
-      margin: 4px 56px 0;
+      margin: 6px var(--edge-offset) 0;
       border-left: 1px solid rgba(17,17,15,.32);
       border-bottom: 1px solid rgba(17,17,15,.32);
       border-right: 1px solid rgba(17,17,15,.32);
@@ -2498,6 +2506,177 @@
         text-align: left;
       }
     }
+
+    /* ===== FINAL TYPOGRAPHY HIERARCHY ===== */
+    :root {
+      --font-ui: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Helvetica Neue", Arial, sans-serif;
+      --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+      --text-display: 64px;
+      --text-h2: 22px;
+      --text-h3: 18px;
+      --text-h4: 15px;
+      --text-body: 14px;
+      --text-body-sm: 13px;
+      --text-caption: 11px;
+      --lh-heading: 1.28;
+      --lh-body: 1.68;
+    }
+
+    body {
+      font-family: var(--font-ui) !important;
+      font-size: var(--text-body);
+      line-height: var(--lh-body);
+      letter-spacing: 0 !important;
+    }
+
+    .hero-title,
+    .dossier-header h2,
+    .loop-flow-head h2 {
+      font-family: var(--font-display) !important;
+      font-weight: 600 !important;
+      letter-spacing: 0 !important;
+      line-height: 1.02 !important;
+    }
+
+    .hero-title {
+      font-size: var(--text-display) !important;
+      max-width: 11ch;
+      word-break: keep-all;
+    }
+
+    .dossier-header h2 {
+      font-size: 48px !important;
+      margin-bottom: 16px !important;
+    }
+
+    .loop-flow-head h2 {
+      font-size: 34px !important;
+      text-transform: none !important;
+    }
+
+    .section-head h2,
+    .relationship-header h3,
+    .relationship-card h3,
+    .feature-card h4,
+    .stat-box .v,
+    .rule strong,
+    .detail-item strong,
+    .loop-step-card strong,
+    .brand strong,
+    .topnav-identity strong {
+      font-family: var(--font-ui) !important;
+      font-weight: 700 !important;
+      letter-spacing: 0 !important;
+      line-height: var(--lh-heading) !important;
+      text-transform: none !important;
+    }
+
+    .section-head h2 {
+      font-size: var(--text-h2) !important;
+    }
+
+    .relationship-card h3,
+    .feature-card h4,
+    .relationship-header h3,
+    .stat-box .v {
+      font-size: var(--text-h3) !important;
+    }
+
+    .rule strong,
+    .detail-item strong {
+      font-size: var(--text-h4) !important;
+    }
+
+    p,
+    td,
+    .sub,
+    .relationship-card p,
+    .detail-item span,
+    .rule span,
+    .signal span,
+    .feature-card p,
+    .timeline-step span,
+    .relationship-header p,
+    .dossier-header p,
+    .stat-box p,
+    .loop-flow-head p,
+    .loop-step-card span {
+      font-family: var(--font-ui) !important;
+      font-size: var(--text-body) !important;
+      line-height: var(--lh-body) !important;
+      letter-spacing: 0 !important;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    .chip,
+    .badge,
+    .tab-btn,
+    .save-btn,
+    .ref-btn,
+    .workspace-sidebar-title,
+    .side-nav h3,
+    .nav-btn small,
+    .stat-box .k,
+    .relationship-card .k,
+    .feature-card .k,
+    .section-head .caption,
+    .loop-flow-kicker,
+    th {
+      font-family: var(--font-ui) !important;
+      font-size: var(--text-caption) !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.04em !important;
+      line-height: 1.35 !important;
+      text-transform: uppercase;
+    }
+
+    .workspace-tab,
+    .nav-btn {
+      font-family: var(--font-ui) !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0 !important;
+      line-height: 1.35 !important;
+      text-transform: none !important;
+    }
+
+    .nav-btn small {
+      display: block;
+      margin-bottom: 5px !important;
+    }
+
+    th,
+    td {
+      line-height: 1.55 !important;
+    }
+
+    .feature-card,
+    .relationship-card,
+    .rule,
+    .detail-item {
+      min-width: 0;
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --text-display: 42px;
+        --text-h2: 19px;
+        --text-h3: 16px;
+      }
+
+      .hero-title {
+        max-width: 100%;
+      }
+
+      .dossier-header h2 {
+        font-size: 34px !important;
+      }
+
+      .loop-flow-head h2 {
+        font-size: 26px !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2521,6 +2700,7 @@
         <button class="tab-btn" data-screen-target="relationships">관계</button>
         <button class="tab-btn" data-screen-target="loop">루프 구조</button>
         <button class="tab-btn" data-screen-target="dossiers">도감</button>
+        <button class="tab-btn" data-screen-target="behaviors">행동 패턴</button>
       </nav>
 
       <div class="toolbar-panel topnav-tools">
@@ -2546,27 +2726,27 @@
       <section class="screen active" id="overview" data-screen="overview">
         <div class="hero">
           <section class="panel">
-            <div class="chip" data-edit-key="overview-chip" contenteditable="true">시스템 개요</div>
-            <h1 class="hero-title" data-edit-key="overview-title" contenteditable="true">ARIA · TRACE · VAULT</h1>
-            <p class="sub" data-edit-key="overview-description" contenteditable="true">이 페이지는 세 캐릭터의 관계, 존재 방식, 기억 전달 구조를 정리한 인터랙티브 Codex이다. 중심 개념은 ARIA가 경험하고, TRACE가 흔적을 남기며, VAULT가 기록을 저장한다는 구조이다.</p>
+            <div class="chip" data-edit-key="overview-chip" contenteditable="true">Final Character Document</div>
+            <h1 class="hero-title" data-edit-key="overview-title" contenteditable="true">LYRA · PIP · RELAY</h1>
+            <p class="sub" data-edit-key="overview-description" contenteditable="true">이 페이지는 제작, 공유, PDF화까지 염두에 둔 최종 캐릭터 기준 문서다. 핵심 구조는 LYRA가 경험하고, PIP이 행동으로 흔적을 남기며, RELAY가 기록을 저장한 뒤 새로운 LYRA로 반복된다는 흐름이다.</p>
             <div class="label-row">
               <span class="chip" data-edit-key="overview-label-1" contenteditable="true">경험</span>
-              <span class="chip" data-edit-key="overview-label-2" contenteditable="true">행동 기억</span>
-              <span class="chip" data-edit-key="overview-label-3" contenteditable="true">기록 시스템</span>
-              <span class="chip" data-edit-key="overview-label-4" contenteditable="true">부분적 연속성</span>
+              <span class="chip" data-edit-key="overview-label-2" contenteditable="true">행동 흔적</span>
+              <span class="chip" data-edit-key="overview-label-3" contenteditable="true">기록 저장</span>
+              <span class="chip" data-edit-key="overview-label-4" contenteditable="true">부분적 이어짐</span>
             </div>
           </section>
 
           <aside class="hero-side">
             <div class="stat-box">
-              <div class="k" data-edit-key="stat-1-k" contenteditable="true">핵심 규칙</div>
-              <div class="v" data-edit-key="stat-1-v" contenteditable="true">같은 존재가 아니라 이어지는 존재</div>
-              <p data-edit-key="stat-1-p" contenteditable="true">죽음 이후에도 구조는 이어지지만 동일한 개체가 완전하게 유지되지는 않는다.</p>
+              <div class="k" data-edit-key="stat-1-k" contenteditable="true">핵심 철학</div>
+              <div class="v" data-edit-key="stat-1-v" contenteditable="true">완전한 반복도, 완전한 연속도 아니다</div>
+              <p data-edit-key="stat-1-p" contenteditable="true">이 세계는 동일한 개체의 복제가 아니라 경험, 흔적, 기록이 부분적으로 이어지는 구조 위에서 작동한다.</p>
             </div>
             <div class="stat-box">
               <div class="k" data-edit-key="stat-2-k" contenteditable="true">플레이어 인식</div>
-              <div class="v" data-edit-key="stat-2-v" contenteditable="true">감정 → 암시 → 확신</div>
-              <p data-edit-key="stat-2-p" contenteditable="true">플레이어는 ARIA를 통해 느끼고, TRACE를 통해 눈치채며, VAULT를 통해 구조를 확신한다.</p>
+              <div class="v" data-edit-key="stat-2-v" contenteditable="true">인간 → 이상함 → 구조 인지</div>
+              <p data-edit-key="stat-2-p" contenteditable="true">플레이어는 LYRA를 인간으로 받아들이고, PIP의 반복 행동에서 이상함을 느끼며, RELAY를 통해 반복 구조의 진실을 확신한다.</p>
             </div>
           </aside>
         </div>
@@ -2582,17 +2762,17 @@
                 <thead>
                   <tr>
                     <th data-edit-key="character-10" contenteditable="true">구분</th>
-                    <th data-edit-key="character-11" contenteditable="true">ARIA</th>
-                    <th data-edit-key="character-12" contenteditable="true">TRACE</th>
-                    <th data-edit-key="character-13" contenteditable="true">VAULT</th>
+                    <th data-edit-key="character-11" contenteditable="true">LYRA</th>
+                    <th data-edit-key="character-12" contenteditable="true">PIP</th>
+                    <th data-edit-key="character-13" contenteditable="true">RELAY</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr><td data-edit-key="character-14" contenteditable="true">외형</td><td data-edit-key="character-15" contenteditable="true">인간</td><td data-edit-key="character-16" contenteditable="true">동물</td><td data-edit-key="character-17" contenteditable="true">기계</td></tr>
-                  <tr><td data-edit-key="character-18" contenteditable="true">본질</td><td data-edit-key="character-19" contenteditable="true">경험하는 존재</td><td data-edit-key="character-20" contenteditable="true">흔적을 남기는 존재</td><td data-edit-key="character-21" contenteditable="true">기록하는 존재</td></tr>
-                  <tr><td data-edit-key="character-22" contenteditable="true">감정</td><td data-edit-key="character-23" contenteditable="true">있음</td><td data-edit-key="character-24" contenteditable="true">행동으로 해석됨</td><td data-edit-key="character-25" contenteditable="true">없음</td></tr>
-                  <tr><td data-edit-key="character-26" contenteditable="true">기억 방식</td><td data-edit-key="character-27" contenteditable="true">단편적 기억</td><td data-edit-key="character-28" contenteditable="true">행동 패턴 기억</td><td data-edit-key="character-29" contenteditable="true">저장 / 압축 / 불완전 복원</td></tr>
-                  <tr><td data-edit-key="character-30" contenteditable="true">플레이어 기능</td><td data-edit-key="character-31" contenteditable="true">직접 조작</td><td data-edit-key="character-32" contenteditable="true">암시와 유도</td><td data-edit-key="character-33" contenteditable="true">구조적 확정</td></tr>
+                  <tr><td data-edit-key="character-18" contenteditable="true">인식</td><td data-edit-key="character-19" contenteditable="true">자신 = 인간</td><td data-edit-key="character-20" contenteditable="true">단순 생물</td><td data-edit-key="character-21" contenteditable="true">도구</td></tr>
+                  <tr><td data-edit-key="character-22" contenteditable="true">실제</td><td data-edit-key="character-23" contenteditable="true">반복되는 존재</td><td data-edit-key="character-24" contenteditable="true">행동 기억 매개체</td><td data-edit-key="character-25" contenteditable="true">기록 저장 장치</td></tr>
+                  <tr><td data-edit-key="character-26" contenteditable="true">역할</td><td data-edit-key="character-27" contenteditable="true">경험</td><td data-edit-key="character-28" contenteditable="true">흔적</td><td data-edit-key="character-29" contenteditable="true">저장</td></tr>
+                  <tr><td data-edit-key="character-30" contenteditable="true">전달 방식</td><td data-edit-key="character-31" contenteditable="true">감정</td><td data-edit-key="character-32" contenteditable="true">행동</td><td data-edit-key="character-33" contenteditable="true">데이터</td></tr>
                 </tbody>
               </table>
             </div>
@@ -2604,9 +2784,9 @@
               <span class="caption" data-edit-key="rules-caption" contenteditable="true">이해 가이드</span>
             </div>
             <div class="rule-list">
-              <div class="rule"><strong data-edit-key="rule-1-title" contenteditable="true">겉과 속의 불일치</strong><span data-edit-key="rule-1-body" contenteditable="true">ARIA는 인간처럼 보이지만 인간이 아니고, TRACE는 동물처럼 보이지만 기록 장치이며, VAULT는 기계처럼 보이고 실제로도 기계이다.</span></div>
-              <div class="rule"><strong data-edit-key="rule-2-title" contenteditable="true">설명보다 체험 우선</strong><span data-edit-key="rule-2-body" contenteditable="true">TRACE는 의미를 직접 말하지 않고, VAULT는 최소한의 정보만 제공하며, ARIA는 모든 체험의 중심에 놓인다.</span></div>
-              <div class="rule"><strong data-edit-key="rule-3-title" contenteditable="true">반복은 의미 구조</strong><span data-edit-key="rule-3-body" contenteditable="true">죽음은 단순한 실패가 아니라 정보와 정체성이 부분적으로 이어지는 시스템이다.</span></div>
+              <div class="rule"><strong data-edit-key="rule-1-title" contenteditable="true">이 세계는 세 캐릭터보다 하나의 구조다</strong><span data-edit-key="rule-1-body" contenteditable="true">LYRA, PIP, RELAY는 각각 독립된 개체처럼 보이지만 실제로는 경험, 흔적, 기록이라는 하나의 반복 구조를 분담한다.</span></div>
+              <div class="rule"><strong data-edit-key="rule-2-title" contenteditable="true">설명보다 체험이 먼저다</strong><span data-edit-key="rule-2-body" contenteditable="true">LYRA는 감정으로 경험하게 하고, PIP은 행동으로 눈치채게 하며, RELAY는 마지막에 구조를 정리한다.</span></div>
+              <div class="rule"><strong data-edit-key="rule-3-title" contenteditable="true">부분적 이어짐만이 유지된다</strong><span data-edit-key="rule-3-body" contenteditable="true">완전한 반복도, 완전한 복원도 불가능하다. 이 구조가 유지하는 것은 손실을 포함한 연속성뿐이다.</span></div>
             </div>
           </section>
         </div>
@@ -2617,8 +2797,8 @@
           <div class="relationship-top-grid">
             <section class="panel">
               <div class="section-head">
-                <h2 data-edit-key="rel-title" contenteditable="true">관계 다이어그램<div><br></div></h2>
-                <span class="hint" data-edit-key="rel-hint" contenteditable="true"><br></span>
+                <h2 data-edit-key="rel-title" contenteditable="true">관계 구조</h2>
+                <span class="hint" data-edit-key="rel-hint" contenteditable="true">LYRA → PIP → RELAY → 새로운 LYRA</span>
               </div>
 
               <div class="circular-infographic theme-aria" id="relationship-loop">
@@ -2633,85 +2813,85 @@
                   <path class="loop-arc arc-trace" d="M 340 430 Q 500 505 660 430" fill="none" stroke="#7cffc7" stroke-opacity="0.52" stroke-width="4" marker-end="url(#arrowHead)" filter="url(#softGlow)"></path>
                   <path class="loop-arc arc-vault" d="M 660 430 Q 590 250 500 150" fill="none" stroke="#ffb37c" stroke-opacity="0.52" stroke-width="4" marker-end="url(#arrowHead)" filter="url(#softGlow)"></path>
                 </svg>
-                <div class="ring-label"><div><strong data-edit-key="loop-core-title" contenteditable="true">루프</strong><span class="loop-copy" data-edit-key="loop-core-body" contenteditable="true">경험 → 흔적 → 기록 → 다시 경험</span></div></div>
-                <article class="ring-node aria active" tabindex="0" role="button" aria-label="ARIA 관계 정보 보기" data-rel="aria"><h3 data-edit-key="character-46" contenteditable="true">ARIA</h3></article>
-                <article class="ring-node trace" tabindex="0" role="button" aria-label="TRACE 관계 정보 보기" data-rel="trace"><h3 data-edit-key="character-47" contenteditable="true">TRACE</h3></article>
-                <article class="ring-node vault" tabindex="0" role="button" aria-label="VAULT 관계 정보 보기" data-rel="vault"><h3 data-edit-key="character-48" contenteditable="true">VAULT</h3></article>
+                <div class="ring-label"><div><strong data-edit-key="loop-core-title" contenteditable="true">구조</strong><span class="loop-copy" data-edit-key="loop-core-body" contenteditable="true">경험 → 행동 흔적 → 기록 저장 → 반복</span></div></div>
+                <article class="ring-node aria active" tabindex="0" role="button" aria-label="LYRA 관계 정보 보기" data-rel="aria"><h3 data-edit-key="character-46" contenteditable="true">LYRA</h3></article>
+                <article class="ring-node trace" tabindex="0" role="button" aria-label="PIP 관계 정보 보기" data-rel="trace"><h3 data-edit-key="character-47" contenteditable="true">PIP</h3></article>
+                <article class="ring-node vault" tabindex="0" role="button" aria-label="RELAY 관계 정보 보기" data-rel="vault"><h3 data-edit-key="character-48" contenteditable="true">RELAY</h3></article>
               </div>
             </section>
 
             <section class="detail-card theme-aria" id="relationship-detail">
               <div class="section-head">
-                <h2 data-edit-key="character-49" contenteditable="true">선택 정보</h2>
-                <span class="caption" data-edit-key="character-50" contenteditable="true">요약 패널</span>
+                <h2 data-edit-key="character-49" contenteditable="true">핵심 정의</h2>
+                <span class="caption" data-edit-key="character-50" contenteditable="true">final summary</span>
               </div>
 
               <div class="relationship-summary active" data-rel-panel="aria">
                 <div class="relationship-header">
-                  <h3 data-edit-key="character-51" contenteditable="true">ARIA</h3>
+                  <h3 data-edit-key="character-51" contenteditable="true">LYRA</h3>
                   <div class="badge-stack relationship-badges">
                     <span class="badge" data-edit-key="character-52" contenteditable="true">경험</span>
                     <span class="badge" data-edit-key="character-53" contenteditable="true">인간 외형</span>
                     <span class="badge" data-edit-key="character-54" contenteditable="true">플레이어 핵심</span>
                   </div>
-                  <p data-edit-key="aria-summary" contenteditable="true">자신이 인간이라고 믿는 존재이며, 플레이어가 직접 경험하는 감정과 선택의 중심축이다.</p>
+                  <p data-edit-key="aria-summary" contenteditable="true">LYRA는 자신이 인간이라고 믿는 반복 구조이며, 플레이어가 직접 살아가게 되는 경험의 중심이다.</p>
                 </div>
                 <div class="relationship-grid">
-                  <div class="detail-item"><strong data-edit-key="character-56" contenteditable="true">존재 정의</strong><span data-edit-key="aria-detail-1" contenteditable="true">ARIA는 인간처럼 보이고 스스로도 인간이라 믿지만, 실상은 반복 구조 안에서 부분적으로 이어지는 존재이다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-58" contenteditable="true">루프 내 위치</strong><span data-edit-key="aria-detail-2" contenteditable="true">루프의 시작점이자 경험의 발생 지점이다. 선택, 감정, 실패, 생존의 무게가 모두 ARIA에서 출발한다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-60" contenteditable="true">ARIA → TRACE</strong><span data-edit-key="aria-detail-3" contenteditable="true">ARIA의 경험은 TRACE에게 행동 흔적으로 남아 다음 탐색에서 감각적인 단서로 반복된다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-62" contenteditable="true">VAULT → ARIA</strong><span data-edit-key="aria-detail-4" contenteditable="true">VAULT가 저장한 기록 일부는 다음 ARIA에게 전달되어 부분적 이어짐과 낯선 익숙함을 만든다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-56" contenteditable="true">존재 정의</strong><span data-edit-key="aria-detail-1" contenteditable="true">인간과 동일한 외형과 유사한 사고를 지니지만, 동일한 개체가 아니라 반복 속에서 교체 가능한 존재다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-58" contenteditable="true">세계 역할</strong><span data-edit-key="aria-detail-2" contenteditable="true">LYRA는 외부 세계를 탐색하고 위험 지역에 진입하는 유일한 적응 가능한 존재이며, 모든 감정과 선택의 출발점이다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-60" contenteditable="true">기억 상태</strong><span data-edit-key="aria-detail-3" contenteditable="true">기억은 일부만 유지되고 일부는 손실된다. 반복될수록 왜곡되며, 이 구조가 플레이어 경험과 정확히 맞물린다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-62" contenteditable="true">최종 정의</strong><span data-edit-key="aria-detail-4" contenteditable="true">LYRA는 인간을 모방하는 존재가 아니라, 살아간다는 상태를 반복하는 구조다.</span></div>
                 </div>
               </div>
 
               <div class="relationship-summary" data-rel-panel="trace" hidden="">
                 <div class="relationship-header">
-                  <h3 data-edit-key="character-64" contenteditable="true">TRACE</h3>
+                  <h3 data-edit-key="character-64" contenteditable="true">PIP</h3>
                   <div class="badge-stack relationship-badges">
                     <span class="badge" data-edit-key="character-65" contenteditable="true">흔적</span>
                     <span class="badge" data-edit-key="character-66" contenteditable="true">비언어적 유도</span>
                     <span class="badge" data-edit-key="character-67" contenteditable="true">행동 기억</span>
                   </div>
-                  <p data-edit-key="trace-summary" contenteditable="true">기억을 설명하지 않고 남기는 존재이며, 행동과 위치 반복으로 과거 사건을 현재에 되비춘다.</p>
+                  <p data-edit-key="trace-summary" contenteditable="true">PIP은 기억을 행동으로 남기는 존재이며, 언어 없이 과거의 선택을 현재에 다시 드러내는 장치다.</p>
                 </div>
                 <div class="relationship-grid">
-                  <div class="detail-item"><strong data-edit-key="character-69" contenteditable="true">존재 정의</strong><span data-edit-key="trace-detail-1" contenteditable="true">TRACE는 말이나 데이터 대신 행동 패턴으로 기억을 전달하는 매개체이며, 플레이어가 가장 먼저 반복을 체감하게 만든다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-71" contenteditable="true">루프 내 위치</strong><span data-edit-key="trace-detail-2" contenteditable="true">경험과 기록 사이에 놓인 감각적 연결 장치이다. 구조를 설명하지 않고, 먼저 느끼게 만든다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-73" contenteditable="true">ARIA → TRACE</strong><span data-edit-key="trace-detail-3" contenteditable="true">ARIA가 남긴 사건과 선택의 자취는 TRACE의 동선, 정지, 시선으로 변환되어 현재에 되비쳐진다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-75" contenteditable="true">TRACE → VAULT</strong><span data-edit-key="trace-detail-4" contenteditable="true">TRACE가 감각적 흔적을 남긴다면, VAULT는 그것과 같은 진실을 구조적 기록으로 고정한다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-69" contenteditable="true">존재 정의</strong><span data-edit-key="trace-detail-1" contenteditable="true">겉보기에는 동물처럼 보이지만 실제로는 이전 LYRA들의 흔적을 보존하는 기억 전달 장치다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-71" contenteditable="true">행동 규칙</strong><span data-edit-key="trace-detail-2" contenteditable="true">특정 위치를 반복해서 맴돌고, 이유 없이 멈추며, 같은 경로를 되짚는다. 설명되지 않는 행동 자체가 메시지다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-73" contenteditable="true">기억 방식</strong><span data-edit-key="trace-detail-3" contenteditable="true">PIP은 언어도 데이터도 쓰지 않는다. 동선, 시선, 정지, 반복 행동 그 자체가 기억이다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-75" contenteditable="true">최종 정의</strong><span data-edit-key="trace-detail-4" contenteditable="true">PIP은 길을 안내하지 않는다. 지나간 선택의 흔적을 현재에 남길 뿐이다.</span></div>
                 </div>
               </div>
 
               <div class="relationship-summary" data-rel-panel="vault" hidden="">
                 <div class="relationship-header">
-                  <h3 data-edit-key="character-77" contenteditable="true">VAULT</h3>
+                  <h3 data-edit-key="character-77" contenteditable="true">RELAY</h3>
                   <div class="badge-stack relationship-badges">
                     <span class="badge" data-edit-key="character-78" contenteditable="true">기록</span>
                     <span class="badge" data-edit-key="character-79" contenteditable="true">부분 복원</span>
                     <span class="badge" data-edit-key="character-80" contenteditable="true">기계적 진실</span>
                   </div>
-                  <p data-edit-key="vault-summary" contenteditable="true">기억을 저장하지만 완전하게 돌려주지 않는 장치이며, 반복 구조의 연속성을 유지하는 가장 차가운 기준점이다.</p>
+                  <p data-edit-key="vault-summary" contenteditable="true">RELAY는 기억을 저장하지만 완전히 돌려주지 않는 구조이며, 반복을 유지하는 가장 정직한 기록 장치다.</p>
                 </div>
                 <div class="relationship-grid">
-                  <div class="detail-item"><strong data-edit-key="character-82" contenteditable="true">존재 정의</strong><span data-edit-key="vault-detail-1" contenteditable="true">VAULT는 경험을 저장하고 일부만 복원하는 기록 장치이며, 동일성 대신 연속성을 유지하는 역할을 맡는다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-84" contenteditable="true">루프 내 위치</strong><span data-edit-key="vault-detail-2" contenteditable="true">루프의 종착점이자 다음 시작을 준비하는 보존 장치이다. 구조를 가장 명확하게 붙잡는 축이다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-86" contenteditable="true">TRACE → VAULT</strong><span data-edit-key="vault-detail-3" contenteditable="true">TRACE가 공간에 남긴 감각적 흔적은 VAULT에서 데이터와 기록의 형태로 응축되고 저장된다.</span></div>
-                  <div class="detail-item"><strong data-edit-key="character-88" contenteditable="true">VAULT → ARIA</strong><span data-edit-key="vault-detail-4" contenteditable="true">저장된 기록 일부가 다음 존재에게 전달되면서, 완전한 복원이 아닌 불완전한 연속성이 성립된다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-82" contenteditable="true">존재 정의</strong><span data-edit-key="vault-detail-1" contenteditable="true">기계적 저장 장치이며 LYRA와 항상 연결되어 있다. 반복 구조의 연속성을 유지하는 핵심 축이다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-84" contenteditable="true">기억 시스템</strong><span data-edit-key="vault-detail-2" contenteditable="true">사건은 저장되고, 압축되며, 일부만 복원된다. 이 과정에서는 항상 손실이 발생하고 완전한 복원은 불가능하다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-86" contenteditable="true">행동 원칙</strong><span data-edit-key="vault-detail-3" contenteditable="true">감정 없이 최소한의 정보만 제공하고 해석은 하지 않는다. 구조를 유지하는 데 필요한 사실만 남긴다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-88" contenteditable="true">최종 정의</strong><span data-edit-key="vault-detail-4" contenteditable="true">RELAY는 기억을 되돌리지 않는다. 사라지는 경험을 이어 붙이는 장치다.</span></div>
                 </div>
               </div>
             </section>
           </div>
 
           <div class="relationship-cards">
-            <article class="relationship-card"><span class="k" data-edit-key="character-90" contenteditable="true">ARIA</span><h3 data-edit-key="card-aria-title" contenteditable="true">경험의 중심</h3><p data-edit-key="card-aria-body" contenteditable="true">플레이어는 ARIA를 통해 세계를 직접 경험한다. 감정, 선택, 실패, 생존의 무게는 모두 이 지점에서 출발한다.</p></article>
-            <article class="relationship-card"><span class="k" data-edit-key="character-93" contenteditable="true">TRACE</span><h3 data-edit-key="card-trace-title" contenteditable="true">흔적의 매개체</h3><p data-edit-key="card-trace-body" contenteditable="true">TRACE는 사건을 말로 설명하지 않는다. 대신 동선과 반복 행동으로 과거의 자취를 현재에 남긴다.</p></article>
-            <article class="relationship-card"><span class="k" data-edit-key="character-96" contenteditable="true">VAULT</span><h3 data-edit-key="card-vault-title" contenteditable="true">기록의 보존 장치</h3><p data-edit-key="card-vault-body" contenteditable="true">VAULT는 경험을 저장하고 일부만 복원한다. 동일한 존재를 돌려놓지는 않지만 연속성은 유지한다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-90" contenteditable="true">LYRA</span><h3 data-edit-key="card-aria-title" contenteditable="true">경험</h3><p data-edit-key="card-aria-body" contenteditable="true">LYRA는 플레이어가 살아가게 되는 감정과 선택의 통로다. 인간처럼 보이지만 실제로는 반복 구조의 시작점이다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-93" contenteditable="true">PIP</span><h3 data-edit-key="card-trace-title" contenteditable="true">흔적</h3><p data-edit-key="card-trace-body" contenteditable="true">PIP은 설명 없이 남겨진 선택의 자취다. 귀여운 동물처럼 보이지만, 반복 행동으로 과거를 현재에 떠올리게 만든다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-96" contenteditable="true">RELAY</span><h3 data-edit-key="card-vault-title" contenteditable="true">기록</h3><p data-edit-key="card-vault-body" contenteditable="true">RELAY는 사라지는 경험을 저장하고 일부만 이어 붙인다. 그 결과 루프는 유지되지만 완전한 복원은 일어나지 않는다.</p></article>
           </div>
 
           <div class="relationship-link-grid">
-            <article class="relationship-card"><span class="k" data-edit-key="character-99" contenteditable="true">경험 → 흔적</span><h3 data-edit-key="character-100" contenteditable="true">ARIA → TRACE</h3><p data-edit-key="link-1-body" contenteditable="true">ARIA가 통과한 사건은 TRACE의 행동 패턴으로 남는다. 플레이어는 이 흔적을 통해 반복을 먼저 감각한다.</p></article>
-            <article class="relationship-card"><span class="k" data-edit-key="character-102" contenteditable="true">흔적 → 기록</span><h3 data-edit-key="character-103" contenteditable="true">TRACE → VAULT</h3><p data-edit-key="link-2-body" contenteditable="true">TRACE가 남긴 감각적 흔적은 VAULT에서 데이터와 기록의 형태로 응축된다. 직감은 구조로 바뀐다.</p></article>
-            <article class="relationship-card"><span class="k" data-edit-key="character-105" contenteditable="true">기록 → 다시 경험</span><h3 data-edit-key="character-106" contenteditable="true">VAULT → ARIA</h3><p data-edit-key="link-3-body" contenteditable="true">저장된 기록 일부가 다음 ARIA에게 전달되며 루프가 다시 시작된다. 완전 반복이 아니라 불완전한 연속성이다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-99" contenteditable="true">경험 → 흔적</span><h3 data-edit-key="character-100" contenteditable="true">LYRA → PIP</h3><p data-edit-key="link-1-body" contenteditable="true">LYRA의 경험은 사라지지 않고 PIP의 동선, 멈춤, 시선으로 남는다. 감정은 행동의 흔적으로 전환된다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-102" contenteditable="true">흔적 → 기록</span><h3 data-edit-key="character-103" contenteditable="true">PIP → RELAY</h3><p data-edit-key="link-2-body" contenteditable="true">PIP이 남긴 비언어적 흔적은 RELAY에서 구조적 기록으로 저장된다. 직감은 데이터로 굳어진다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-105" contenteditable="true">기록 → 반복</span><h3 data-edit-key="character-106" contenteditable="true">RELAY → 새로운 LYRA</h3><p data-edit-key="link-3-body" contenteditable="true">기록 일부만이 다음 LYRA에게 건네지며 루프가 이어진다. 되돌아오는 것은 같은 존재가 아니라 부분적으로 이어지는 상태다.</p></article>
           </div>
         </div>
       </section>
@@ -2720,18 +2900,18 @@
         <div class="dossier-layout">
           <aside class="side-nav">
             <h3 data-edit-key="character-108" contenteditable="true">도감 선택</h3>
-            <button class="nav-btn active" data-dossier-target="aria-panel"><small>플레이어 핵심</small>ARIA</button>
-            <button class="nav-btn" data-dossier-target="trace-panel"><small>행동 기억</small>TRACE</button>
-            <button class="nav-btn" data-dossier-target="vault-panel"><small>기록 시스템</small>VAULT</button>
+            <button class="nav-btn active" data-dossier-target="aria-panel"><small>final document</small>LYRA</button>
+            <button class="nav-btn" data-dossier-target="trace-panel"><small>final document</small>PIP</button>
+            <button class="nav-btn" data-dossier-target="vault-panel"><small>final document</small>RELAY</button>
           </aside>
 
           <section class="dossier-view panel">
             <div class="dossier-scroll">
             <article class="dossier-panel active" id="aria-panel">
               <div class="dossier-header">
-                <h2 data-edit-key="character-109" contenteditable="true">ARIA</h2>
-                <div class="badge-stack"><span class="badge" data-edit-key="character-110" contenteditable="true">인간 외형</span><span class="badge" data-edit-key="character-111" contenteditable="true">단편적 기억</span><span class="badge" data-edit-key="character-112" contenteditable="true">플레이 가능</span></div>
-                <p data-edit-key="dossier-aria-desc" contenteditable="true">자신이 인간이라고 믿는 존재이며, 플레이어 시점의 중심이다.</p>
+                <h2 data-edit-key="character-109" contenteditable="true">LYRA</h2>
+                <div class="badge-stack"><span class="badge" data-edit-key="character-110" contenteditable="true">인간 외형</span><span class="badge" data-edit-key="character-111" contenteditable="true">반복 구조</span><span class="badge" data-edit-key="character-112" contenteditable="true">경험의 중심</span></div>
+                <p data-edit-key="dossier-aria-desc" contenteditable="true">LYRA는 자신이 인간이라고 믿는 반복 구조이며, 플레이어가 직접 살아가게 되는 존재다.</p>
               </div>
               <div class="reference-card" data-ref-group="aria" data-ref-index="0">
                 <div class="reference-toolbar">
@@ -2745,24 +2925,24 @@
                 </div>
                 <div class="reference-frame">
                   <div class="reference-strip"></div>
-                  <div class="reference-placeholder">ARIA 레퍼런스 이미지를 이 영역에 추가</div>
+                  <div class="reference-placeholder">LYRA 레퍼런스 이미지를 이 영역에 추가</div>
                 </div>
                 <div class="reference-meta"><span class="ref-counter" data-edit-key="character-115" contenteditable="true">0 / 0</span></div>
                 <input class="ref-file-input" type="file" accept="image/*" multiple="">
               </div>
               <div class="dossier-grid">
-                <div class="feature-card"><span class="k" data-edit-key="character-116" contenteditable="true">역할</span><h4 data-edit-key="character-117" contenteditable="true">경험의 중심</h4><p data-edit-key="character-118" contenteditable="true">플레이어는 ARIA를 통해 외부 세계의 위험, 감정, 상실, 발견을 직접 체험한다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-119" contenteditable="true">인식</span><h4 data-edit-key="character-120" contenteditable="true">자기 인식의 오류</h4><p data-edit-key="character-121" contenteditable="true">ARIA는 스스로를 인간이라 믿지만, 반복과 전환의 진실을 인식하지 못한다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-122" contenteditable="true">디자인 규칙</span><h4 data-edit-key="character-123" contenteditable="true">완전한 인간성</h4><p data-edit-key="character-124" contenteditable="true">겉보기에는 100% 인간처럼 보여야 하며, 노골적인 SF 기호는 드러나지 않아야 한다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-125" contenteditable="true">플레이어 경험</span><h4 data-edit-key="character-126" contenteditable="true">정체성의 해체</h4><p data-edit-key="character-127" contenteditable="true">플레이어는 ARIA를 인간으로 받아들이지만, 점차 동일한 존재가 아님을 깨닫는다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-116" contenteditable="true">core identity</span><h4 data-edit-key="character-117" contenteditable="true">자신이 인간이라고 믿는 반복 구조</h4><p data-edit-key="character-118" contenteditable="true">LYRA는 인간과 동일한 외형, 인간과 유사한 사고를 가지지만 동일한 개체는 아니다. 교체 가능하며 죽음은 종료가 아니라 전환이다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-119" contenteditable="true">world role</span><h4 data-edit-key="character-120" contenteditable="true">위험 지역을 탐색하는 존재</h4><p data-edit-key="character-121" contenteditable="true">LYRA는 인간 대신 외부 세계로 진입하고, 위험을 직접 감당하며, 이 구조 안에서 유일하게 적응 가능한 존재로 기능한다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-122" contenteditable="true">memory</span><h4 data-edit-key="character-123" contenteditable="true">일부 유지, 일부 손실</h4><p data-edit-key="character-124" contenteditable="true">기억은 반복 속에서 왜곡되고 불완전하게 이어진다. 이 손실 구조가 플레이어가 체감하는 익숙함과 어긋남을 만든다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-125" contenteditable="true">visual design</span><h4 data-edit-key="character-126" contenteditable="true">완전히 인간처럼 보여야 한다</h4><p data-edit-key="character-127" contenteditable="true">16~18세의 현실적인 인상, 피로감 있는 눈, 실용적인 의상을 지향한다. SF 기호, 기계 디테일, 발광 요소는 금지한다.</p></div>
               </div>
             </article>
 
             <article class="dossier-panel" id="trace-panel" hidden="">
               <div class="dossier-header">
-                <h2 data-edit-key="character-128" contenteditable="true">TRACE</h2>
-                <div class="badge-stack"><span class="badge" data-edit-key="character-129" contenteditable="true">동물 실루엣</span><span class="badge" data-edit-key="character-130" contenteditable="true">비언어적 유도</span><span class="badge" data-edit-key="character-131" contenteditable="true">행동 흔적</span></div>
-                <p data-edit-key="dossier-trace-desc" contenteditable="true">기억을 말하지 않고 남기는 존재이며, 반복을 감각적으로 전달하는 장치다.</p>
+                <h2 data-edit-key="character-128" contenteditable="true">PIP</h2>
+                <div class="badge-stack"><span class="badge" data-edit-key="character-129" contenteditable="true">동물 외형</span><span class="badge" data-edit-key="character-130" contenteditable="true">행동 기억</span><span class="badge" data-edit-key="character-131" contenteditable="true">흔적 장치</span></div>
+                <p data-edit-key="dossier-trace-desc" contenteditable="true">PIP은 기억을 행동으로 남기는 존재이며, 언어 없이 반복 구조를 감각하게 만드는 장치다.</p>
               </div>
               <div class="reference-card" data-ref-group="trace" data-ref-index="0">
                 <div class="reference-toolbar">
@@ -2776,24 +2956,24 @@
                 </div>
                 <div class="reference-frame">
                   <div class="reference-strip"></div>
-                  <div class="reference-placeholder">TRACE 레퍼런스 이미지를 이 영역에 추가</div>
+                  <div class="reference-placeholder">PIP 레퍼런스 이미지를 이 영역에 추가</div>
                 </div>
                 <div class="reference-meta"><span class="ref-counter" data-edit-key="character-134" contenteditable="true">0 / 0</span></div>
                 <input class="ref-file-input" type="file" accept="image/*" multiple="">
               </div>
               <div class="dossier-grid">
-                <div class="feature-card"><span class="k" data-edit-key="character-135" contenteditable="true">역할</span><h4 data-edit-key="character-136" contenteditable="true">행동 기억의 매개체</h4><p data-edit-key="character-137" contenteditable="true">TRACE는 말이나 데이터 대신 반복 행동으로 이전 사건의 흔적을 현재에 남긴다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-138" contenteditable="true">인식</span><h4 data-edit-key="character-139" contenteditable="true">귀여움에서 불안으로</h4><p data-edit-key="character-140" contenteditable="true">처음에는 단순한 동반 동물처럼 보이지만, 반복 행동이 의미를 가지기 시작한다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-141" contenteditable="true">디자인 규칙</span><h4 data-edit-key="character-142" contenteditable="true">자연스러운 비정상성</h4><p data-edit-key="character-143" contenteditable="true">외형은 동물적이어야 하지만 시선과 멈춤 타이밍에는 설명하기 어려운 지성이 남아야 한다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-144" contenteditable="true">플레이어 경험</span><h4 data-edit-key="character-145" contenteditable="true">직감의 시작점</h4><p data-edit-key="character-146" contenteditable="true">플레이어는 TRACE를 통해 가장 먼저 무언가 반복되고 있다는 감각을 얻게 된다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-135" contenteditable="true">core identity</span><h4 data-edit-key="character-136" contenteditable="true">기억을 행동으로 남기는 존재</h4><p data-edit-key="character-137" contenteditable="true">PIP은 동물처럼 보이는 생물이지만 실제로는 이전 LYRA들의 흔적과 사건의 잔재를 보존하는 기억 전달 장치다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-138" contenteditable="true">behavior</span><h4 data-edit-key="character-139" contenteditable="true">반복과 멈춤으로 말한다</h4><p data-edit-key="character-140" contenteditable="true">특정 위치 반복, 이유 없는 정지, 같은 경로 순환처럼 설명되지 않는 행동이 곧 메시지이자 기억의 형식이다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-141" contenteditable="true">player perception</span><h4 data-edit-key="character-142" contenteditable="true">귀여움에서 구조 인지로</h4><p data-edit-key="character-143" contenteditable="true">처음에는 귀여운 동물로 보이지만, 점차 이상한 행동을 통해 기억을 알고 있는 존재이며 반복 구조의 핵심 장치라는 사실이 드러난다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-144" contenteditable="true">visual design</span><h4 data-edit-key="character-145" contenteditable="true">귀엽지만 점점 불안해진다</h4><p data-edit-key="character-146" contenteditable="true">족제비 형태, 지능적인 눈, 자연스러운 색상을 기본으로 하되 시선이 오래 머무르고 설명되지 않는 행동이 느껴져야 한다.</p></div>
               </div>
             </article>
 
             <article class="dossier-panel" id="vault-panel" hidden="">
               <div class="dossier-header">
-                <h2 data-edit-key="character-147" contenteditable="true">VAULT</h2>
-                <div class="badge-stack"><span class="badge" data-edit-key="character-148" contenteditable="true">기계적 진실</span><span class="badge" data-edit-key="character-149" contenteditable="true">부분 복원</span><span class="badge" data-edit-key="character-150" contenteditable="true">기록 코어</span></div>
-                <p data-edit-key="dossier-vault-desc" contenteditable="true">기억을 저장하지만 완전하게 돌려주지 않는 장치이며, 반복 구조의 연속성을 유지하는 축이다.</p>
+                <h2 data-edit-key="character-147" contenteditable="true">RELAY</h2>
+                <div class="badge-stack"><span class="badge" data-edit-key="character-148" contenteditable="true">기계 구조</span><span class="badge" data-edit-key="character-149" contenteditable="true">부분 복원</span><span class="badge" data-edit-key="character-150" contenteditable="true">기록 장치</span></div>
+                <p data-edit-key="dossier-vault-desc" contenteditable="true">RELAY는 기억을 저장하지만 완전하게 돌려주지 않는 구조이며, 반복의 연속성을 유지하는 핵심 장치다.</p>
               </div>
               <div class="reference-card" data-ref-group="vault" data-ref-index="0">
                 <div class="reference-toolbar">
@@ -2807,18 +2987,89 @@
                 </div>
                 <div class="reference-frame">
                   <div class="reference-strip"></div>
-                  <div class="reference-placeholder">VAULT 레퍼런스 이미지를 이 영역에 추가</div>
+                  <div class="reference-placeholder">RELAY 레퍼런스 이미지를 이 영역에 추가</div>
                 </div>
                 <div class="reference-meta"><span class="ref-counter" data-edit-key="character-153" contenteditable="true">0 / 0</span></div>
                 <input class="ref-file-input" type="file" accept="image/*" multiple="">
               </div>
               <div class="dossier-grid">
-                <div class="feature-card"><span class="k" data-edit-key="character-154" contenteditable="true">역할</span><h4 data-edit-key="character-155" contenteditable="true">기록과 복원</h4><p data-edit-key="character-156" contenteditable="true">경험을 저장하고 일부만 복원하며, 다음 존재가 이어질 수 있게 구조적 기반을 제공한다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-157" contenteditable="true">인식</span><h4 data-edit-key="character-158" contenteditable="true">감정 없는 신뢰</h4><p data-edit-key="character-159" contenteditable="true">위로도 망설임도 없이 사실만 전달하기 때문에, 가장 신뢰 가능한 기준점처럼 느껴진다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-160" contenteditable="true">디자인 규칙</span><h4 data-edit-key="character-161" contenteditable="true">보이는 그대로의 기계</h4><p data-edit-key="character-162" contenteditable="true">구조가 노출되고 기능이 드러난 외형을 통해, 이 세계에서 드물게 겉과 속이 일치하는 존재가 된다.</p></div>
-                <div class="feature-card"><span class="k" data-edit-key="character-163" contenteditable="true">플레이어 경험</span><h4 data-edit-key="character-164" contenteditable="true">구조의 확정</h4><p data-edit-key="character-165" contenteditable="true">TRACE가 만든 감각적 불안을 VAULT가 기록과 복원이라는 시스템으로 정리해 준다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-154" contenteditable="true">core identity</span><h4 data-edit-key="character-155" contenteditable="true">기억을 저장하지만 완전히 돌려주지 않는다</h4><p data-edit-key="character-156" contenteditable="true">RELAY는 사건 기록을 저장하고 일부 기억만 복원한다. 동일성이 아니라 연속성을 유지하는 것이 이 장치의 목적이다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-157" contenteditable="true">memory system</span><h4 data-edit-key="character-158" contenteditable="true">저장 → 압축 → 부분 복원</h4><p data-edit-key="character-159" contenteditable="true">기록은 항상 손실을 동반한다. 완전한 복원은 불가능하며, 이 손실 자체가 반복 구조의 핵심 규칙으로 남는다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-160" contenteditable="true">visual design</span><h4 data-edit-key="character-161" contenteditable="true">가장 정직한 형태의 기계</h4><p data-edit-key="character-162" contenteditable="true">노출된 프레임, 중심 코어, 금속 구조를 통해 이 세계에서 드물게 겉과 속이 일치하는 존재로 보여야 한다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-163" contenteditable="true">contrast with trace</span><h4 data-edit-key="character-164" contenteditable="true">감각 대신 구조를 제공한다</h4><p data-edit-key="character-165" contenteditable="true">PIP이 감각적이고 직관적인 흔적이라면, RELAY는 구조적이고 명확한 데이터다. 두 존재는 같은 진실을 다른 방식으로 드러낸다.</p></div>
               </div>
             </article>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="behaviors" data-screen="behaviors">
+        <div class="dossier-layout">
+          <aside class="side-nav">
+            <h3 data-edit-key="character-behavior-1" contenteditable="true">행동 패턴 선택</h3>
+            <button class="nav-btn" data-dossier-target="behavior-lyra-panel"><small data-edit-key="character-behavior-2" contenteditable="true">behavior pattern</small>LYRA</button>
+            <button class="nav-btn active" data-dossier-target="behavior-pip-panel"><small data-edit-key="character-behavior-3" contenteditable="true">behavior pattern</small>PIP</button>
+            <button class="nav-btn" data-dossier-target="behavior-relay-panel"><small data-edit-key="character-behavior-4" contenteditable="true">behavior pattern</small>RELAY</button>
+          </aside>
+
+          <section class="dossier-view panel">
+            <div class="dossier-scroll">
+              <article class="dossier-panel" id="behavior-lyra-panel">
+                <div class="dossier-header">
+                  <h2 data-edit-key="character-behavior-5" contenteditable="true">LYRA</h2>
+                  <div class="badge-stack">
+                    <span class="badge" data-edit-key="character-behavior-6" contenteditable="true">human passing</span>
+                    <span class="badge" data-edit-key="character-behavior-7" contenteditable="true">survival first</span>
+                    <span class="badge" data-edit-key="character-behavior-8" contenteditable="true">memory drift</span>
+                  </div>
+                  <p data-edit-key="character-behavior-9" contenteditable="true">LYRA의 행동 패턴은 생존, 탐색, 기억의 어긋남이 어떻게 플레이 경험으로 전환되는지 정리하는 영역이다.</p>
+                </div>
+                <div class="dossier-grid">
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-10" contenteditable="true">baseline</span><h4 data-edit-key="character-behavior-11" contenteditable="true">생존 중심으로 판단한다</h4><p data-edit-key="character-behavior-12" contenteditable="true">위험 지역에서는 감정보다 생존과 이동 가능성을 먼저 계산한다. 불안, 망설임, 경계가 선택에 계속 개입한다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-13" contenteditable="true">social read</span><h4 data-edit-key="character-behavior-14" contenteditable="true">인간처럼 반응하지만 미세하게 어긋난다</h4><p data-edit-key="character-behavior-15" contenteditable="true">상황을 감정적으로 받아들이지만, 기억의 결손 때문에 익숙한 장면에서 반 박자 늦거나 잘못된 확신을 보일 수 있다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-16" contenteditable="true">loop cue</span><h4 data-edit-key="character-behavior-17" contenteditable="true">데자뷰에 끌리듯 움직인다</h4><p data-edit-key="character-behavior-18" contenteditable="true">정확한 이유는 모르지만 이전 반복의 일부 흔적이 남은 장소나 선택지에 더 오래 머무르고, 설명되지 않는 기시감을 행동으로 드러낸다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-19" contenteditable="true">failure state</span><h4 data-edit-key="character-behavior-20" contenteditable="true">죽음은 중단이 아니라 전환이다</h4><p data-edit-key="character-behavior-21" contenteditable="true">행동의 끝은 소멸처럼 보이지만 실제로는 구조가 다음 LYRA로 넘어가는 지점이다. 마지막 선택은 기록과 흔적을 남기는 사건으로 읽혀야 한다.</p></div>
+                </div>
+              </article>
+
+              <article class="dossier-panel active" id="behavior-pip-panel">
+                <div class="dossier-header">
+                  <h2 data-edit-key="character-behavior-22" contenteditable="true">PIP</h2>
+                  <div class="badge-stack">
+                    <span class="badge" data-edit-key="character-behavior-23" contenteditable="true">behavior spec</span>
+                    <span class="badge" data-edit-key="character-behavior-24" contenteditable="true">indirect support</span>
+                    <span class="badge" data-edit-key="character-behavior-25" contenteditable="true">signal by action</span>
+                  </div>
+                  <p data-edit-key="character-behavior-26" contenteditable="true">PIP은 전투 유닛이 아니라 상황을 감지하고 행동으로 신호를 전달하는 간접 조력자다. 항상 LYRA에게 붙어 있다가 SIGNAL 상태에서만 분리되며, UI나 대사 없이 행동만으로 위험 방향, 긴장도, 타겟, 중요 위치를 플레이어가 스스로 읽게 만든다.</p>
+                </div>
+                <div class="dossier-grid">
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-27" contenteditable="true">IDLE</span><h4 data-edit-key="character-behavior-28" contenteditable="true">기본 경계 상태</h4><p data-edit-key="character-behavior-29" contenteditable="true">LYRA 목 뒤에 감긴 채 어깨 너머로 고개를 조금 드러낸다. 좌우 시선 이동, 후방 확인, 미세한 꼬리와 귀 반응처럼 작은 움직임만 유지한다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-30" contenteditable="true">ALERT</span><h4 data-edit-key="character-behavior-31" contenteditable="true">위험 방향 감지</h4><p data-edit-key="character-behavior-32" contenteditable="true">몸이 긴장하고 목에서 약간 풀리며 특정 방향을 고정해서 바라본다. 빠른 시선 전환, 짧은 떨림, 방향 lock 유지가 핵심이다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-33" contenteditable="true">HIDE</span><h4 data-edit-key="character-behavior-34" contenteditable="true">위험 상승 / 은신</h4><p data-edit-key="character-behavior-35" contenteditable="true">백팩 쪽으로 이동해 몸 대부분을 숨기고 고개만 드러낸다. 짧은 peek를 반복하다가 위험이 커지면 완전히 숨는다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-36" contenteditable="true">OBSERVE</span><h4 data-edit-key="character-behavior-37" contenteditable="true">타겟 관찰</h4><p data-edit-key="character-behavior-38" contenteditable="true">고개만 부분 노출한 채 특정 대상을 계속 추적한다. 적을 오래 응시하고 공격 직전에는 미세하게 움찔하지만 전체 움직임은 최소화된다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-39" contenteditable="true">SIGNAL</span><h4 data-edit-key="character-behavior-40" contenteditable="true">중요 위치 확정</h4><p data-edit-key="character-behavior-41" contenteditable="true">목 뒤에서 이상 반응을 보인 뒤 LYRA 몸을 따라 이동하고, 몸에서 분리되어 주변을 제한적으로 움직이며 특정 위치에 고정된다. 반복 응시, 바닥 집중, 짧은 원형 이동, 긁기와 탐색 행동으로 여기라는 신호를 만든다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-42" contenteditable="true">RESOLVE / RETURN</span><h4 data-edit-key="character-behavior-43" contenteditable="true">상황 종료와 복귀</h4><p data-edit-key="character-behavior-44" contenteditable="true">상황이 끝나면 노출이 늘고 주변을 천천히 확인하면서 긴장을 푼다. 이후 백팩에서 어깨를 거쳐 다시 목 뒤로 이동해 안정된 리듬으로 돌아간다.</p></div>
+                </div>
+              </article>
+
+              <article class="dossier-panel" id="behavior-relay-panel" hidden>
+                <div class="dossier-header">
+                  <h2 data-edit-key="character-behavior-45" contenteditable="true">RELAY</h2>
+                  <div class="badge-stack">
+                    <span class="badge" data-edit-key="character-behavior-46" contenteditable="true">system logic</span>
+                    <span class="badge" data-edit-key="character-behavior-47" contenteditable="true">cold output</span>
+                    <span class="badge" data-edit-key="character-behavior-48" contenteditable="true">partial restore</span>
+                  </div>
+                  <p data-edit-key="character-behavior-49" contenteditable="true">RELAY의 행동 패턴은 감정 없는 기록 장치가 어떤 방식으로 정보를 제한적으로 반환하는지 정리하는 영역이다.</p>
+                </div>
+                <div class="dossier-grid">
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-50" contenteditable="true">output rule</span><h4 data-edit-key="character-behavior-51" contenteditable="true">필요한 정보만 돌려준다</h4><p data-edit-key="character-behavior-52" contenteditable="true">RELAY는 감정적 맥락 없이 최소 단위의 사실만 전달한다. 설명보다 저장과 복원 규칙을 우선한다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-53" contenteditable="true">recovery logic</span><h4 data-edit-key="character-behavior-54" contenteditable="true">복원은 항상 손실을 포함한다</h4><p data-edit-key="character-behavior-55" contenteditable="true">모든 반환 정보는 일부만 열리고, 공백은 남는다. 그 공백이 다음 행동의 동기이자 세계의 규칙으로 작동한다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-56" contenteditable="true">interaction tone</span><h4 data-edit-key="character-behavior-57" contenteditable="true">해석하지 않고 기록만 남긴다</h4><p data-edit-key="character-behavior-58" contenteditable="true">RELAY는 위로하거나 경고하지 않는다. 사건을 정리된 구조로 제시할 뿐이며, 플레이어가 의미를 조합하도록 남겨 둔다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-59" contenteditable="true">loop role</span><h4 data-edit-key="character-behavior-60" contenteditable="true">다음 반복을 가능하게 만든다</h4><p data-edit-key="character-behavior-61" contenteditable="true">행동의 종착점처럼 보이지만 실제로는 다음 LYRA가 깨어날 수 있도록 연속성을 붙잡는 마지막 구조물이다.</p></div>
+                </div>
+              </article>
             </div>
           </section>
         </div>
@@ -2828,38 +3079,38 @@
         <section class="loop-flow-card">
           <div class="loop-flow-head">
             <div>
-              <span class="loop-flow-kicker" data-edit-key="character-166" contenteditable="true">LOOP STRUCTURE</span>
-              <h2 data-edit-key="character-167" contenteditable="true">Experience · Trace · Record</h2>
-              <p data-edit-key="character-168" contenteditable="true">ARIA가 경험하고, TRACE가 흔적을 남기며, VAULT가 기록을 저장한 뒤 다음 ARIA에게 일부만 전달되는 반복 구조.</p>
+              <span class="loop-flow-kicker" data-edit-key="character-166" contenteditable="true">SYSTEM SUMMARY</span>
+              <h2 data-edit-key="character-167" contenteditable="true">Experience · Trace · Record · Repeat</h2>
+              <p data-edit-key="character-168" contenteditable="true">LYRA는 경험하고, PIP은 행동으로 흔적을 남기며, RELAY는 기억을 저장한다. 그리고 그 일부만이 다음 LYRA로 이어진다.</p>
             </div>
             <button class="loop-detail-btn" type="button" aria-expanded="false">루프 상세 보기</button>
           </div>
-          <p class="loop-flow-note" hidden>이 루프는 한 번의 생애가 완전히 복구되는 구조가 아니라, 경험의 일부만 흔적과 기록으로 이어져 다음 존재에게 전달되는 비연속적 연속성의 구조를 설명한다.</p>
+          <p class="loop-flow-note" hidden>이 구조는 완전한 반복도 완전한 연속도 아니다. 손실을 포함한 일부만이 이어지고, 그 불완전함 자체가 세계의 진실로 남는다.</p>
 
-          <div class="loop-flow-track" aria-label="ARIA TRACE VAULT loop flow">
+          <div class="loop-flow-track" aria-label="LYRA PIP RELAY loop flow">
             <div class="loop-step-card" data-step="1">
-              <strong data-edit-key="character-169" contenteditable="true">ARIA · EXPERIENCE</strong>
-              <span data-edit-key="character-170" contenteditable="true">플레이어는 ARIA를 통해 외부 세계를 직접 경험한다. 감정, 선택, 실패, 생존의 무게가 이 단계에서 발생한다.</span>
+              <strong data-edit-key="character-169" contenteditable="true">LYRA · EXPERIENCE</strong>
+              <span data-edit-key="character-170" contenteditable="true">LYRA는 세계를 직접 살아가는 단계다. 감정, 선택, 실패, 생존의 무게가 모두 이 지점에서 발생한다.</span>
             </div>
             <div class="loop-step-card" data-step="2">
-              <strong data-edit-key="character-171" contenteditable="true">EVENT · LOSS</strong>
-              <span data-edit-key="character-172" contenteditable="true">탐색 중 사건이 발생하고 ARIA의 경험은 완전하게 보존되지 못한 채 단절된다. 죽음은 끝이 아니라 전환의 시작이다.</span>
+              <strong data-edit-key="character-171" contenteditable="true">PIP · RESIDUE</strong>
+              <span data-edit-key="character-172" contenteditable="true">LYRA의 경험은 PIP의 동선, 멈춤, 시선, 반복 행동으로 남는다. 기억은 설명이 아니라 흔적으로 전달된다.</span>
             </div>
             <div class="loop-step-card" data-step="3">
-              <strong data-edit-key="character-173" contenteditable="true">TRACE · RESIDUE</strong>
-              <span data-edit-key="character-174" contenteditable="true">TRACE는 이전 ARIA의 경험을 말로 설명하지 않는다. 대신 동선, 멈춤, 시선, 반복 행동으로 흔적을 남긴다.</span>
+              <strong data-edit-key="character-173" contenteditable="true">RELAY · RECORD</strong>
+              <span data-edit-key="character-174" contenteditable="true">PIP이 남긴 흔적과 사건의 기록은 RELAY에서 저장된다. 그러나 이 저장은 언제나 압축과 손실을 동반한다.</span>
             </div>
             <div class="loop-step-card" data-step="4">
-              <strong data-edit-key="character-175" contenteditable="true">VAULT · RECORD</strong>
-              <span data-edit-key="character-176" contenteditable="true">VAULT는 사건과 기억을 저장하지만 완전하게 복원하지 않는다. 기록은 압축되고 일부는 손실된다.</span>
+              <strong data-edit-key="character-175" contenteditable="true">PARTIAL RESTORE</strong>
+              <span data-edit-key="character-176" contenteditable="true">저장된 기록 일부만이 다음 존재에게 전달된다. 복원은 언제나 불완전하며, 완전한 귀환은 일어나지 않는다.</span>
             </div>
             <div class="loop-step-card" data-step="5">
-              <strong data-edit-key="character-177" contenteditable="true">RESTORE · PARTIAL</strong>
-              <span data-edit-key="character-178" contenteditable="true">저장된 기록 일부가 다음 존재에게 전달된다. 같은 존재가 돌아오는 것이 아니라, 불완전한 연속성이 만들어진다.</span>
+              <strong data-edit-key="character-177" contenteditable="true">NEW LYRA</strong>
+              <span data-edit-key="character-178" contenteditable="true">새로운 LYRA가 다시 깨어난다. 익숙함은 남지만 완전히 같은 존재는 아니며, 반복은 다시 시작된다.</span>
             </div>
             <div class="loop-step-card" data-step="6">
-              <strong data-edit-key="character-179" contenteditable="true">NEW ARIA · LOOP</strong>
-              <span data-edit-key="character-180" contenteditable="true">새로운 ARIA가 다시 깨어난다. 플레이어는 익숙하지만 완전히 같지 않은 반복을 통해 구조를 인식하기 시작한다.</span>
+              <strong data-edit-key="character-179" contenteditable="true">PLAYER REALIZATION</strong>
+              <span data-edit-key="character-180" contenteditable="true">플레이어는 같은 캐릭터가 돌아오는 것이 아니라 경험, 흔적, 기록으로 이루어진 구조가 반복된다는 사실을 깨닫게 된다.</span>
             </div>
           </div>
 
@@ -3128,6 +3379,12 @@
             </section>
           </div>
         </section>
+        <section class="screen" data-screen="behaviors">
+          <div class="panel">
+            <div class="section-head"><h2 data-edit-key="env-behaviors-title" contenteditable="true">행동 패턴</h2><span class="caption" data-edit-key="env-behaviors-caption" contenteditable="true">환경 placeholder</span></div>
+            <p data-edit-key="env-behaviors-body" contenteditable="true">환경 워크스페이스에는 아직 행동 패턴 문서가 정의되지 않았다. 필요 시 환경 오브젝트나 위협의 반복 패턴을 이 영역에 정리할 수 있다.</p>
+          </div>
+        </section>
         <section class="screen" data-screen="loop">
           <div class="panel"><div class="section-head"><h2 data-edit-key="workspace-workspace-3-57" contenteditable="true">루프 구조</h2><span class="caption" data-edit-key="workspace-workspace-3-58" contenteditable="true">기본 구조</span></div><p data-edit-key="workspace-workspace-3-59" contenteditable="true">새 탭의 루프 구조를 여기서 정리한다.</p></div>
         </section></div></main>
@@ -3210,8 +3467,8 @@
             button.classList.add('active');
             targetScreen.classList.add('active');
 
-            if (target === 'dossiers') {
-              activateFirstDossierInPane(activePane);
+            if (target === 'dossiers' || target === 'behaviors') {
+              activateFirstDossierInPane(targetScreen);
             }
           });
         });
@@ -3268,8 +3525,8 @@
             <section class="panel">
               <div class="chip">새 워크스페이스 개요</div>
               <h1 class="hero-title">${name.toUpperCase()}</h1>
-              <p class="sub">이 워크스페이스는 ${name} 설정을 위한 기본 문서이다. 개요, 관계, 도감, 루프 구조를 자유롭게 편집할 수 있다.</p>
-              <div class="label-row"><span class="chip">개요</span><span class="chip">관계</span><span class="chip">도감</span><span class="chip">루프</span></div>
+              <p class="sub">이 워크스페이스는 ${name} 설정을 위한 기본 문서이다. 개요, 관계, 도감, 행동 패턴, 루프 구조를 자유롭게 편집할 수 있다.</p>
+              <div class="label-row"><span class="chip">개요</span><span class="chip">관계</span><span class="chip">도감</span><span class="chip">행동 패턴</span><span class="chip">루프</span></div>
             </section>
             <aside class="hero-side">
               <div class="stat-box"><div class="k">핵심 규칙</div><div class="v">새 워크스페이스</div><p>이 영역을 클릭해서 텍스트를 자유롭게 수정할 수 있다.</p></div>
@@ -3323,6 +3580,9 @@
               </div>
             </section>
           </div>
+        </section>
+        <section class="screen" data-screen="behaviors">
+          <div class="panel"><div class="section-head"><h2>행동 패턴</h2><span class="caption">기본 구조</span></div><p>${name}의 행동 패턴을 여기서 정리한다.</p></div>
         </section>
         <section class="screen" data-screen="loop">
           <div class="panel"><div class="section-head"><h2>루프 구조</h2><span class="caption">기본 구조</span></div><p>새 탭의 루프 구조를 여기서 정리한다.</p></div>
@@ -3479,12 +3739,12 @@
         activate('aria');
       }
 
-      function activateDossierInPane(pane, target) {
-        if (!pane || !target) return;
-        const buttons = Array.from(pane.querySelectorAll('.nav-btn[data-dossier-target]'));
-        const panels = Array.from(pane.querySelectorAll('.dossier-panel'));
+      function activateDossierInPane(container, target) {
+        if (!container || !target) return;
+        const buttons = Array.from(container.querySelectorAll('.nav-btn[data-dossier-target]'));
+        const panels = Array.from(container.querySelectorAll('.dossier-panel'));
         const activePanel = byId(target);
-        if (!buttons.length || !panels.length || !activePanel || !pane.contains(activePanel)) return;
+        if (!buttons.length || !panels.length || !activePanel || !container.contains(activePanel)) return;
 
         buttons.forEach((btn) => {
           btn.classList.toggle('active', btn.dataset.dossierTarget === target);
@@ -3497,26 +3757,26 @@
         activePanel.classList.add('active');
       }
 
-      function activateFirstDossierInPane(pane) {
-        if (!pane) return;
-        const firstButton = pane.querySelector('.nav-btn[data-dossier-target]');
+      function activateFirstDossierInPane(container) {
+        if (!container) return;
+        const firstButton = container.querySelector('.nav-btn[data-dossier-target]');
         if (!firstButton) return;
-        activateDossierInPane(pane, firstButton.dataset.dossierTarget);
+        activateDossierInPane(container, firstButton.dataset.dossierTarget);
       }
 
       function initDossiers() {
-        const panes = Array.from(document.querySelectorAll('.workspace-pane[data-workspace-pane]'));
-        panes.forEach((pane) => {
-          const buttons = Array.from(pane.querySelectorAll('.nav-btn[data-dossier-target]'));
+        const containers = Array.from(document.querySelectorAll('.screen[data-screen="dossiers"], .screen[data-screen="behaviors"]'));
+        containers.forEach((container) => {
+          const buttons = Array.from(container.querySelectorAll('.nav-btn[data-dossier-target]'));
           if (!buttons.length) return;
 
           buttons.forEach((button) => {
             button.addEventListener('click', () => {
-              activateDossierInPane(pane, button.dataset.dossierTarget);
+              activateDossierInPane(container, button.dataset.dossierTarget);
             });
           });
 
-          activateFirstDossierInPane(pane);
+          activateFirstDossierInPane(container);
         });
       }
 
@@ -4117,7 +4377,7 @@
 
       function runSelfChecks() {
         const checks = [
-          ['탭 버튼 수', document.querySelectorAll('.tab-btn[data-screen-target]').length === 4],
+          ['탭 버튼 수', document.querySelectorAll('.tab-btn[data-screen-target]').length === 5],
           ['워크스페이스 탭', document.querySelectorAll('.workspace-tab[data-workspace-target]').length >= 2],
           ['워크스페이스 추가 버튼', !!byId('add-workspace-btn')],
           ['관계 루프', !!byId('relationship-loop')],
