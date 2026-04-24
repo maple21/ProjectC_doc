@@ -1,0 +1,4167 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Codex</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+    :root {
+      --aria-color: #70e0c9;
+      --trace-color: #ff4d4f;
+      --vault-color: #ffb14c;
+      --bg: #081019;
+      --panel: rgba(12, 20, 33, 0.86);
+      --panel-strong: rgba(8, 14, 24, 0.94);
+      --line: rgba(112, 224, 201, 0.18);
+      --line-strong: rgba(112, 224, 201, 0.32);
+      --text: #f4efe6;
+      --muted: #b5c0cb;
+      --accent: #70e0c9;
+      --accent-2: #70e0c9;
+      --warn: #ff7a66;
+
+      /* Typography */
+      --font-ui: "Playfair Display", "Times New Roman", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", serif;
+      --font-display: "Playfair Display", "Times New Roman", serif, "Noto Sans KR";
+      --text-display: clamp(34px, 4.8vw, 58px);
+      --text-h1: clamp(28px, 3.8vw, 42px);
+      --text-h2: 20px;
+      --text-h3: 17px;
+      --text-h4: 15px;
+      --text-body-lg: 16px;
+      --text-body: 14px;
+      --text-body-sm: 13px;
+      --text-caption: 11px;
+      --text-micro: 10px;
+      --lh-tight: 1.15;
+      --lh-heading: 1.25;
+      --lh-body: 1.72;
+      --tracking-ui: 0.08em;
+      --tracking-caption: 0.12em;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-ui);
+      color: var(--text);
+      background: linear-gradient(180deg, #091018 0%, #101923 52%, #131d27 100%);
+      overflow-x: hidden;
+      font-size: var(--text-body);
+      line-height: var(--lh-body);
+      letter-spacing: -0.01em;
+      font-weight: 400;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: 0.25;
+    }
+
+    .shell {
+      width: min(1380px, calc(100% - 32px));
+      margin: 16px auto;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #0c1117;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .workspace-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .workspace-sidebar {
+      position: sticky;
+      top: 16px;
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: #0e141b;
+      height: fit-content;
+    }
+
+    .workspace-sidebar-title {
+      margin: 0 0 6px;
+      color: #f1f2ed;
+      font-size: var(--text-caption);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    .workspace-tab {
+      appearance: none;
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,.12);
+      background: transparent;
+      color: var(--muted);
+      padding: 12px 12px;
+      cursor: pointer;
+      font-size: var(--text-body-sm);
+      letter-spacing: .02em;
+      line-height: 1.4;
+      font-weight: 500;
+      transition: .2s ease;
+    }
+
+    .workspace-tab:hover,
+    .workspace-tab.active {
+      color: var(--text);
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.04);
+    }
+
+    .workspace-tab.is-add {
+      text-align: center;
+      font-size: 18px;
+      line-height: 1;
+      padding: 10px 12px 12px;
+    }
+
+    .workspace-content {
+      min-width: 0;
+    }
+
+    .workspace-pane {
+      display: none;
+    }
+
+    .workspace-pane.active {
+      display: block;
+    }
+
+    .shell::before {
+      display: none; /* remove unwanted overlay line */
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr) 180px;
+      gap: 12px;
+      align-items: start;
+      padding: 8px 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 14, 18, 0.96);
+    }
+
+    .brand,
+    .status,
+    .panel,
+    .info-card,
+    .matrix-card,
+    .detail-card,
+    .signal-card,
+    .timeline-card,
+    .side-nav,
+    .stat-box,
+    .relationship-card,
+    .feature-card,
+    .timeline-step,
+    .rule,
+    .detail-item,
+    .signal,
+    .nav-btn,
+    .footer-note {
+      border: 1px solid rgba(255,255,255,.08);
+      background: #0e141b;
+    }
+
+    .brand {
+      min-height: 64px;
+      padding: 12px 14px;
+    }
+
+    .brand .eyebrow {
+      color: #f1f2ed;
+      font-size: var(--text-caption);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+
+    .brand strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: var(--lh-tight);
+      font-weight: 700;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: center;
+      min-width: 0;
+      overflow-x: auto;
+      padding-top: 2px;
+    }
+
+    .tab-btn,
+    .save-btn {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: transparent;
+      color: var(--muted);
+      padding: 9px 13px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: var(--text-caption);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-ui);
+      line-height: 1.2;
+      transition: 0.2s ease;
+      white-space: nowrap;
+      font-family: var(--font-ui);
+    }
+
+    .save-btn {
+      padding: 5px 8px;
+      font-size: var(--text-micro);
+      letter-spacing: 0.1em;
+    }
+
+    .tab-btn:hover,
+    .tab-btn.active,
+    .save-btn:hover {
+      color: var(--text);
+      border-color: rgba(255, 255, 255, 0.18);
+      background: rgba(255,255,255,.04);
+    }
+
+    .toolbar-panel {
+      display: grid;
+      gap: 6px;
+      justify-self: end;
+      width: 100%;
+      max-width: 180px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      padding: 0 2px;
+    }
+
+    .save-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 2px;
+      color: var(--muted);
+      font-size: var(--text-micro);
+      letter-spacing: .04em;
+      line-height: 1.3;
+      font-weight: 500;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      color: var(--muted);
+      font-size: 11px;
+      min-height: 0;
+    }
+
+    .status-copy {
+      display: grid;
+      gap: 2px;
+      line-height: 1.35;
+    }
+
+    .status-title {
+      color: #f1f2ed;
+      font-size: var(--text-micro);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+
+    .status-sub {
+      font-size: var(--text-micro);
+      color: var(--muted);
+      opacity: .84;
+      line-height: 1.35;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-2);
+      box-shadow: 0 0 12px rgba(124,255,199,.7);
+    }
+
+    .screen {
+      display: none;
+      padding: 20px 10px 10px;
+      animation: fadeUp .28s ease;
+    }
+    .screen.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero,
+    .overview-grid,
+    .relations-layout,
+    .relationship-top-grid,
+    .relationship-cards,
+    .relationship-link-grid,
+    .dossier-layout,
+    .dossier-grid,
+    .loop-layout,
+    .relationship-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero { grid-template-columns: 1.2fr .8fr; margin-bottom: 18px; }
+    .overview-grid { grid-template-columns: 1.1fr .9fr; }
+    .relations-layout { grid-template-columns: 1fr; }
+    .relationship-top-grid { grid-template-columns: .9fr 1.1fr; align-items: stretch; margin-bottom: 18px; }
+    .relationship-top-grid > * { height: 100%; }
+    .relationship-cards,
+    .relationship-link-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 18px; }
+    .dossier-layout { grid-template-columns: 280px 1fr; }
+    
+    /* ===== SCROLLBAR STYLE ===== */
+    .relationship-summary.active,
+    .dossier-panel.active,
+    #history-panel {
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+    }
+
+    .relationship-summary.active::-webkit-scrollbar,
+    .dossier-panel.active::-webkit-scrollbar,
+    #history-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .relationship-summary.active::-webkit-scrollbar-track,
+    .dossier-panel.active::-webkit-scrollbar-track,
+    #history-panel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .relationship-summary.active::-webkit-scrollbar-thumb,
+    .dossier-panel.active::-webkit-scrollbar-thumb,
+    #history-panel::-webkit-scrollbar-thumb {
+      background: transparent;
+      border-radius: 4px;
+      transition: background .18s ease;
+    }
+
+    .relationship-summary.active:hover,
+    .relationship-summary.active:focus-within,
+    .dossier-panel.active:hover,
+    .dossier-panel.active:focus-within,
+    #history-panel:hover,
+    #history-panel:focus-within {
+      scrollbar-color: rgba(255,255,255,.22) transparent;
+    }
+
+    .relationship-summary.active:hover::-webkit-scrollbar-thumb,
+    .relationship-summary.active:focus-within::-webkit-scrollbar-thumb,
+    .dossier-panel.active:hover::-webkit-scrollbar-thumb,
+    .dossier-panel.active:focus-within::-webkit-scrollbar-thumb,
+    #history-panel:hover::-webkit-scrollbar-thumb,
+    #history-panel:focus-within::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.22);
+    }
+
+    .relationship-summary.active:hover::-webkit-scrollbar-thumb:hover,
+    .relationship-summary.active:focus-within::-webkit-scrollbar-thumb:hover,
+    .dossier-panel.active:hover::-webkit-scrollbar-thumb:hover,
+    .dossier-panel.active:focus-within::-webkit-scrollbar-thumb:hover,
+    #history-panel:hover::-webkit-scrollbar-thumb:hover,
+    #history-panel:focus-within::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,.32);
+    }
+
+    /* ===== DOSSIER HEIGHT FIX ===== */
+    .dossier-view {
+      height: 680px;
+      display: block;
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    .dossier-scroll {
+      height: 100%;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .reference-card {
+      margin: 0 0 22px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+      overflow: hidden;
+    }
+
+    .reference-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .reference-card .ref-label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .ref-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .ref-btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.12);
+      background: transparent;
+      color: var(--muted);
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: .18s ease;
+    }
+
+    .ref-btn:hover,
+    .ref-btn:focus-visible {
+      color: var(--text);
+      border-color: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.04);
+      outline: none;
+    }
+
+    .reference-frame {
+      width: 100%;
+      aspect-ratio: 16 / 7;
+      border: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      display: block;
+      overflow: hidden;
+      position: relative;
+      padding: 12px;
+    }
+
+    .reference-strip {
+      display: flex;
+      gap: 12px;
+      height: 100%;
+      align-items: stretch;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      padding-bottom: 4px;
+    }
+
+    .reference-strip::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .reference-strip::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .reference-strip::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.16);
+      border-radius: 4px;
+    }
+
+    .reference-strip:hover::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,.26);
+    }
+
+    .reference-thumb {
+      flex: 0 0 38%;
+      min-width: 0;
+      height: 100%;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+      opacity: .82;
+    }
+
+    .reference-thumb:hover {
+      opacity: 1;
+      border-color: rgba(255,255,255,.18);
+      transform: translateY(-1px);
+    }
+
+    .reference-thumb.active {
+      border-color: rgba(112,224,201,.42);
+      box-shadow: inset 0 0 0 1px rgba(112,224,201,.22);
+      opacity: 1;
+    }
+
+    .reference-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .reference-thumb-index {
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      padding: 4px 6px;
+      font-size: 10px;
+      letter-spacing: .08em;
+      color: #f4efe6;
+      background: rgba(0,0,0,.48);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .reference-placeholder {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: rgba(255,255,255,.34);
+      font-size: 13px;
+      letter-spacing: .04em;
+      text-align: center;
+      padding: 18px;
+    }
+
+    .reference-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 12px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .ref-counter {
+      letter-spacing: .04em;
+    }
+
+    .ref-file-input {
+      display: none;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 10, 14, 0.84);
+      backdrop-filter: blur(6px);
+      z-index: 9999;
+      padding: 24px;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      width: min(100%, 1600px);
+    }
+
+    .lightbox-image {
+      display: block;
+      max-width: min(92vw, 1600px);
+      max-height: min(1024px, 88vh);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border: 1px solid rgba(255,255,255,.10);
+      background: #0c1117;
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      cursor: pointer;
+    }
+
+    .lightbox-nav {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(12,17,23,.72);
+      color: var(--text);
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: .18s ease;
+      flex: 0 0 auto;
+    }
+
+    .lightbox-nav:hover,
+    .lightbox-nav:focus-visible {
+      border-color: rgba(255,255,255,.24);
+      background: rgba(18,24,32,.9);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .lightbox-meta {
+      position: absolute;
+      left: 50%;
+      bottom: -34px;
+      transform: translateX(-50%);
+      color: rgba(244,239,230,.72);
+      font-size: var(--text-caption);
+      letter-spacing: .08em;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+
+    .dossier-panel {
+      min-height: 0;
+    }
+
+    .dossier-panel.active {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .dossier-grid {
+      flex: 1 1 auto;
+      align-content: start;
+    }
+    .dossier-grid { grid-template-columns: repeat(2, 1fr); }
+    .loop-layout { grid-template-columns: .8fr 1.2fr; }
+    .relationship-grid { grid-template-columns: repeat(2, 1fr); }
+
+    .panel,
+    .info-card,
+    .matrix-card,
+    .detail-card,
+    .signal-card,
+    .timeline-card,
+    .side-nav { padding: 18px; }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: var(--text-display);
+      line-height: 0.98;
+      margin: 6px 0 14px;
+      letter-spacing: -0.04em;
+      font-weight: 700;
+    }
+
+    .sub,
+    .relationship-card p,
+    .detail-item span,
+    .rule span,
+    .signal span,
+    .feature-card p,
+    .timeline-step span,
+    .relationship-header p,
+    .dossier-header p,
+    .stat-box p {
+      color: var(--muted);
+      font-size: var(--text-body);
+      line-height: var(--lh-body);
+      letter-spacing: -0.01em;
+    }
+
+    .label-row,
+    .badge-stack { display: flex; gap: 10px; flex-wrap: wrap; }
+    .label-row { margin-top: 18px; }
+    .badge-stack { justify-content: flex-end; }
+
+    .chip,
+    .badge {
+      padding: 8px 12px;
+      border: 1px solid rgba(17,17,15,.16);
+      background: rgba(17,17,15,.05); /* lighter gray */
+      color: rgba(17,17,15,.72); /* softer text */
+      font-size: var(--text-caption);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      line-height: 1.2;
+      font-weight: 400; /* lighter */
+      font-family: var(--font-ui);
+    }
+
+    .stat-box .k,
+    .relationship-card .k,
+    .feature-card .k,
+    .side-nav h3,
+    .section-head .caption {
+      font-size: var(--text-caption);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .hero-side .stat-box {
+      border: 0;
+      background: transparent;
+      padding: 0 0 14px;
+      box-shadow: none;
+    }
+
+    .hero-side .stat-box + .stat-box {
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+    .stat-box .k { color: #f1f2ed; margin-bottom: 8px; }
+    .stat-box .v {
+      font-size: var(--text-h3);
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: var(--lh-heading);
+      letter-spacing: -0.02em;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 12px 0 12px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--text-h2);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-weight: 700;
+      line-height: var(--lh-heading);
+    }
+    .section-head .caption { color: var(--muted); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+      table-layout: fixed;
+    }
+    th, td {
+      padding: 12px 12px;
+      vertical-align: top;
+      text-align: left;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: var(--text-body);
+      letter-spacing: -0.01em;
+    }
+    th {
+      color: var(--accent);
+      font-size: var(--text-caption);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      background: rgba(255,255,255,.015);
+      line-height: 1.35;
+      font-weight: 600;
+    }
+    td {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: var(--text-body);
+    }
+
+    .rule-list,
+    .signal-list,
+    .timeline,
+    .detail-list,
+    .side-list { display: grid; gap: 10px; }
+
+    .rule,
+    .detail-item,
+    .signal,
+    .nav-btn,
+    .feature-card,
+    .relationship-card,
+    .timeline-step,
+    .footer-note { padding: 12px 12px; }
+
+    .rule strong,
+    .detail-item strong,
+    .signal strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: var(--text-body-sm);
+      line-height: 1.45;
+      letter-spacing: -0.01em;
+      font-weight: 600;
+    }
+
+    .circular-infographic {
+      position: relative;
+      min-height: 420px;
+      margin-top: 8px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: #131922;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .circular-infographic::before,
+    .circular-infographic::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .circular-infographic::before {
+      width: 360px;
+      height: 360px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .circular-infographic::after {
+      width: 240px;
+      height: 240px;
+      border: 1px dashed rgba(255,255,255,.10);
+    }
+
+    .orbit-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .ring-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.14);
+      background: radial-gradient(circle, rgba(255,177,76,.10), rgba(12,17,23,.96) 68%);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 14px;
+      z-index: 1;
+      transition: border-color .24s ease, background .24s ease;
+    }
+
+    .ring-label strong { display: block; font-size: 20px; letter-spacing: .08em; margin-bottom: 4px; }
+    .ring-label span { display: block; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .loop-copy {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 4px 6px;
+      text-align: center;
+    }
+    .loop-word,
+    .loop-sep {
+      font-size: 11px;
+      line-height: 1.45;
+      transition: color .24s ease, opacity .24s ease, text-shadow .24s ease, transform .24s ease;
+    }
+    .loop-word {
+      color: rgba(244,239,230,.48);
+      opacity: .72;
+    }
+    .loop-sep {
+      color: rgba(255,255,255,.18);
+      opacity: .6;
+    }
+    .circular-infographic.theme-aria .loop-word.exp,
+    .circular-infographic.theme-trace .loop-word.trace,
+    .circular-infographic.theme-vault .loop-word.record {
+      opacity: 1;
+      transform: translateY(-1px);
+      text-shadow: 0 0 14px currentColor;
+    }
+    .circular-infographic.theme-aria .loop-word.exp { color: var(--aria-color); }
+    .circular-infographic.theme-trace .loop-word.trace { color: var(--trace-color); }
+    .circular-infographic.theme-vault .loop-word.record { color: var(--vault-color); }
+
+    .loop-arc { transition: stroke .24s ease, stroke-opacity .24s ease, stroke-width .24s ease; }
+    .circular-infographic.theme-aria .ring-label { border-color: rgba(112,224,201,.28); background: radial-gradient(circle, rgba(112,224,201,.12), rgba(12,17,23,.96) 68%); }
+    .circular-infographic.theme-trace .ring-label {
+      border-color: rgba(255,77,79,.32);
+      background: radial-gradient(circle, rgba(255,77,79,.14), rgba(12,17,23,.96) 68%);
+    }
+    .circular-infographic.theme-vault .ring-label { border-color: rgba(255,177,76,.32); background: radial-gradient(circle, rgba(255,177,76,.14), rgba(12,17,23,.96) 68%); }
+    .circular-infographic.theme-aria .ring-label strong { color: var(--aria-color); }
+    .circular-infographic.theme-trace .ring-label strong { color: var(--trace-color); }
+    .circular-infographic.theme-vault .ring-label strong { color: var(--vault-color); }
+    .circular-infographic.theme-aria .loop-arc.arc-aria { stroke: var(--aria-color); stroke-opacity: .95; stroke-width: 5; }
+    .circular-infographic.theme-trace .loop-arc.arc-trace {
+      stroke: var(--trace-color);
+      stroke-opacity: .95;
+      stroke-width: 5;
+    }
+    .circular-infographic.theme-vault .loop-arc.arc-vault { stroke: var(--vault-color); stroke-opacity: .95; stroke-width: 5; }
+    .circular-infographic.theme-aria .loop-arc:not(.arc-aria),
+    .circular-infographic.theme-trace .loop-arc:not(.arc-trace),
+    .circular-infographic.theme-vault .loop-arc:not(.arc-vault) { stroke-opacity: .16; }
+
+    /* ===== OPTION A: PANEL COLOR SYNC ===== */
+    #relationship-detail.theme-aria {
+      border-color: rgba(112,224,201,.6);
+      box-shadow: 0 0 0 1px rgba(112,224,201,.12);
+    }
+
+    #relationship-detail.theme-trace {
+      border-color: rgba(255,77,79,.7);
+      box-shadow: 0 0 0 1px rgba(255,77,79,.15);
+    }
+
+    #relationship-detail.theme-vault {
+      border-color: rgba(255,177,76,.65);
+      box-shadow: 0 0 0 1px rgba(255,177,76,.12);
+    }
+
+    .ring-node {
+      position: absolute;
+      width: 112px;
+      height: 112px;
+      padding: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.12);
+      background: radial-gradient(circle at 30% 30%, rgba(18,28,42,.82), rgba(10,16,25,.92));
+      color: rgba(244, 239, 230, 0.78);
+      z-index: 3;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease, box-shadow .18s ease, opacity .18s ease;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+
+    .ring-node h3 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 18px;
+      letter-spacing: .05em;
+      line-height: 1;
+      font-weight: 700;
+      transition: transform .18s ease, color .18s ease, opacity .18s ease;
+    }
+    .ring-node.aria { left: 50%; top: 24px; transform: translateX(-50%); }
+    .ring-node.trace { left: 30%; top: 72%; transform: translate(-50%, -50%); }
+    .ring-node.vault { left: 70%; top: 72%; transform: translate(-50%, -50%); }
+    .ring-node:hover {
+      border-color: rgba(255,255,255,.24);
+      background: radial-gradient(circle at 30% 30%, rgba(26,40,58,.96), rgba(12,18,28,.98));
+      color: rgba(244, 239, 230, 0.96);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 8px 18px rgba(0,0,0,.28);
+    }
+
+    .ring-node:hover h3 {
+      transform: scale(1.04);
+    }
+
+    .ring-node:active {
+      transform: scale(.97);
+    }
+
+    .ring-node.aria:hover {
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    .ring-node.trace:hover,
+    .ring-node.vault:hover {
+      transform: translate(-50%, -50%) translateY(-2px);
+    }
+
+    .ring-node.active {
+      color: #ffffff;
+      border-width: 2px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 0 0 4px rgba(255,255,255,.03), 0 14px 28px rgba(0,0,0,.34);
+    }
+
+    .ring-node.active h3 {
+      transform: scale(1.06);
+    }
+
+    .ring-node.aria.active {
+      transform: translateX(-50%) translateY(-4px) scale(1.02);
+      border-color: rgba(112,224,201,.72);
+      background: radial-gradient(circle at 30% 30%, rgba(24,58,62,.98), rgba(10,18,25,.98));
+      box-shadow: 0 0 0 1px rgba(112,224,201,.16), 0 0 24px rgba(112,224,201,.18), 0 14px 28px rgba(0,0,0,.34);
+    }
+
+    .ring-node.trace.active {
+      transform: translate(-50%, -50%) translateY(-4px) scale(1.02);
+      border-color: rgba(255,77,79,.8);
+      background: radial-gradient(circle at 30% 30%, rgba(60,18,18,.98), rgba(10,18,25,.98));
+      box-shadow: 0 0 0 1px rgba(255,77,79,.2), 0 0 24px rgba(255,77,79,.25), 0 14px 28px rgba(0,0,0,.34);
+    }
+
+    .ring-node.vault.active {
+      transform: translate(-50%, -50%) translateY(-4px) scale(1.02);
+      border-color: rgba(255,177,76,.76);
+      background: radial-gradient(circle at 30% 30%, rgba(66,46,24,.98), rgba(12,18,25,.98));
+      box-shadow: 0 0 0 1px rgba(255,177,76,.16), 0 0 24px rgba(255,177,76,.18), 0 14px 28px rgba(0,0,0,.34);
+    }
+
+    .ring-node:not(.active) {
+      opacity: .76;
+    }
+
+    .ring-node:not(.active):hover {
+      opacity: .96;
+    }
+
+    .ring-node:focus-visible {
+      outline: 2px solid rgba(255,177,76,.48);
+      outline-offset: 4px;
+    }
+
+    .relationship-header,
+    .dossier-header {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .relationship-header {
+      display: block;
+    }
+
+    .relationship-header h3 {
+      margin: 0 0 12px;
+      font-family: var(--font-display);
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+
+    .relationship-header .relationship-badges {
+      justify-content: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .relationship-header p {
+      margin: 0;
+    }
+
+    .dossier-header {
+      display: block;
+      padding-bottom: 20px;
+      margin-bottom: 22px;
+    }
+
+    .dossier-header .chip {
+      display: none;
+    }
+
+    .dossier-header h2 {
+      margin: 0 0 16px;
+      font-family: var(--font-display);
+      font-size: clamp(44px, 5vw, 62px);
+      line-height: .95;
+      letter-spacing: -.04em;
+      font-weight: 700;
+    }
+
+    .dossier-header .badge-stack {
+      justify-content: flex-start;
+      margin-bottom: 22px;
+    }
+
+    .dossier-header p {
+      max-width: 980px;
+      margin: 0;
+      font-size: var(--text-body-lg);
+      line-height: 1.8;
+      letter-spacing: -0.01em;
+      color: #d8e1ea;
+      font-weight: 400;
+    }
+
+    .relationship-summary,
+    .dossier-panel { display: none; }
+    .relationship-summary.active,
+    .dossier-panel.active {
+      display: block;
+      animation: fadeUp .22s ease;
+    }
+
+    /* ===== FIX: HEIGHT STABILIZATION ===== */
+    #relationship-detail {
+      height: 620px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      align-self: stretch;
+      overflow: hidden;
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .relationship-summary {
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .relationship-summary.active {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .relationship-grid {
+      align-content: start;
+      grid-auto-rows: minmax(0, auto);
+      flex: 1 1 auto;
+    }
+
+    .side-nav { display: grid; align-content: start; gap: 14px; position: sticky; top: 16px; height: fit-content; }
+    .nav-btn { width: 100%; text-align: left; cursor: pointer; color: var(--muted); transition: .2s ease; }
+    .nav-btn:hover,
+    .nav-btn.active { color: var(--text); border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.04); }
+    .nav-btn small { display: block; margin-bottom: 5px; color: var(--accent); text-transform: uppercase; letter-spacing: .12em; font-size: 11px; }
+
+    .feature-card:hover,
+    .relationship-card:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.12);
+    }
+
+    .timeline-step::before {
+      content: attr(data-step);
+      position: absolute;
+      left: 16px;
+      top: 15px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(109,217,255,.14);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .timeline-step { position: relative; padding-left: 54px; }
+    .footer-note { margin-top: 18px; border-style: dashed; }
+
+    [contenteditable="true"]:hover { background: rgba(255,255,255,.03); }
+    [contenteditable="true"]:focus {
+      outline: 1px solid rgba(112,224,201,.35);
+      background: rgba(255,255,255,.05);
+    }
+
+    @media (max-width: 1180px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar-panel {
+        justify-self: stretch;
+        max-width: none;
+      }
+      .workspace-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace-sidebar {
+        position: static;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .workspace-sidebar-title {
+        grid-column: 1 / -1;
+      }
+      .dossier-view {
+        height: auto;
+      }
+
+      .dossier-panel.active {
+        height: auto;
+        overflow: visible;
+      }
+      #relationship-detail {
+        height: auto;
+      }
+
+      .relationship-summary.active {
+        min-height: 0;
+        height: auto;
+        overflow: visible;
+      }
+      .topbar,
+      .hero,
+      .overview-grid,
+      .relationship-top-grid,
+      .relationship-cards,
+      .relationship-link-grid,
+      .dossier-layout,
+      .dossier-grid,
+      .loop-layout,
+      .relationship-grid,
+      .relationship-header,
+      .dossier-header {
+        grid-template-columns: 1fr;
+      }
+
+      .badge-stack { justify-content: flex-start; }
+      .side-nav { position: static; }
+    }
+
+    @media (max-width: 720px) {
+      .tabs {
+        gap: 6px;
+      }
+
+      .tab-btn {
+        padding: 7px 9px;
+        font-size: 10px;
+      }
+
+      .save-btn {
+        padding: 5px 8px;
+        font-size: 10px;
+      }
+      .workspace-sidebar {
+        grid-template-columns: 1fr 1fr 64px;
+      }
+      .shell { width: min(100%, calc(100% - 14px)); margin: 7px auto; padding: 8px; }
+      .topbar { padding: 8px 6px 14px; }
+      .tabs { display: grid; grid-template-columns: 1fr 1fr; }
+      .tab-btn, .save-btn { width: 100%; }
+      .panel, .info-card, .matrix-card, .detail-card, .signal-card, .timeline-card, .side-nav { padding: 16px; }
+      .hero-title { font-size: 34px; }
+      .circular-infographic { min-height: 420px; }
+      .circular-infographic::before { width: 260px; height: 260px; }
+      .circular-infographic::after { width: 180px; height: 180px; }
+      .ring-label { width: 118px; height: 118px; }
+      .ring-label strong { font-size: 18px; }
+      .ring-node { width: 92px; height: 92px; }
+      .ring-node h3 { font-size: 15px; }
+      .ring-node.trace { left: 28%; top: 74%; }
+      .ring-node.vault { left: 72%; top: 74%; }
+      .dossier-scroll { padding: 0; }
+      .reference-frame { aspect-ratio: 16 / 9; }
+      .reference-thumb { flex-basis: 44%; }
+    }
+  
+    /* ===== EDITORIAL STUDIO MODE: G!THEIMAGINEERS-INSPIRED COMPOSITION ===== */
+    :root {
+      --studio-bg: #0b0b0a;
+      --studio-surface: #11110f;
+      --studio-surface-2: #151512;
+      --studio-line: rgba(244,239,230,.14);
+      --studio-line-soft: rgba(244,239,230,.075);
+      --studio-text: #f4efe6;
+      --studio-muted: rgba(244,239,230,.58);
+    }
+
+    body {
+      background: var(--studio-bg);
+    }
+
+    body::before {
+      opacity: .08;
+      background:
+        linear-gradient(rgba(244,239,230,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244,239,230,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .shell {
+      width: min(1540px, calc(100% - 40px));
+      margin: 20px auto;
+      padding: 0;
+      border: 1px solid var(--studio-line);
+      background: var(--studio-bg);
+    }
+
+    .workspace-layout {
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 0;
+      min-height: calc(100vh - 40px);
+    }
+
+    .workspace-sidebar {
+      top: 0;
+      min-height: calc(100vh - 40px);
+      padding: 24px 18px;
+      border: 0;
+      border-right: 1px solid var(--studio-line);
+      background: var(--studio-bg);
+      align-content: start;
+      gap: 8px;
+    }
+
+    .workspace-sidebar-title {
+      margin: 0 0 34px;
+      color: var(--studio-muted);
+      font-size: 10px;
+      letter-spacing: .22em;
+      font-weight: 700;
+    }
+
+    .workspace-tab {
+      position: relative;
+      border: 0;
+      border-bottom: 1px solid var(--studio-line-soft);
+      background: transparent;
+      color: var(--studio-muted);
+      padding: 18px 0 18px 34px;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: -.04em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .workspace-tab::before {
+      content: counter(workspace-index, decimal-leading-zero);
+      counter-increment: workspace-index;
+      position: absolute;
+      left: 0;
+      top: 20px;
+      color: rgba(244,239,230,.34);
+      font-size: 10px;
+      letter-spacing: .1em;
+      font-weight: 600;
+    }
+
+    .workspace-sidebar {
+      counter-reset: workspace-index;
+    }
+
+    .workspace-tab:hover,
+    .workspace-tab.active {
+      color: var(--studio-text);
+      border-color: var(--studio-text);
+      background: transparent;
+    }
+
+    .workspace-tab.is-add {
+      margin-top: 18px;
+      padding: 14px 0;
+      border: 1px solid var(--studio-line);
+      text-align: center;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .workspace-tab.is-add::before {
+      display: none;
+    }
+
+    .workspace-content {
+      background: var(--studio-bg);
+    }
+
+    .topbar {
+      grid-template-columns: minmax(220px, 340px) minmax(0, 1fr) 170px;
+      padding: 22px 24px;
+      gap: 24px;
+      border-bottom: 1px solid var(--studio-line);
+      background: var(--studio-bg);
+      align-items: center;
+    }
+
+    .brand {
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .brand .eyebrow {
+      color: var(--studio-muted);
+      font-size: 10px;
+      letter-spacing: .22em;
+      margin-bottom: 8px;
+    }
+
+    .brand strong {
+      font-size: clamp(22px, 2.2vw, 34px);
+      letter-spacing: -.06em;
+      text-transform: uppercase;
+    }
+
+    .tabs {
+      justify-content: flex-end;
+      gap: 0;
+      padding: 0;
+      border-left: 1px solid var(--studio-line-soft);
+    }
+
+    .tab-btn {
+      border: 0;
+      border-right: 1px solid var(--studio-line-soft);
+      padding: 12px 16px;
+      font-size: 10px;
+      color: var(--studio-muted);
+      background: transparent;
+    }
+
+    .tab-btn:hover,
+    .tab-btn.active {
+      color: var(--studio-text);
+      background: rgba(244,239,230,.04);
+    }
+
+    .toolbar-panel {
+      max-width: 170px;
+      justify-self: end;
+    }
+
+    .status {
+      border: 0;
+      background: transparent;
+      padding: 0;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      box-shadow: none;
+    }
+
+    .toolbar-actions {
+      padding: 0;
+    }
+
+    .save-btn {
+      border-color: var(--studio-line);
+      padding: 5px 7px;
+    }
+
+    .screen {
+      padding: 34px 24px 24px;
+    }
+
+    .hero {
+      grid-template-columns: minmax(0, 1.4fr) minmax(260px, .6fr);
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel,
+    .info-card,
+    .matrix-card,
+    .detail-card,
+    .signal-card,
+    .timeline-card,
+    .side-nav,
+    .stat-box,
+    .relationship-card,
+    .feature-card,
+    .timeline-step,
+    .rule,
+    .detail-item,
+    .signal,
+    .nav-btn,
+    .footer-note,
+    .reference-card {
+      border-color: var(--studio-line-soft);
+      background: var(--studio-surface);
+    }
+
+    .panel,
+    .info-card,
+    .matrix-card,
+    .detail-card,
+    .signal-card,
+    .timeline-card,
+    .side-nav {
+      padding: 24px;
+    }
+
+    .hero .panel {
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: var(--studio-surface);
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 7.2vw, 104px);
+      line-height: .86;
+      letter-spacing: -.085em;
+      margin: 18px 0 22px;
+    }
+
+    .sub {
+      max-width: 820px;
+      font-size: 15px;
+      color: var(--studio-muted);
+    }
+
+    .chip,
+    .badge {
+      border-color: var(--studio-line-soft);
+      color: var(--studio-muted);
+      padding: 7px 10px;
+      background: transparent;
+    }
+
+    .section-head {
+      margin: 0 0 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--studio-line-soft);
+    }
+
+    .section-head h2 {
+      font-size: 18px;
+      letter-spacing: -.02em;
+      text-transform: none;
+    }
+
+    .section-head .caption,
+    .hint {
+      color: var(--studio-muted);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .overview-grid,
+    .relationship-top-grid,
+    .loop-layout {
+      gap: 24px;
+    }
+
+    .relationship-card,
+    .feature-card,
+    .rule,
+    .detail-item,
+    .signal,
+    .timeline-step,
+    .footer-note {
+      padding: 18px;
+    }
+
+    .relationship-card:hover,
+    .feature-card:hover {
+      border-color: var(--studio-line);
+      transform: none;
+    }
+
+    .dossier-layout {
+      grid-template-columns: 260px 1fr;
+      gap: 24px;
+    }
+
+    .side-nav {
+      background: var(--studio-bg);
+      border-right: 1px solid var(--studio-line-soft);
+      border-top: 0;
+      border-left: 0;
+      border-bottom: 0;
+    }
+
+    .nav-btn {
+      border: 0;
+      border-bottom: 1px solid var(--studio-line-soft);
+      background: transparent;
+      padding: 18px 0;
+      font-size: 18px;
+      letter-spacing: -.04em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      color: var(--studio-text);
+      background: transparent;
+      border-color: var(--studio-text);
+    }
+
+    .nav-btn small {
+      color: var(--studio-muted);
+      font-size: 10px;
+      letter-spacing: .12em;
+      margin-bottom: 8px;
+    }
+
+    .dossier-view {
+      background: var(--studio-surface);
+    }
+
+    .dossier-header h2 {
+      font-size: clamp(56px, 7vw, 98px);
+      letter-spacing: -.085em;
+      margin-bottom: 20px;
+    }
+
+    .circular-infographic {
+      background: var(--studio-surface-2);
+      border-color: var(--studio-line-soft);
+    }
+
+    table {
+      min-width: 720px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--studio-line-soft);
+    }
+
+    @media (max-width: 1180px) {
+      .workspace-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace-sidebar {
+        min-height: 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--studio-line);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: calc(100% - 14px);
+        margin: 7px auto;
+      }
+
+      .workspace-sidebar {
+        grid-template-columns: 1fr 1fr 56px;
+      }
+
+      .workspace-tab {
+        font-size: 15px;
+        padding-left: 26px;
+      }
+
+      .screen {
+        padding: 22px 14px 16px;
+      }
+
+      .hero-title {
+        font-size: 44px;
+      }
+    }
+
+    /* ===== FINAL FIX: LOOP FLOW ALIGNMENT ===== */
+    .loop-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+      align-items: stretch !important;
+      gap: 28px !important;
+    }
+
+    .loop-layout > .signal-card,
+    .loop-layout > .timeline-card {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .signal-list,
+    .timeline {
+      display: grid !important;
+      gap: 14px !important;
+      align-content: start;
+    }
+
+    .timeline-step {
+      position: relative !important;
+      min-height: 84px;
+      padding: 16px 16px 16px 64px !important;
+      display: flex !important;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .timeline-step::before {
+      content: attr(data-step);
+      position: absolute !important;
+      left: 18px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      width: 30px !important;
+      height: 30px !important;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(109,217,255,.14);
+      color: var(--accent);
+      font-size: 11px !important;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .timeline-step strong,
+    .timeline-step span {
+      display: block;
+      width: 100%;
+    }
+
+    .timeline-step strong {
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 1180px) {
+      .loop-layout {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* ===== FINAL FIX: TOP MENU REORGANIZATION ===== */
+    .topbar.topnav {
+      display: grid !important;
+      grid-template-columns: minmax(240px, 360px) minmax(360px, 1fr) minmax(190px, auto) !important;
+      align-items: center !important;
+      gap: 24px !important;
+      padding: 18px 24px !important;
+      border-bottom: 1px solid var(--studio-line) !important;
+      background: var(--studio-bg) !important;
+    }
+
+    .topnav-identity {
+      min-width: 0;
+    }
+
+    .topnav-identity .eyebrow {
+      display: block;
+      color: var(--studio-muted);
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
+    .topnav-identity strong {
+      display: block;
+      color: var(--studio-text);
+      font-family: var(--font-display);
+      font-size: clamp(22px, 2.1vw, 34px);
+      line-height: .95;
+      letter-spacing: -.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topnav-tabs {
+      display: flex !important;
+      justify-content: flex-start !important;
+      align-items: center !important;
+      gap: 0 !important;
+      min-width: 0 !important;
+      overflow-x: auto !important;
+      padding: 0 !important;
+      border-left: 1px solid var(--studio-line-soft) !important;
+      border-right: 1px solid var(--studio-line-soft) !important;
+    }
+
+    .topnav-tabs .tab-btn {
+      min-height: 38px;
+      border: 0 !important;
+      border-right: 1px solid var(--studio-line-soft) !important;
+      padding: 11px 18px !important;
+      color: var(--studio-muted) !important;
+      background: transparent !important;
+      font-size: 11px !important;
+      letter-spacing: .12em !important;
+      text-transform: uppercase !important;
+      white-space: nowrap !important;
+    }
+
+    .topnav-tabs .tab-btn:hover,
+    .topnav-tabs .tab-btn.active {
+      color: var(--studio-text) !important;
+      background: rgba(244,239,230,.045) !important;
+    }
+
+    .topnav-tools {
+      display: grid !important;
+      grid-template-columns: auto !important;
+      gap: 6px !important;
+      justify-self: end !important;
+      width: auto !important;
+      max-width: none !important;
+      min-width: 190px;
+    }
+
+    .topnav-status {
+      display: flex !important;
+      align-items: center !important;
+      gap: 7px !important;
+      padding: 0 !important;
+      border: 0 !important;
+      background: transparent !important;
+      min-height: 0 !important;
+    }
+
+    .topnav-status .status-dot {
+      width: 6px !important;
+      height: 6px !important;
+      box-shadow: none !important;
+    }
+
+    .topnav-status .status-title,
+    .topnav-status .status-sub {
+      font-size: 9px !important;
+      line-height: 1.25 !important;
+    }
+
+    .topnav-actions {
+      display: flex !important;
+      gap: 6px !important;
+      justify-content: flex-start !important;
+      padding: 0 !important;
+      flex-wrap: nowrap !important;
+    }
+
+    .topnav-actions .save-btn {
+      padding: 5px 8px !important;
+      font-size: 9px !important;
+      border-color: var(--studio-line) !important;
+      color: var(--studio-muted) !important;
+      background: transparent !important;
+    }
+
+    .topnav-actions .save-btn:hover {
+      color: var(--studio-text) !important;
+      background: rgba(244,239,230,.045) !important;
+    }
+
+    .topnav-save-meta {
+      padding: 0 !important;
+      font-size: 9px !important;
+      line-height: 1.2 !important;
+      color: var(--studio-muted) !important;
+    }
+
+    #history-panel {
+      top: 82px !important;
+      right: 24px !important;
+      background: var(--studio-surface) !important;
+      border-color: var(--studio-line) !important;
+    }
+
+    @media (max-width: 1180px) {
+      .topbar.topnav {
+        grid-template-columns: 1fr !important;
+        align-items: stretch !important;
+      }
+
+      .topnav-tabs {
+        border-left: 0 !important;
+        border-right: 0 !important;
+        border-top: 1px solid var(--studio-line-soft) !important;
+        border-bottom: 1px solid var(--studio-line-soft) !important;
+      }
+
+      .topnav-tools {
+        justify-self: stretch !important;
+        min-width: 0 !important;
+      }
+
+      .topnav-actions {
+        flex-wrap: wrap !important;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar.topnav {
+        padding: 16px 14px !important;
+        gap: 14px !important;
+      }
+
+      .topnav-tabs {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .topnav-tabs .tab-btn {
+        width: 100% !important;
+        text-align: center !important;
+        padding: 10px 8px !important;
+      }
+    }
+
+    /* ===== FINAL THEME: LIGHT EDITORIAL FONT COLOR SYSTEM ===== */
+    :root {
+      --bg: #f4f0e8;
+      --panel: #fbf8f2;
+      --panel-strong: #ffffff;
+      --text: #11110f;
+      --muted: #5f5d57;
+      --accent: #11110f;
+      --accent-2: #11110f;
+      --warn: #9b3b2f;
+      --line: rgba(17,17,15,.14);
+      --line-strong: rgba(17,17,15,.28);
+      --studio-bg: #f4f0e8;
+      --studio-surface: #fbf8f2;
+      --studio-surface-2: #f8f4ed;
+      --studio-line: rgba(17,17,15,.18);
+      --studio-line-soft: rgba(17,17,15,.10);
+      --studio-text: #11110f;
+      --studio-muted: rgba(17,17,15,.58);
+    }
+
+    html,
+    body {
+      color: #11110f !important;
+      background: #f4f0e8 !important;
+    }
+
+    body::before {
+      opacity: .16 !important;
+      background:
+        linear-gradient(rgba(17,17,15,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17,17,15,.025) 1px, transparent 1px) !important;
+      background-size: 48px 48px !important;
+    }
+
+    .shell,
+    .workspace-content,
+    .workspace-sidebar,
+    .topbar,
+    .topbar.topnav {
+      background: #f4f0e8 !important;
+      color: #11110f !important;
+      border-color: rgba(17,17,15,.18) !important;
+    }
+
+    .panel,
+    .info-card,
+    .matrix-card,
+    .detail-card,
+    .signal-card,
+    .timeline-card,
+    .side-nav,
+    .stat-box,
+    .relationship-card,
+    .feature-card,
+    .timeline-step,
+    .rule,
+    .detail-item,
+    .signal,
+    .nav-btn,
+    .footer-note,
+    .reference-card,
+    .dossier-view {
+      background: #fbf8f2 !important;
+      color: #11110f !important;
+      border-color: rgba(17,17,15,.12) !important;
+    }
+
+    .brand,
+    .status,
+    .hero-side .stat-box,
+    .side-nav {
+      background: transparent !important;
+      color: #11110f !important;
+    }
+
+    h1, h2, h3, h4,
+    .hero-title,
+    .dossier-header h2,
+    .relationship-header h3,
+    .section-head h2,
+    .brand strong,
+    .topnav-identity strong,
+    .workspace-tab.active,
+    .nav-btn.active,
+    .stat-box .v,
+    .rule strong,
+    .detail-item strong,
+    .signal strong,
+    .timeline-step strong,
+    .feature-card h4,
+    .relationship-card h3 {
+      color: #11110f !important;
+      font-weight: 400 !important;
+    }
+
+    .hero-title,
+    .dossier-header h2,
+    .topnav-identity strong,
+    .brand strong,
+    .ring-node h3,
+    .section-head h2 {
+      font-weight: 400 !important;
+      letter-spacing: -.055em;
+    }
+
+    p,
+    td,
+    .sub,
+    .relationship-card p,
+    .detail-item span,
+    .rule span,
+    .signal span,
+    .feature-card p,
+    .timeline-step span,
+    .relationship-header p,
+    .dossier-header p,
+    .stat-box p,
+    .status-sub,
+    .save-meta,
+    .caption,
+    .hint {
+      color: rgba(17,17,15,.68) !important;
+    }
+
+    .eyebrow,
+    .brand .eyebrow,
+    .topnav-identity .eyebrow,
+    .workspace-sidebar-title,
+    .stat-box .k,
+    .relationship-card .k,
+    .feature-card .k,
+    .side-nav h3,
+    .section-head .caption,
+    .chip,
+    .badge,
+    .ref-label,
+    .ref-counter,
+    .reference-placeholder {
+      color: rgba(17,17,15,.58) !important;
+    }
+
+    .tab-btn,
+    .save-btn,
+    .ref-btn,
+    .workspace-tab,
+    .nav-btn,
+    .topnav-tabs .tab-btn,
+    .topnav-actions .save-btn {
+      color: rgba(17,17,15,.64) !important;
+      border-color: rgba(17,17,15,.16) !important;
+      background: transparent !important;
+    }
+
+    .tab-btn:hover,
+    .tab-btn.active,
+    .save-btn:hover,
+    .workspace-tab:hover,
+    .workspace-tab.active,
+    .nav-btn:hover,
+    .nav-btn.active,
+    .ref-btn:hover,
+    .topnav-tabs .tab-btn:hover,
+    .topnav-tabs .tab-btn.active,
+    .topnav-actions .save-btn:hover {
+      color: #11110f !important;
+      background: rgba(17,17,15,.04) !important;
+      border-color: rgba(17,17,15,.28) !important;
+    }
+
+    th {
+      color: #11110f !important;
+      background: rgba(17,17,15,.025) !important;
+      font-weight: 500 !important;
+    }
+
+    th, td,
+    .section-head,
+    .relationship-header,
+    .dossier-header,
+    .reference-toolbar,
+    .reference-meta,
+    .hero-side .stat-box + .stat-box,
+    .topnav-tabs,
+    .workspace-sidebar,
+    .side-nav,
+    .nav-btn,
+    .workspace-tab {
+      border-color: rgba(17,17,15,.12) !important;
+    }
+
+    .circular-infographic {
+      background: #f8f4ed !important;
+      border-color: rgba(17,17,15,.12) !important;
+    }
+
+    .circular-infographic::before,
+    .circular-infographic::after {
+      border-color: rgba(17,17,15,.12) !important;
+    }
+
+    .ring-label,
+    .ring-node {
+      background: #fbf8f2 !important;
+      color: #11110f !important;
+      border-color: rgba(17,17,15,.18) !important;
+      box-shadow: none !important;
+    }
+
+    .ring-label span,
+    .loop-word,
+    .loop-sep {
+      color: rgba(17,17,15,.58) !important;
+    }
+
+    .ring-node:not(.active) {
+      opacity: .68;
+    }
+
+    .ring-node.active {
+      opacity: 1;
+      border-color: #11110f !important;
+      color: #11110f !important;
+    }
+
+    .status-dot {
+      background: #11110f !important;
+      box-shadow: none !important;
+    }
+
+    .reference-frame,
+    .reference-thumb,
+    .lightbox-image {
+      background: #f8f4ed !important;
+      border-color: rgba(17,17,15,.12) !important;
+    }
+
+    .lightbox {
+      background: rgba(244,240,232,.88) !important;
+    }
+
+    .lightbox-nav {
+      background: #fbf8f2 !important;
+      color: #11110f !important;
+      border-color: rgba(17,17,15,.16) !important;
+    }
+
+    #history-panel {
+      background: #fbf8f2 !important;
+      color: #11110f !important;
+      border-color: rgba(17,17,15,.16) !important;
+    }
+
+    /* ===== FINAL FIX: SIDE MENU / DOSSIER FONT SYNC ===== */
+    .workspace-sidebar,
+    .workspace-sidebar-title,
+    .workspace-tab,
+    .side-nav,
+    .side-nav h3,
+    .nav-btn,
+    .nav-btn small {
+      font-family: var(--font-display) !important;
+    }
+
+    .workspace-sidebar-title,
+    .side-nav h3,
+    .nav-btn small {
+      font-size: 10px !important;
+      font-weight: 400 !important;
+      letter-spacing: .16em !important;
+      text-transform: uppercase !important;
+      color: rgba(17,17,15,.52) !important;
+    }
+
+    .workspace-tab,
+    .nav-btn {
+      font-weight: 400 !important;
+      letter-spacing: -.045em !important;
+      color: rgba(17,17,15,.62) !important;
+    }
+
+    .workspace-tab {
+      font-size: 22px !important;
+    }
+
+    .nav-btn {
+      font-size: 21px !important;
+    }
+
+    .workspace-tab:hover,
+    .workspace-tab.active,
+    .nav-btn:hover,
+    .nav-btn.active {
+      color: #11110f !important;
+    }
+
+    /* ===== FINAL DESIGN: NARRATIVE LOOP FLOW ===== */
+    .loop-flow-card {
+      position: relative;
+      padding: 34px 38px 44px;
+      border: 1px solid rgba(17,17,15,.12);
+      background: #fbf8f2;
+      color: #11110f;
+      overflow-x: auto;
+    }
+
+    .loop-flow-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .loop-flow-kicker {
+      display: block;
+      margin-bottom: 8px;
+      color: #11110f;
+      font-size: 11px;
+      line-height: 1.2;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .loop-flow-head h2 {
+      margin: 0 0 10px;
+      color: #11110f;
+      font-family: var(--font-display);
+      font-size: clamp(32px, 4.6vw, 58px);
+      line-height: .92;
+      letter-spacing: -.055em;
+      font-weight: 400;
+      text-transform: uppercase;
+    }
+
+    .loop-flow-head p {
+      margin: 0;
+      color: rgba(17,17,15,.68);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .loop-flow-note {
+      margin: -12px 0 24px;
+      padding: 14px 16px;
+      border: 1px solid rgba(17,17,15,.12);
+      background: rgba(17,17,15,.025);
+      color: rgba(17,17,15,.72);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .loop-detail-btn {
+      appearance: none;
+      border: 1px solid rgba(17,17,15,.16);
+      background: transparent;
+      color: #11110f;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      transition: background .18s ease, border-color .18s ease;
+    }
+
+    .loop-detail-btn:hover {
+      background: rgba(17,17,15,.045);
+      border-color: rgba(17,17,15,.3);
+    }
+
+    .loop-flow-track {
+      --step-size: 34px;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(158px, 1fr));
+      gap: 22px;
+      min-width: 1040px;
+      padding-top: 48px;
+    }
+
+    .loop-flow-track::before {
+      content: "";
+      position: absolute;
+      left: calc(8.333% + 17px);
+      right: calc(8.333% + 17px);
+      top: 17px;
+      height: 1px;
+      background: rgba(17,17,15,.28);
+    }
+
+    .loop-step-card {
+      position: relative;
+      min-height: 142px;
+      padding: 20px 20px 18px;
+      border: 1px solid rgba(17,17,15,.14);
+      background: rgba(255,255,255,.32);
+      color: #11110f;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 16px;
+    }
+
+    .loop-step-card::before {
+      content: attr(data-step);
+      position: absolute;
+      left: 50%;
+      top: calc(-48px - var(--step-size) / 2 + 17px);
+      transform: translateX(-50%);
+      width: var(--step-size);
+      height: var(--step-size);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #11110f;
+      color: #f4f0e8;
+      font-size: 13px;
+      line-height: 1;
+      font-weight: 500;
+      z-index: 2;
+    }
+
+    .loop-step-card:not(:last-child)::after {
+      content: "›";
+      position: absolute;
+      top: calc(-48px - 6px + 17px);
+      right: -15px;
+      color: rgba(17,17,15,.5);
+      font-size: 18px;
+      line-height: 1;
+      z-index: 3;
+    }
+
+    .loop-step-card strong {
+      color: #11110f;
+      font-family: var(--font-display);
+      font-size: 13px;
+      line-height: 1.25;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    .loop-step-card span {
+      color: rgba(17,17,15,.72);
+      font-size: 14px;
+      line-height: 1.75;
+      word-break: keep-all;
+    }
+
+    .loop-return-line {
+      position: relative;
+      min-width: 1040px;
+      height: 48px;
+      margin: 4px 56px 0;
+      border-left: 1px solid rgba(17,17,15,.32);
+      border-bottom: 1px solid rgba(17,17,15,.32);
+      border-right: 1px solid rgba(17,17,15,.32);
+      border-radius: 0 0 9px 9px;
+    }
+
+    .loop-return-line::before {
+      content: "↑";
+      position: absolute;
+      left: -5px;
+      top: -10px;
+      color: rgba(17,17,15,.58);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    @media (max-width: 1180px) {
+      .loop-flow-card {
+        padding: 28px 24px 34px;
+      }
+
+      .loop-flow-head {
+        flex-direction: column;
+        margin-bottom: 34px;
+      }
+
+      .loop-flow-note {
+        margin-top: -8px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .loop-flow-card {
+        padding: 24px 16px 28px;
+      }
+
+      .loop-flow-track {
+        min-width: 0;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding-top: 0;
+      }
+
+      .loop-flow-track::before,
+      .loop-step-card::after,
+      .loop-return-line {
+        display: none;
+      }
+
+      .loop-step-card {
+        padding-left: 64px;
+        min-height: 110px;
+      }
+
+      .loop-step-card::before {
+        left: 18px;
+        top: 20px;
+        transform: none;
+      }
+
+      .loop-step-card strong {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="workspace-layout">
+      <aside class="workspace-sidebar" aria-label="전역 탭">
+        <div class="workspace-sidebar-title">워크스페이스</div>
+        <button class="workspace-tab active" type="button" data-workspace-target="character">Character</button>
+        <button class="workspace-tab" type="button" data-workspace-target="environment">Environment</button>
+        <button class="workspace-tab" type="button" data-workspace-target="workspace-3">새 탭 1</button><button class="workspace-tab is-add" id="add-workspace-btn" type="button" aria-label="탭 추가">+</button>
+      </aside>
+      <div class="workspace-content">
+    <header class="topbar topnav">
+      <div class="topnav-identity">
+        <span class="eyebrow" id="brand-eyebrow-text" data-edit-key="brand-eyebrow" contenteditable="true">Capital 기록</span>
+        <strong id="brand-title-text" data-edit-key="brand-title" contenteditable="true">Character Codex</strong>
+      </div>
+
+      <nav class="tabs topnav-tabs" aria-label="Codex Sections">
+        <button class="tab-btn active" data-screen-target="overview">개요</button>
+        <button class="tab-btn" data-screen-target="relationships">관계</button>
+        <button class="tab-btn" data-screen-target="loop">루프 구조</button>
+        <button class="tab-btn" data-screen-target="dossiers">도감</button>
+      </nav>
+
+      <div class="toolbar-panel topnav-tools">
+        <div class="status topnav-status">
+          <span class="status-dot"></span>
+          <div class="status-copy">
+            <span class="status-title" id="status-title-text">데이터 동기화</span>
+            <span class="status-sub" id="status-sub-text">캐릭터 워크스페이스</span>
+          </div>
+        </div>
+        <div class="toolbar-actions topnav-actions">
+          <button class="save-btn" id="save-btn" type="button">저장</button>
+          <button class="save-btn" id="export-btn" type="button">내보내기</button>
+        </div>
+        <div class="save-meta topnav-save-meta">
+          <span id="save-status" class="caption">내보내기 저장 완료</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="workspace-pane active" data-workspace-pane="character">
+      <section class="screen active" id="overview" data-screen="overview">
+        <div class="hero">
+          <section class="panel">
+            <div class="chip" data-edit-key="overview-chip" contenteditable="true">시스템 개요</div>
+            <h1 class="hero-title" data-edit-key="overview-title" contenteditable="true">ARIA · TRACE · VAULT</h1>
+            <p class="sub" data-edit-key="overview-description" contenteditable="true">이 페이지는 세 캐릭터의 관계, 존재 방식, 기억 전달 구조를 정리한 인터랙티브 Codex이다. 중심 개념은 ARIA가 경험하고, TRACE가 흔적을 남기며, VAULT가 기록을 저장한다는 구조이다.</p>
+            <div class="label-row">
+              <span class="chip" data-edit-key="overview-label-1" contenteditable="true">경험</span>
+              <span class="chip" data-edit-key="overview-label-2" contenteditable="true">행동 기억</span>
+              <span class="chip" data-edit-key="overview-label-3" contenteditable="true">기록 시스템</span>
+              <span class="chip" data-edit-key="overview-label-4" contenteditable="true">부분적 연속성</span>
+            </div>
+          </section>
+
+          <aside class="hero-side">
+            <div class="stat-box">
+              <div class="k" data-edit-key="stat-1-k" contenteditable="true">핵심 규칙</div>
+              <div class="v" data-edit-key="stat-1-v" contenteditable="true">같은 존재가 아니라 이어지는 존재</div>
+              <p data-edit-key="stat-1-p" contenteditable="true">죽음 이후에도 구조는 이어지지만 동일한 개체가 완전하게 유지되지는 않는다.</p>
+            </div>
+            <div class="stat-box">
+              <div class="k" data-edit-key="stat-2-k" contenteditable="true">플레이어 인식</div>
+              <div class="v" data-edit-key="stat-2-v" contenteditable="true">감정 → 암시 → 확신</div>
+              <p data-edit-key="stat-2-p" contenteditable="true">플레이어는 ARIA를 통해 느끼고, TRACE를 통해 눈치채며, VAULT를 통해 구조를 확신한다.</p>
+            </div>
+          </aside>
+        </div>
+
+        <div class="overview-grid">
+          <section class="matrix-card">
+            <div class="section-head">
+              <h2 data-edit-key="matrix-title" contenteditable="true">핵심 비교</h2>
+              <span class="caption" data-edit-key="matrix-caption" contenteditable="true">비교 테이블</span>
+            </div>
+            <div class="matrix-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-edit-key="character-10" contenteditable="true">구분</th>
+                    <th data-edit-key="character-11" contenteditable="true">ARIA</th>
+                    <th data-edit-key="character-12" contenteditable="true">TRACE</th>
+                    <th data-edit-key="character-13" contenteditable="true">VAULT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td data-edit-key="character-14" contenteditable="true">외형</td><td data-edit-key="character-15" contenteditable="true">인간</td><td data-edit-key="character-16" contenteditable="true">동물</td><td data-edit-key="character-17" contenteditable="true">기계</td></tr>
+                  <tr><td data-edit-key="character-18" contenteditable="true">본질</td><td data-edit-key="character-19" contenteditable="true">경험하는 존재</td><td data-edit-key="character-20" contenteditable="true">흔적을 남기는 존재</td><td data-edit-key="character-21" contenteditable="true">기록하는 존재</td></tr>
+                  <tr><td data-edit-key="character-22" contenteditable="true">감정</td><td data-edit-key="character-23" contenteditable="true">있음</td><td data-edit-key="character-24" contenteditable="true">행동으로 해석됨</td><td data-edit-key="character-25" contenteditable="true">없음</td></tr>
+                  <tr><td data-edit-key="character-26" contenteditable="true">기억 방식</td><td data-edit-key="character-27" contenteditable="true">단편적 기억</td><td data-edit-key="character-28" contenteditable="true">행동 패턴 기억</td><td data-edit-key="character-29" contenteditable="true">저장 / 압축 / 불완전 복원</td></tr>
+                  <tr><td data-edit-key="character-30" contenteditable="true">플레이어 기능</td><td data-edit-key="character-31" contenteditable="true">직접 조작</td><td data-edit-key="character-32" contenteditable="true">암시와 유도</td><td data-edit-key="character-33" contenteditable="true">구조적 확정</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="info-card">
+            <div class="section-head">
+              <h2 data-edit-key="rules-title" contenteditable="true">핵심 규칙</h2>
+              <span class="caption" data-edit-key="rules-caption" contenteditable="true">이해 가이드</span>
+            </div>
+            <div class="rule-list">
+              <div class="rule"><strong data-edit-key="rule-1-title" contenteditable="true">겉과 속의 불일치</strong><span data-edit-key="rule-1-body" contenteditable="true">ARIA는 인간처럼 보이지만 인간이 아니고, TRACE는 동물처럼 보이지만 기록 장치이며, VAULT는 기계처럼 보이고 실제로도 기계이다.</span></div>
+              <div class="rule"><strong data-edit-key="rule-2-title" contenteditable="true">설명보다 체험 우선</strong><span data-edit-key="rule-2-body" contenteditable="true">TRACE는 의미를 직접 말하지 않고, VAULT는 최소한의 정보만 제공하며, ARIA는 모든 체험의 중심에 놓인다.</span></div>
+              <div class="rule"><strong data-edit-key="rule-3-title" contenteditable="true">반복은 의미 구조</strong><span data-edit-key="rule-3-body" contenteditable="true">죽음은 단순한 실패가 아니라 정보와 정체성이 부분적으로 이어지는 시스템이다.</span></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="relationships" data-screen="relationships">
+        <div class="relations-layout">
+          <div class="relationship-top-grid">
+            <section class="panel">
+              <div class="section-head">
+                <h2 data-edit-key="rel-title" contenteditable="true">관계 다이어그램<div><br></div></h2>
+                <span class="hint" data-edit-key="rel-hint" contenteditable="true"><br></span>
+              </div>
+
+              <div class="circular-infographic theme-aria" id="relationship-loop">
+                <svg class="orbit-svg" viewBox="0 0 1000 700" aria-hidden="true">
+                  <defs>
+                    <filter id="softGlow"><feGaussianBlur stdDeviation="4" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+                    <marker id="arrowHead" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6dd9ff"></path></marker>
+                  </defs>
+                  <circle cx="500" cy="350" r="200" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"></circle>
+                  <circle cx="500" cy="350" r="138" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="6 10"></circle>
+                  <path class="loop-arc arc-aria" d="M 500 150 Q 410 250 340 430" fill="none" stroke="#6dd9ff" stroke-opacity="0.56" stroke-width="4" marker-end="url(#arrowHead)" filter="url(#softGlow)"></path>
+                  <path class="loop-arc arc-trace" d="M 340 430 Q 500 505 660 430" fill="none" stroke="#7cffc7" stroke-opacity="0.52" stroke-width="4" marker-end="url(#arrowHead)" filter="url(#softGlow)"></path>
+                  <path class="loop-arc arc-vault" d="M 660 430 Q 590 250 500 150" fill="none" stroke="#ffb37c" stroke-opacity="0.52" stroke-width="4" marker-end="url(#arrowHead)" filter="url(#softGlow)"></path>
+                </svg>
+                <div class="ring-label"><div><strong data-edit-key="loop-core-title" contenteditable="true">루프</strong><span class="loop-copy" data-edit-key="loop-core-body" contenteditable="true">경험 → 흔적 → 기록 → 다시 경험</span></div></div>
+                <article class="ring-node aria active" tabindex="0" role="button" aria-label="ARIA 관계 정보 보기" data-rel="aria"><h3 data-edit-key="character-46" contenteditable="true">ARIA</h3></article>
+                <article class="ring-node trace" tabindex="0" role="button" aria-label="TRACE 관계 정보 보기" data-rel="trace"><h3 data-edit-key="character-47" contenteditable="true">TRACE</h3></article>
+                <article class="ring-node vault" tabindex="0" role="button" aria-label="VAULT 관계 정보 보기" data-rel="vault"><h3 data-edit-key="character-48" contenteditable="true">VAULT</h3></article>
+              </div>
+            </section>
+
+            <section class="detail-card theme-aria" id="relationship-detail">
+              <div class="section-head">
+                <h2 data-edit-key="character-49" contenteditable="true">선택 정보</h2>
+                <span class="caption" data-edit-key="character-50" contenteditable="true">요약 패널</span>
+              </div>
+
+              <div class="relationship-summary active" data-rel-panel="aria">
+                <div class="relationship-header">
+                  <h3 data-edit-key="character-51" contenteditable="true">ARIA</h3>
+                  <div class="badge-stack relationship-badges">
+                    <span class="badge" data-edit-key="character-52" contenteditable="true">경험</span>
+                    <span class="badge" data-edit-key="character-53" contenteditable="true">인간 외형</span>
+                    <span class="badge" data-edit-key="character-54" contenteditable="true">플레이어 핵심</span>
+                  </div>
+                  <p data-edit-key="aria-summary" contenteditable="true">자신이 인간이라고 믿는 존재이며, 플레이어가 직접 경험하는 감정과 선택의 중심축이다.</p>
+                </div>
+                <div class="relationship-grid">
+                  <div class="detail-item"><strong data-edit-key="character-56" contenteditable="true">존재 정의</strong><span data-edit-key="aria-detail-1" contenteditable="true">ARIA는 인간처럼 보이고 스스로도 인간이라 믿지만, 실상은 반복 구조 안에서 부분적으로 이어지는 존재이다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-58" contenteditable="true">루프 내 위치</strong><span data-edit-key="aria-detail-2" contenteditable="true">루프의 시작점이자 경험의 발생 지점이다. 선택, 감정, 실패, 생존의 무게가 모두 ARIA에서 출발한다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-60" contenteditable="true">ARIA → TRACE</strong><span data-edit-key="aria-detail-3" contenteditable="true">ARIA의 경험은 TRACE에게 행동 흔적으로 남아 다음 탐색에서 감각적인 단서로 반복된다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-62" contenteditable="true">VAULT → ARIA</strong><span data-edit-key="aria-detail-4" contenteditable="true">VAULT가 저장한 기록 일부는 다음 ARIA에게 전달되어 부분적 이어짐과 낯선 익숙함을 만든다.</span></div>
+                </div>
+              </div>
+
+              <div class="relationship-summary" data-rel-panel="trace" hidden="">
+                <div class="relationship-header">
+                  <h3 data-edit-key="character-64" contenteditable="true">TRACE</h3>
+                  <div class="badge-stack relationship-badges">
+                    <span class="badge" data-edit-key="character-65" contenteditable="true">흔적</span>
+                    <span class="badge" data-edit-key="character-66" contenteditable="true">비언어적 유도</span>
+                    <span class="badge" data-edit-key="character-67" contenteditable="true">행동 기억</span>
+                  </div>
+                  <p data-edit-key="trace-summary" contenteditable="true">기억을 설명하지 않고 남기는 존재이며, 행동과 위치 반복으로 과거 사건을 현재에 되비춘다.</p>
+                </div>
+                <div class="relationship-grid">
+                  <div class="detail-item"><strong data-edit-key="character-69" contenteditable="true">존재 정의</strong><span data-edit-key="trace-detail-1" contenteditable="true">TRACE는 말이나 데이터 대신 행동 패턴으로 기억을 전달하는 매개체이며, 플레이어가 가장 먼저 반복을 체감하게 만든다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-71" contenteditable="true">루프 내 위치</strong><span data-edit-key="trace-detail-2" contenteditable="true">경험과 기록 사이에 놓인 감각적 연결 장치이다. 구조를 설명하지 않고, 먼저 느끼게 만든다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-73" contenteditable="true">ARIA → TRACE</strong><span data-edit-key="trace-detail-3" contenteditable="true">ARIA가 남긴 사건과 선택의 자취는 TRACE의 동선, 정지, 시선으로 변환되어 현재에 되비쳐진다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-75" contenteditable="true">TRACE → VAULT</strong><span data-edit-key="trace-detail-4" contenteditable="true">TRACE가 감각적 흔적을 남긴다면, VAULT는 그것과 같은 진실을 구조적 기록으로 고정한다.</span></div>
+                </div>
+              </div>
+
+              <div class="relationship-summary" data-rel-panel="vault" hidden="">
+                <div class="relationship-header">
+                  <h3 data-edit-key="character-77" contenteditable="true">VAULT</h3>
+                  <div class="badge-stack relationship-badges">
+                    <span class="badge" data-edit-key="character-78" contenteditable="true">기록</span>
+                    <span class="badge" data-edit-key="character-79" contenteditable="true">부분 복원</span>
+                    <span class="badge" data-edit-key="character-80" contenteditable="true">기계적 진실</span>
+                  </div>
+                  <p data-edit-key="vault-summary" contenteditable="true">기억을 저장하지만 완전하게 돌려주지 않는 장치이며, 반복 구조의 연속성을 유지하는 가장 차가운 기준점이다.</p>
+                </div>
+                <div class="relationship-grid">
+                  <div class="detail-item"><strong data-edit-key="character-82" contenteditable="true">존재 정의</strong><span data-edit-key="vault-detail-1" contenteditable="true">VAULT는 경험을 저장하고 일부만 복원하는 기록 장치이며, 동일성 대신 연속성을 유지하는 역할을 맡는다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-84" contenteditable="true">루프 내 위치</strong><span data-edit-key="vault-detail-2" contenteditable="true">루프의 종착점이자 다음 시작을 준비하는 보존 장치이다. 구조를 가장 명확하게 붙잡는 축이다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-86" contenteditable="true">TRACE → VAULT</strong><span data-edit-key="vault-detail-3" contenteditable="true">TRACE가 공간에 남긴 감각적 흔적은 VAULT에서 데이터와 기록의 형태로 응축되고 저장된다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="character-88" contenteditable="true">VAULT → ARIA</strong><span data-edit-key="vault-detail-4" contenteditable="true">저장된 기록 일부가 다음 존재에게 전달되면서, 완전한 복원이 아닌 불완전한 연속성이 성립된다.</span></div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="relationship-cards">
+            <article class="relationship-card"><span class="k" data-edit-key="character-90" contenteditable="true">ARIA</span><h3 data-edit-key="card-aria-title" contenteditable="true">경험의 중심</h3><p data-edit-key="card-aria-body" contenteditable="true">플레이어는 ARIA를 통해 세계를 직접 경험한다. 감정, 선택, 실패, 생존의 무게는 모두 이 지점에서 출발한다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-93" contenteditable="true">TRACE</span><h3 data-edit-key="card-trace-title" contenteditable="true">흔적의 매개체</h3><p data-edit-key="card-trace-body" contenteditable="true">TRACE는 사건을 말로 설명하지 않는다. 대신 동선과 반복 행동으로 과거의 자취를 현재에 남긴다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-96" contenteditable="true">VAULT</span><h3 data-edit-key="card-vault-title" contenteditable="true">기록의 보존 장치</h3><p data-edit-key="card-vault-body" contenteditable="true">VAULT는 경험을 저장하고 일부만 복원한다. 동일한 존재를 돌려놓지는 않지만 연속성은 유지한다.</p></article>
+          </div>
+
+          <div class="relationship-link-grid">
+            <article class="relationship-card"><span class="k" data-edit-key="character-99" contenteditable="true">경험 → 흔적</span><h3 data-edit-key="character-100" contenteditable="true">ARIA → TRACE</h3><p data-edit-key="link-1-body" contenteditable="true">ARIA가 통과한 사건은 TRACE의 행동 패턴으로 남는다. 플레이어는 이 흔적을 통해 반복을 먼저 감각한다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-102" contenteditable="true">흔적 → 기록</span><h3 data-edit-key="character-103" contenteditable="true">TRACE → VAULT</h3><p data-edit-key="link-2-body" contenteditable="true">TRACE가 남긴 감각적 흔적은 VAULT에서 데이터와 기록의 형태로 응축된다. 직감은 구조로 바뀐다.</p></article>
+            <article class="relationship-card"><span class="k" data-edit-key="character-105" contenteditable="true">기록 → 다시 경험</span><h3 data-edit-key="character-106" contenteditable="true">VAULT → ARIA</h3><p data-edit-key="link-3-body" contenteditable="true">저장된 기록 일부가 다음 ARIA에게 전달되며 루프가 다시 시작된다. 완전 반복이 아니라 불완전한 연속성이다.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="dossiers" data-screen="dossiers">
+        <div class="dossier-layout">
+          <aside class="side-nav">
+            <h3 data-edit-key="character-108" contenteditable="true">도감 선택</h3>
+            <button class="nav-btn active" data-dossier-target="aria-panel"><small>플레이어 핵심</small>ARIA</button>
+            <button class="nav-btn" data-dossier-target="trace-panel"><small>행동 기억</small>TRACE</button>
+            <button class="nav-btn" data-dossier-target="vault-panel"><small>기록 시스템</small>VAULT</button>
+          </aside>
+
+          <section class="dossier-view panel">
+            <div class="dossier-scroll">
+            <article class="dossier-panel active" id="aria-panel">
+              <div class="dossier-header">
+                <h2 data-edit-key="character-109" contenteditable="true">ARIA</h2>
+                <div class="badge-stack"><span class="badge" data-edit-key="character-110" contenteditable="true">인간 외형</span><span class="badge" data-edit-key="character-111" contenteditable="true">단편적 기억</span><span class="badge" data-edit-key="character-112" contenteditable="true">플레이 가능</span></div>
+                <p data-edit-key="dossier-aria-desc" contenteditable="true">자신이 인간이라고 믿는 존재이며, 플레이어 시점의 중심이다.</p>
+              </div>
+              <div class="reference-card" data-ref-group="aria" data-ref-index="0">
+                <div class="reference-toolbar">
+                  <span class="ref-label" data-edit-key="character-114" contenteditable="true">레퍼런스 이미지</span>
+                  <div class="ref-actions">
+                    <button class="ref-btn" type="button" data-ref-action="prev">이전</button>
+                    <button class="ref-btn" type="button" data-ref-action="next">다음</button>
+                    <button class="ref-btn" type="button" data-ref-action="add">추가</button>
+                    <button class="ref-btn" type="button" data-ref-action="delete">삭제</button>
+                  </div>
+                </div>
+                <div class="reference-frame">
+                  <div class="reference-strip"></div>
+                  <div class="reference-placeholder">ARIA 레퍼런스 이미지를 이 영역에 추가</div>
+                </div>
+                <div class="reference-meta"><span class="ref-counter" data-edit-key="character-115" contenteditable="true">0 / 0</span></div>
+                <input class="ref-file-input" type="file" accept="image/*" multiple="">
+              </div>
+              <div class="dossier-grid">
+                <div class="feature-card"><span class="k" data-edit-key="character-116" contenteditable="true">역할</span><h4 data-edit-key="character-117" contenteditable="true">경험의 중심</h4><p data-edit-key="character-118" contenteditable="true">플레이어는 ARIA를 통해 외부 세계의 위험, 감정, 상실, 발견을 직접 체험한다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-119" contenteditable="true">인식</span><h4 data-edit-key="character-120" contenteditable="true">자기 인식의 오류</h4><p data-edit-key="character-121" contenteditable="true">ARIA는 스스로를 인간이라 믿지만, 반복과 전환의 진실을 인식하지 못한다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-122" contenteditable="true">디자인 규칙</span><h4 data-edit-key="character-123" contenteditable="true">완전한 인간성</h4><p data-edit-key="character-124" contenteditable="true">겉보기에는 100% 인간처럼 보여야 하며, 노골적인 SF 기호는 드러나지 않아야 한다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-125" contenteditable="true">플레이어 경험</span><h4 data-edit-key="character-126" contenteditable="true">정체성의 해체</h4><p data-edit-key="character-127" contenteditable="true">플레이어는 ARIA를 인간으로 받아들이지만, 점차 동일한 존재가 아님을 깨닫는다.</p></div>
+              </div>
+            </article>
+
+            <article class="dossier-panel" id="trace-panel" hidden="">
+              <div class="dossier-header">
+                <h2 data-edit-key="character-128" contenteditable="true">TRACE</h2>
+                <div class="badge-stack"><span class="badge" data-edit-key="character-129" contenteditable="true">동물 실루엣</span><span class="badge" data-edit-key="character-130" contenteditable="true">비언어적 유도</span><span class="badge" data-edit-key="character-131" contenteditable="true">행동 흔적</span></div>
+                <p data-edit-key="dossier-trace-desc" contenteditable="true">기억을 말하지 않고 남기는 존재이며, 반복을 감각적으로 전달하는 장치다.</p>
+              </div>
+              <div class="reference-card" data-ref-group="trace" data-ref-index="0">
+                <div class="reference-toolbar">
+                  <span class="ref-label" data-edit-key="character-133" contenteditable="true">레퍼런스 이미지</span>
+                  <div class="ref-actions">
+                    <button class="ref-btn" type="button" data-ref-action="prev">이전</button>
+                    <button class="ref-btn" type="button" data-ref-action="next">다음</button>
+                    <button class="ref-btn" type="button" data-ref-action="add">추가</button>
+                    <button class="ref-btn" type="button" data-ref-action="delete">삭제</button>
+                  </div>
+                </div>
+                <div class="reference-frame">
+                  <div class="reference-strip"></div>
+                  <div class="reference-placeholder">TRACE 레퍼런스 이미지를 이 영역에 추가</div>
+                </div>
+                <div class="reference-meta"><span class="ref-counter" data-edit-key="character-134" contenteditable="true">0 / 0</span></div>
+                <input class="ref-file-input" type="file" accept="image/*" multiple="">
+              </div>
+              <div class="dossier-grid">
+                <div class="feature-card"><span class="k" data-edit-key="character-135" contenteditable="true">역할</span><h4 data-edit-key="character-136" contenteditable="true">행동 기억의 매개체</h4><p data-edit-key="character-137" contenteditable="true">TRACE는 말이나 데이터 대신 반복 행동으로 이전 사건의 흔적을 현재에 남긴다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-138" contenteditable="true">인식</span><h4 data-edit-key="character-139" contenteditable="true">귀여움에서 불안으로</h4><p data-edit-key="character-140" contenteditable="true">처음에는 단순한 동반 동물처럼 보이지만, 반복 행동이 의미를 가지기 시작한다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-141" contenteditable="true">디자인 규칙</span><h4 data-edit-key="character-142" contenteditable="true">자연스러운 비정상성</h4><p data-edit-key="character-143" contenteditable="true">외형은 동물적이어야 하지만 시선과 멈춤 타이밍에는 설명하기 어려운 지성이 남아야 한다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-144" contenteditable="true">플레이어 경험</span><h4 data-edit-key="character-145" contenteditable="true">직감의 시작점</h4><p data-edit-key="character-146" contenteditable="true">플레이어는 TRACE를 통해 가장 먼저 무언가 반복되고 있다는 감각을 얻게 된다.</p></div>
+              </div>
+            </article>
+
+            <article class="dossier-panel" id="vault-panel" hidden="">
+              <div class="dossier-header">
+                <h2 data-edit-key="character-147" contenteditable="true">VAULT</h2>
+                <div class="badge-stack"><span class="badge" data-edit-key="character-148" contenteditable="true">기계적 진실</span><span class="badge" data-edit-key="character-149" contenteditable="true">부분 복원</span><span class="badge" data-edit-key="character-150" contenteditable="true">기록 코어</span></div>
+                <p data-edit-key="dossier-vault-desc" contenteditable="true">기억을 저장하지만 완전하게 돌려주지 않는 장치이며, 반복 구조의 연속성을 유지하는 축이다.</p>
+              </div>
+              <div class="reference-card" data-ref-group="vault" data-ref-index="0">
+                <div class="reference-toolbar">
+                  <span class="ref-label" data-edit-key="character-152" contenteditable="true">레퍼런스 이미지</span>
+                  <div class="ref-actions">
+                    <button class="ref-btn" type="button" data-ref-action="prev">이전</button>
+                    <button class="ref-btn" type="button" data-ref-action="next">다음</button>
+                    <button class="ref-btn" type="button" data-ref-action="add">추가</button>
+                    <button class="ref-btn" type="button" data-ref-action="delete">삭제</button>
+                  </div>
+                </div>
+                <div class="reference-frame">
+                  <div class="reference-strip"></div>
+                  <div class="reference-placeholder">VAULT 레퍼런스 이미지를 이 영역에 추가</div>
+                </div>
+                <div class="reference-meta"><span class="ref-counter" data-edit-key="character-153" contenteditable="true">0 / 0</span></div>
+                <input class="ref-file-input" type="file" accept="image/*" multiple="">
+              </div>
+              <div class="dossier-grid">
+                <div class="feature-card"><span class="k" data-edit-key="character-154" contenteditable="true">역할</span><h4 data-edit-key="character-155" contenteditable="true">기록과 복원</h4><p data-edit-key="character-156" contenteditable="true">경험을 저장하고 일부만 복원하며, 다음 존재가 이어질 수 있게 구조적 기반을 제공한다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-157" contenteditable="true">인식</span><h4 data-edit-key="character-158" contenteditable="true">감정 없는 신뢰</h4><p data-edit-key="character-159" contenteditable="true">위로도 망설임도 없이 사실만 전달하기 때문에, 가장 신뢰 가능한 기준점처럼 느껴진다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-160" contenteditable="true">디자인 규칙</span><h4 data-edit-key="character-161" contenteditable="true">보이는 그대로의 기계</h4><p data-edit-key="character-162" contenteditable="true">구조가 노출되고 기능이 드러난 외형을 통해, 이 세계에서 드물게 겉과 속이 일치하는 존재가 된다.</p></div>
+                <div class="feature-card"><span class="k" data-edit-key="character-163" contenteditable="true">플레이어 경험</span><h4 data-edit-key="character-164" contenteditable="true">구조의 확정</h4><p data-edit-key="character-165" contenteditable="true">TRACE가 만든 감각적 불안을 VAULT가 기록과 복원이라는 시스템으로 정리해 준다.</p></div>
+              </div>
+            </article>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="loop" data-screen="loop">
+        <section class="loop-flow-card">
+          <div class="loop-flow-head">
+            <div>
+              <span class="loop-flow-kicker" data-edit-key="character-166" contenteditable="true">LOOP STRUCTURE</span>
+              <h2 data-edit-key="character-167" contenteditable="true">Experience · Trace · Record</h2>
+              <p data-edit-key="character-168" contenteditable="true">ARIA가 경험하고, TRACE가 흔적을 남기며, VAULT가 기록을 저장한 뒤 다음 ARIA에게 일부만 전달되는 반복 구조.</p>
+            </div>
+            <button class="loop-detail-btn" type="button" aria-expanded="false">루프 상세 보기</button>
+          </div>
+          <p class="loop-flow-note" hidden>이 루프는 한 번의 생애가 완전히 복구되는 구조가 아니라, 경험의 일부만 흔적과 기록으로 이어져 다음 존재에게 전달되는 비연속적 연속성의 구조를 설명한다.</p>
+
+          <div class="loop-flow-track" aria-label="ARIA TRACE VAULT loop flow">
+            <div class="loop-step-card" data-step="1">
+              <strong data-edit-key="character-169" contenteditable="true">ARIA · EXPERIENCE</strong>
+              <span data-edit-key="character-170" contenteditable="true">플레이어는 ARIA를 통해 외부 세계를 직접 경험한다. 감정, 선택, 실패, 생존의 무게가 이 단계에서 발생한다.</span>
+            </div>
+            <div class="loop-step-card" data-step="2">
+              <strong data-edit-key="character-171" contenteditable="true">EVENT · LOSS</strong>
+              <span data-edit-key="character-172" contenteditable="true">탐색 중 사건이 발생하고 ARIA의 경험은 완전하게 보존되지 못한 채 단절된다. 죽음은 끝이 아니라 전환의 시작이다.</span>
+            </div>
+            <div class="loop-step-card" data-step="3">
+              <strong data-edit-key="character-173" contenteditable="true">TRACE · RESIDUE</strong>
+              <span data-edit-key="character-174" contenteditable="true">TRACE는 이전 ARIA의 경험을 말로 설명하지 않는다. 대신 동선, 멈춤, 시선, 반복 행동으로 흔적을 남긴다.</span>
+            </div>
+            <div class="loop-step-card" data-step="4">
+              <strong data-edit-key="character-175" contenteditable="true">VAULT · RECORD</strong>
+              <span data-edit-key="character-176" contenteditable="true">VAULT는 사건과 기억을 저장하지만 완전하게 복원하지 않는다. 기록은 압축되고 일부는 손실된다.</span>
+            </div>
+            <div class="loop-step-card" data-step="5">
+              <strong data-edit-key="character-177" contenteditable="true">RESTORE · PARTIAL</strong>
+              <span data-edit-key="character-178" contenteditable="true">저장된 기록 일부가 다음 존재에게 전달된다. 같은 존재가 돌아오는 것이 아니라, 불완전한 연속성이 만들어진다.</span>
+            </div>
+            <div class="loop-step-card" data-step="6">
+              <strong data-edit-key="character-179" contenteditable="true">NEW ARIA · LOOP</strong>
+              <span data-edit-key="character-180" contenteditable="true">새로운 ARIA가 다시 깨어난다. 플레이어는 익숙하지만 완전히 같지 않은 반복을 통해 구조를 인식하기 시작한다.</span>
+            </div>
+          </div>
+
+          <div class="loop-return-line" aria-hidden="true"></div>
+        </section>
+      </section>
+      </div>
+
+      <div class="workspace-pane" data-workspace-pane="environment">
+        <section class="screen active" data-screen="overview">
+          <div class="hero">
+            <section class="panel">
+              <div class="chip" data-edit-key="env-overview-chip" contenteditable="true">환경 개요</div>
+              <h1 class="hero-title" data-edit-key="env-overview-title" contenteditable="true">CAPITAL · OUTLAND · HAZARD</h1>
+              <p class="sub" data-edit-key="env-overview-description" contenteditable="true">이 페이지는 환경 설정, 공간 관계, 생존 루프의 무대를 정리하는 인터랙티브 Codex이다. 중심 개념은 Capital이 보호하고, Outland가 시험하며, Hazard가 구조를 압박한다는 흐름이다.</p>
+              <div class="label-row">
+                <span class="chip" data-edit-key="env-overview-label-1" contenteditable="true">대피 공간</span>
+                <span class="chip" data-edit-key="env-overview-label-2" contenteditable="true">외부 환경</span>
+                <span class="chip" data-edit-key="env-overview-label-3" contenteditable="true">기후 위험</span>
+                <span class="chip" data-edit-key="env-overview-label-4" contenteditable="true">생존 루프</span>
+              </div>
+            </section>
+            <aside class="hero-side">
+              <div class="stat-box">
+                <div class="k" data-edit-key="env-stat-1-k" contenteditable="true">핵심 규칙</div>
+                <div class="v" data-edit-key="env-stat-1-v" contenteditable="true">안전은 내부에만 존재한다</div>
+                <p data-edit-key="env-stat-1-p" contenteditable="true">Capital은 유일한 복귀 지점이며, 외부는 언제나 손실과 소모를 전제로 작동한다.</p>
+              </div>
+              <div class="stat-box">
+                <div class="k" data-edit-key="env-stat-2-k" contenteditable="true">플레이어 인식</div>
+                <div class="v" data-edit-key="env-stat-2-v" contenteditable="true">안정 → 긴장 → 복귀</div>
+                <p data-edit-key="env-stat-2-p" contenteditable="true">플레이어는 내부에서 정비하고, 외부에서 긴장하며, 복귀를 통해 루프의 의미를 체감한다.</p>
+              </div>
+            </aside>
+          </div>
+          <div class="overview-grid">
+            <section class="matrix-card">
+              <div class="section-head"><h2 data-edit-key="env-matrix-title" contenteditable="true">핵심 비교</h2><span class="caption" data-edit-key="env-matrix-caption" contenteditable="true">환경 테이블</span></div>
+              <div class="matrix-wrap">
+                <table>
+                  <thead><tr><th data-edit-key="environment-10" contenteditable="true">구분</th><th data-edit-key="environment-11" contenteditable="true">CAPITAL</th><th data-edit-key="environment-12" contenteditable="true">OUTLAND</th><th data-edit-key="environment-13" contenteditable="true">HAZARD</th></tr></thead>
+                  <tbody>
+                    <tr><td data-edit-key="environment-14" contenteditable="true">기능</td><td data-edit-key="environment-15" contenteditable="true">복귀 / 정비</td><td data-edit-key="environment-16" contenteditable="true">탐색 / 회수</td><td data-edit-key="environment-17" contenteditable="true">압박 / 소모</td></tr>
+                    <tr><td data-edit-key="environment-18" contenteditable="true">인상</td><td data-edit-key="environment-19" contenteditable="true">보호</td><td data-edit-key="environment-20" contenteditable="true">노출</td><td data-edit-key="environment-21" contenteditable="true">위협</td></tr>
+                    <tr><td data-edit-key="environment-22" contenteditable="true">변화</td><td data-edit-key="environment-23" contenteditable="true">안정적</td><td data-edit-key="environment-24" contenteditable="true">가변적</td><td data-edit-key="environment-25" contenteditable="true">점증적</td></tr>
+                    <tr><td data-edit-key="environment-26" contenteditable="true">플레이 구조</td><td data-edit-key="environment-27" contenteditable="true">준비</td><td data-edit-key="environment-28" contenteditable="true">행동</td><td data-edit-key="environment-29" contenteditable="true">실패 유도</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+            <section class="info-card">
+              <div class="section-head"><h2 data-edit-key="env-rules-title" contenteditable="true">핵심 규칙</h2><span class="caption" data-edit-key="env-rules-caption" contenteditable="true">이해 가이드</span></div>
+              <div class="rule-list">
+                <div class="rule"><strong data-edit-key="env-rule-1-title" contenteditable="true">보호는 제한적이다</strong><span data-edit-key="env-rule-1-body" contenteditable="true">Capital은 안전하지만 충분하지 않다. 자원과 정보는 결국 외부에서 가져와야 한다.</span></div>
+                <div class="rule"><strong data-edit-key="env-rule-2-title" contenteditable="true">위험은 형태를 바꾼다</strong><span data-edit-key="env-rule-2-body" contenteditable="true">Hazard는 적만을 뜻하지 않는다. 기후, 독성, 시야 방해, 붕괴 구조 모두가 위험의 일부다.</span></div>
+                <div class="rule"><strong data-edit-key="env-rule-3-title" contenteditable="true">환경은 서사를 만든다</strong><span data-edit-key="env-rule-3-body" contenteditable="true">플레이어는 공간의 배치와 상태 변화를 통해 세계관의 압박을 직접 읽게 된다.</span></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="relationships">
+          <div class="relations-layout">
+            <div class="relationship-cards">
+              <article class="relationship-card"><span class="k" data-edit-key="environment-38" contenteditable="true">CAPITAL</span><h3 data-edit-key="env-rel-card-1-title" contenteditable="true">복귀의 중심</h3><p data-edit-key="env-rel-card-1-body" contenteditable="true">Capital은 정비와 정리가 가능한 유일한 내부 공간이다. 플레이어는 이곳에서 다음 행동을 준비한다.</p></article>
+              <article class="relationship-card"><span class="k" data-edit-key="environment-41" contenteditable="true">OUTLAND</span><h3 data-edit-key="env-rel-card-2-title" contenteditable="true">탐색의 무대</h3><p data-edit-key="env-rel-card-2-body" contenteditable="true">Outland는 자원과 정보가 존재하지만, 동시에 가장 큰 리스크를 감수해야 하는 공간이다.</p></article>
+              <article class="relationship-card"><span class="k" data-edit-key="environment-44" contenteditable="true">HAZARD</span><h3 data-edit-key="env-rel-card-3-title" contenteditable="true">압박의 장치</h3><p data-edit-key="env-rel-card-3-body" contenteditable="true">Hazard는 환경 전체에 개입하며 긴장과 소모를 누적시키는 구조적 위협이다.</p></article>
+            </div>
+            <div class="relationship-link-grid">
+              <article class="relationship-card"><span class="k" data-edit-key="environment-47" contenteditable="true">복귀 → 준비</span><h3 data-edit-key="environment-48" contenteditable="true">CAPITAL → OUTLAND</h3><p data-edit-key="env-link-1-body" contenteditable="true">내부 정비는 외부 탐색으로 이어진다. 준비는 곧 위험에 대한 선행 단계다.</p></article>
+              <article class="relationship-card"><span class="k" data-edit-key="environment-50" contenteditable="true">노출 → 압박</span><h3 data-edit-key="environment-51" contenteditable="true">OUTLAND → HAZARD</h3><p data-edit-key="env-link-2-body" contenteditable="true">외부로 나가는 순간 Hazard가 본격적으로 작동한다. 시야, 동선, 체력 관리가 동시에 흔들린다.</p></article>
+              <article class="relationship-card"><span class="k" data-edit-key="environment-53" contenteditable="true">생존 → 복귀</span><h3 data-edit-key="environment-54" contenteditable="true">HAZARD → CAPITAL</h3><p data-edit-key="env-link-3-body" contenteditable="true">압박을 견디고 돌아오는 순간 Capital의 의미가 완성된다. 귀환은 단순 종료가 아니라 회수와 정리의 단계다.</p></article>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="dossiers">
+          <div class="dossier-layout">
+            <aside class="side-nav">
+              <h3 data-edit-key="environment-56" contenteditable="true">도감 선택</h3>
+              <button class="nav-btn active" data-dossier-target="env-capital-panel"><small>내부 허브</small>CAPITAL</button>
+              <button class="nav-btn" data-dossier-target="env-outland-panel"><small>외부 필드</small>OUTLAND</button>
+              <button class="nav-btn" data-dossier-target="env-hazard-panel"><small>위협 구조</small>HAZARD</button>
+            </aside>
+            <section class="dossier-view panel">
+              <div class="dossier-scroll">
+                <article class="dossier-panel active" id="env-capital-panel">
+                  <div class="dossier-header"><h2 data-edit-key="environment-57" contenteditable="true">CAPITAL</h2><div class="badge-stack"><span class="badge" data-edit-key="environment-58" contenteditable="true">지하 거점</span><span class="badge" data-edit-key="environment-59" contenteditable="true">정비 공간</span><span class="badge" data-edit-key="environment-60" contenteditable="true">복귀 지점</span></div><p data-edit-key="env-dossier-capital-desc" contenteditable="true">Capital은 플레이어가 숨을 고르고, 정리하고, 다음 루프를 준비하는 내부 허브다.</p></div>
+                  <div class="reference-card" data-ref-group="env-capital" data-ref-index="0">
+                    <div class="reference-toolbar">
+                      <span class="ref-label" data-edit-key="environment-62" contenteditable="true">레퍼런스 이미지</span>
+                      <div class="ref-actions">
+                        <button class="ref-btn" type="button" data-ref-action="prev">이전</button>
+                        <button class="ref-btn" type="button" data-ref-action="next">다음</button>
+                        <button class="ref-btn" type="button" data-ref-action="add">추가</button>
+                        <button class="ref-btn" type="button" data-ref-action="delete">삭제</button>
+                      </div>
+                    </div>
+                    <div class="reference-frame">
+                      <div class="reference-strip"></div>
+                      <div class="reference-placeholder">CAPITAL 레퍼런스 이미지를 이 영역에 추가</div>
+                    </div>
+                    <div class="reference-meta"><span class="ref-counter" data-edit-key="environment-63" contenteditable="true">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple="">
+                  </div>
+                  <div class="dossier-grid">
+                    <div class="feature-card"><span class="k" data-edit-key="environment-64" contenteditable="true">역할</span><h4 data-edit-key="environment-65" contenteditable="true">안전의 기준점</h4><p data-edit-key="environment-66" contenteditable="true">플레이어가 외부와 대비되는 감각을 인식하게 만드는 기준 공간이다.</p></div>
+                    <div class="feature-card"><span class="k" data-edit-key="environment-67" contenteditable="true">인상</span><h4 data-edit-key="environment-68" contenteditable="true">불완전한 안심</h4><p data-edit-key="environment-69" contenteditable="true">완전한 낙원은 아니지만, 외부와 비교했을 때 유일하게 정리 가능한 영역으로 느껴져야 한다.</p></div>
+                  </div>
+                </article>
+                <article class="dossier-panel" id="env-outland-panel" hidden="">
+                  <div class="dossier-header"><h2 data-edit-key="environment-70" contenteditable="true">OUTLAND</h2><div class="badge-stack"><span class="badge" data-edit-key="environment-71" contenteditable="true">외부 지대</span><span class="badge" data-edit-key="environment-72" contenteditable="true">탐색 구역</span><span class="badge" data-edit-key="environment-73" contenteditable="true">가변 동선</span></div><p data-edit-key="env-dossier-outland-desc" contenteditable="true">Outland는 자원과 진실이 묻혀 있는 동시에, 살아남기 위해 가장 많은 비용을 요구하는 공간이다.</p></div>
+                  <div class="reference-card" data-ref-group="env-outland" data-ref-index="0">
+                    <div class="reference-toolbar">
+                      <span class="ref-label" data-edit-key="environment-75" contenteditable="true">레퍼런스 이미지</span>
+                      <div class="ref-actions">
+                        <button class="ref-btn" type="button" data-ref-action="prev">이전</button>
+                        <button class="ref-btn" type="button" data-ref-action="next">다음</button>
+                        <button class="ref-btn" type="button" data-ref-action="add">추가</button>
+                        <button class="ref-btn" type="button" data-ref-action="delete">삭제</button>
+                      </div>
+                    </div>
+                    <div class="reference-frame">
+                      <div class="reference-strip"></div>
+                      <div class="reference-placeholder">OUTLAND 레퍼런스 이미지를 이 영역에 추가</div>
+                    </div>
+                    <div class="reference-meta"><span class="ref-counter" data-edit-key="environment-76" contenteditable="true">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple="">
+                  </div>
+                  <div class="dossier-grid">
+                    <div class="feature-card"><span class="k" data-edit-key="environment-77" contenteditable="true">역할</span><h4 data-edit-key="environment-78" contenteditable="true">행동의 무대</h4><p data-edit-key="environment-79" contenteditable="true">전투, 수집, 발견, 회수가 동시에 발생하는 핵심 플레이 공간이다.</p></div>
+                    <div class="feature-card"><span class="k" data-edit-key="environment-80" contenteditable="true">인상</span><h4 data-edit-key="environment-81" contenteditable="true">노출과 긴장</h4><p data-edit-key="environment-82" contenteditable="true">시야와 동선, 사운드와 위험이 끊임없이 플레이어를 흔들어야 한다.</p></div>
+                  </div>
+                </article>
+                <article class="dossier-panel" id="env-hazard-panel" hidden="">
+                  <div class="dossier-header"><h2 data-edit-key="environment-83" contenteditable="true">HAZARD</h2><div class="badge-stack"><span class="badge" data-edit-key="environment-84" contenteditable="true">기후 압박</span><span class="badge" data-edit-key="environment-85" contenteditable="true">독성 환경</span><span class="badge" data-edit-key="environment-86" contenteditable="true">붕괴 구조</span></div><p data-edit-key="env-dossier-hazard-desc" contenteditable="true">Hazard는 단일 개체가 아니라 외부 전체를 점유하는 복합 위협 구조다.</p></div>
+                  <div class="reference-card" data-ref-group="env-hazard" data-ref-index="0">
+                    <div class="reference-toolbar">
+                      <span class="ref-label" data-edit-key="environment-88" contenteditable="true">레퍼런스 이미지</span>
+                      <div class="ref-actions">
+                        <button class="ref-btn" type="button" data-ref-action="prev">이전</button>
+                        <button class="ref-btn" type="button" data-ref-action="next">다음</button>
+                        <button class="ref-btn" type="button" data-ref-action="add">추가</button>
+                        <button class="ref-btn" type="button" data-ref-action="delete">삭제</button>
+                      </div>
+                    </div>
+                    <div class="reference-frame">
+                      <div class="reference-strip"></div>
+                      <div class="reference-placeholder">HAZARD 레퍼런스 이미지를 이 영역에 추가</div>
+                    </div>
+                    <div class="reference-meta"><span class="ref-counter" data-edit-key="environment-89" contenteditable="true">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple="">
+                  </div>
+                  <div class="dossier-grid">
+                    <div class="feature-card"><span class="k" data-edit-key="environment-90" contenteditable="true">역할</span><h4 data-edit-key="environment-91" contenteditable="true">소모의 압박</h4><p data-edit-key="environment-92" contenteditable="true">플레이어 자원을 감소시키고 선택을 조급하게 만드는 간접적 적대 요소다.</p></div>
+                    <div class="feature-card"><span class="k" data-edit-key="environment-93" contenteditable="true">인상</span><h4 data-edit-key="environment-94" contenteditable="true">늘 존재하는 위협</h4><p data-edit-key="environment-95" contenteditable="true">적이 없더라도 Hazard 자체만으로 긴장감이 유지되어야 한다.</p></div>
+                  </div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="loop">
+          <section class="loop-flow-card">
+            <div class="loop-flow-head">
+              <div>
+                <span class="loop-flow-kicker" data-edit-key="environment-96" contenteditable="true">ENVIRONMENT LOOP</span>
+                <h2 data-edit-key="environment-97" contenteditable="true">Prepare · Explore · Survive</h2>
+                <p data-edit-key="environment-98" contenteditable="true">CAPITAL에서 준비하고, OUTLAND로 진입해 회수하며, HAZARD의 압박을 견딘 뒤 다시 CAPITAL로 복귀하는 환경 기반 생존 루프.</p>
+              </div>
+              <button class="loop-detail-btn" type="button" aria-expanded="false">루프 상세 보기</button>
+            </div>
+            <p class="loop-flow-note" hidden>환경 루프는 안전지대에서 준비하고 외부에서 소모를 감수한 뒤 다시 복귀하는 순환을 뜻한다. 중요한 것은 전투 그 자체보다도, 언제 더 들어가고 언제 돌아올지를 판단하는 리듬이다.</p>
+
+            <div class="loop-flow-track" aria-label="Capital Outland Hazard environment loop flow">
+              <div class="loop-step-card" data-step="1">
+                <strong data-edit-key="environment-99" contenteditable="true">CAPITAL · PREPARE</strong>
+                <span data-edit-key="environment-100" contenteditable="true">플레이어는 Capital에서 장비를 정비하고, 목표를 선택하며, 외부 진입을 준비한다. 이곳은 유일한 안정 기준점이다.</span>
+              </div>
+              <div class="loop-step-card" data-step="2">
+                <strong data-edit-key="environment-101" contenteditable="true">OUTLAND · ENTRY</strong>
+                <span data-edit-key="environment-102" contenteditable="true">Outland로 진입하는 순간 안전은 사라진다. 탐색, 수집, 연구, 전투가 동시에 발생하는 행동 구간이 열린다.</span>
+              </div>
+              <div class="loop-step-card" data-step="3">
+                <strong data-edit-key="environment-103" contenteditable="true">FIELD · GATHER</strong>
+                <span data-edit-key="environment-104" contenteditable="true">플레이어는 자원과 정보를 회수한다. 필요한 것을 더 얻을수록 체류 시간이 늘어나고 위험 노출도 함께 증가한다.</span>
+              </div>
+              <div class="loop-step-card" data-step="4">
+                <strong data-edit-key="environment-105" contenteditable="true">HAZARD · PRESSURE</strong>
+                <span data-edit-key="environment-106" contenteditable="true">기후, 독성 안개, 자기장, 모래폭풍, 감염체가 판단과 자원을 압박한다. 환경 자체가 적대적 시스템으로 작동한다.</span>
+              </div>
+              <div class="loop-step-card" data-step="5">
+                <strong data-edit-key="environment-107" contenteditable="true">RETURN · EXTRACTION</strong>
+                <span data-edit-key="environment-108" contenteditable="true">획득한 것을 잃지 않기 위해 복귀 판단을 내려야 한다. 귀환은 단순한 종료가 아니라 회수와 손실을 결정하는 단계다.</span>
+              </div>
+              <div class="loop-step-card" data-step="6">
+                <strong data-edit-key="environment-109" contenteditable="true">CAPITAL · RECOVER</strong>
+                <span data-edit-key="environment-110" contenteditable="true">Capital로 돌아오면 회수한 자원과 기록을 정리하고 다음 루프를 준비한다. 공간은 다시 안정으로 돌아가지만 완전하지 않다.</span>
+              </div>
+            </div>
+
+            <div class="loop-return-line" aria-hidden="true"></div>
+          </section>
+        </section>
+      </div>
+    <div class="workspace-pane" data-workspace-pane="workspace-3">
+        <section class="screen active" data-screen="overview">
+          <div class="hero">
+            <section class="panel">
+              <div class="chip">새 워크스페이스 개요</div>
+              <h1 class="hero-title" data-edit-key="workspace-workspace-3-0" contenteditable="true">ABC<div><br></div></h1>
+              <p class="sub" data-edit-key="workspace-workspace-3-1" contenteditable="true">이 워크스페이스는 새 탭 1 설정을 위한 기본 문서이다. 개요, 관계, 도감, 루프 구조를 자유롭게 편집할 수 있다.</p>
+              <div class="label-row"><span class="chip" data-edit-key="workspace-workspace-3-2" contenteditable="true">개요</span><span class="chip" data-edit-key="workspace-workspace-3-3" contenteditable="true">관계</span><span class="chip" data-edit-key="workspace-workspace-3-4" contenteditable="true">도감</span><span class="chip" data-edit-key="workspace-workspace-3-5" contenteditable="true">루프</span></div>
+            </section>
+            <aside class="hero-side">
+              <div class="stat-box"><div class="k">핵심 규칙</div><div class="v">새 워크스페이스</div><p data-edit-key="workspace-workspace-3-6" contenteditable="true">이 영역을 클릭해서 텍스트를 자유롭게 수정할 수 있다.</p></div>
+              <div class="stat-box"><div class="k">플레이어 인식</div><div class="v">편집 가능 구조</div><p data-edit-key="workspace-workspace-3-7" contenteditable="true">기본 문서 구조는 유지하면서 내용만 교체하는 방식으로 사용한다.</p></div>
+            </aside>
+          </div>
+        </section>
+        <section class="screen" data-screen="relationships">
+          <div class="relationship-cards"><article class="relationship-card"><span class="k" data-edit-key="workspace-workspace-3-8" contenteditable="true">NODE A</span><h3 data-edit-key="workspace-workspace-3-9" contenteditable="true">관계 카드 A</h3><p data-edit-key="workspace-workspace-3-10" contenteditable="true">이 영역은 새 워크스페이스 관계 설명용 기본 카드다.</p></article><article class="relationship-card"><span class="k" data-edit-key="workspace-workspace-3-11" contenteditable="true">NODE B</span><h3 data-edit-key="workspace-workspace-3-12" contenteditable="true">관계 카드 B</h3><p data-edit-key="workspace-workspace-3-13" contenteditable="true">필요한 구조에 맞게 텍스트를 수정한다.</p></article><article class="relationship-card"><span class="k" data-edit-key="workspace-workspace-3-14" contenteditable="true">NODE C</span><h3 data-edit-key="workspace-workspace-3-15" contenteditable="true">관계 카드 C</h3><p data-edit-key="workspace-workspace-3-16" contenteditable="true">새 워크스페이스의 핵심 흐름을 요약한다.</p></article></div>
+        </section>
+        <section class="screen" data-screen="dossiers">
+          <div class="dossier-layout">
+            <aside class="side-nav">
+              <h3 data-edit-key="workspace-workspace-3-17" contenteditable="true">도감 선택</h3>
+              <button class="nav-btn active" data-dossier-target="workspace-3-panel-a"><small>기본 엔트리</small>새 탭 1 A</button>
+              <button class="nav-btn" data-dossier-target="workspace-3-panel-b"><small>기본 엔트리</small>새 탭 1 B</button>
+              <button class="nav-btn" data-dossier-target="workspace-3-panel-c"><small>기본 엔트리</small>새 탭 1 C</button>
+            </aside>
+            <section class="dossier-view panel">
+              <div class="dossier-scroll">
+                <article class="dossier-panel active" id="workspace-3-panel-a">
+                  <div class="dossier-header"><h2 data-edit-key="workspace-workspace-3-18" contenteditable="true">새 탭 1 A</h2><div class="badge-stack"><span class="badge" data-edit-key="workspace-workspace-3-19" contenteditable="true">기본 태그</span><span class="badge" data-edit-key="workspace-workspace-3-20" contenteditable="true">편집 가능</span><span class="badge" data-edit-key="workspace-workspace-3-21" contenteditable="true">이미지 카드</span></div><p data-edit-key="workspace-workspace-3-22" contenteditable="true">이 엔트리는 새 워크스페이스용 기본 도감 A다.</p></div>
+                  <div class="reference-card" data-ref-group="workspace-3-a" data-ref-index="0">
+                    <div class="reference-toolbar"><span class="ref-label" data-edit-key="workspace-workspace-3-23" contenteditable="true">레퍼런스 이미지</span><div class="ref-actions"><button class="ref-btn" type="button" data-ref-action="prev">이전</button><button class="ref-btn" type="button" data-ref-action="next">다음</button><button class="ref-btn" type="button" data-ref-action="add">추가</button><button class="ref-btn" type="button" data-ref-action="delete">삭제</button></div></div>
+                    <div class="reference-frame"><div class="reference-strip"></div><div class="reference-placeholder">새 탭 1 A 레퍼런스 이미지를 이 영역에 추가</div></div>
+                    <div class="reference-meta"><span class="ref-counter" data-edit-key="workspace-workspace-3-24" contenteditable="true">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple="">
+                  </div>
+                  <div class="dossier-grid"><div class="feature-card"><span class="k" data-edit-key="workspace-workspace-3-25" contenteditable="true">역할</span><h4 data-edit-key="workspace-workspace-3-26" contenteditable="true">기본 설명 A</h4><p data-edit-key="workspace-workspace-3-27" contenteditable="true">이 영역을 클릭해서 새 엔트리 설명을 수정한다.</p></div><div class="feature-card"><span class="k" data-edit-key="workspace-workspace-3-28" contenteditable="true">인상</span><h4 data-edit-key="workspace-workspace-3-29" contenteditable="true">기본 설명</h4><p data-edit-key="workspace-workspace-3-30" contenteditable="true">레퍼런스 이미지와 함께 사용할 수 있는 기본 카드다.</p></div></div>
+                </article>
+                <article class="dossier-panel" id="workspace-3-panel-b" hidden="">
+                  <div class="dossier-header"><h2 data-edit-key="workspace-workspace-3-31" contenteditable="true">새 탭 1 B</h2><div class="badge-stack"><span class="badge" data-edit-key="workspace-workspace-3-32" contenteditable="true">기본 태그</span><span class="badge" data-edit-key="workspace-workspace-3-33" contenteditable="true">편집 가능</span><span class="badge" data-edit-key="workspace-workspace-3-34" contenteditable="true">이미지 카드</span></div><p data-edit-key="workspace-workspace-3-35" contenteditable="true">이 엔트리는 새 워크스페이스용 기본 도감 B다.</p></div>
+                  <div class="reference-card" data-ref-group="workspace-3-b" data-ref-index="0">
+                    <div class="reference-toolbar"><span class="ref-label" data-edit-key="workspace-workspace-3-36" contenteditable="true">레퍼런스 이미지</span><div class="ref-actions"><button class="ref-btn" type="button" data-ref-action="prev">이전</button><button class="ref-btn" type="button" data-ref-action="next">다음</button><button class="ref-btn" type="button" data-ref-action="add">추가</button><button class="ref-btn" type="button" data-ref-action="delete">삭제</button></div></div>
+                    <div class="reference-frame"><div class="reference-strip"></div><div class="reference-placeholder">새 탭 1 B 레퍼런스 이미지를 이 영역에 추가</div></div>
+                    <div class="reference-meta"><span class="ref-counter" data-edit-key="workspace-workspace-3-37" contenteditable="true">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple="">
+                  </div>
+                  <div class="dossier-grid"><div class="feature-card"><span class="k" data-edit-key="workspace-workspace-3-38" contenteditable="true">역할</span><h4 data-edit-key="workspace-workspace-3-39" contenteditable="true">기본 설명 B</h4><p data-edit-key="workspace-workspace-3-40" contenteditable="true">이 영역을 클릭해서 새 엔트리 설명을 수정한다.</p></div><div class="feature-card"><span class="k" data-edit-key="workspace-workspace-3-41" contenteditable="true">인상</span><h4 data-edit-key="workspace-workspace-3-42" contenteditable="true">기본 설명</h4><p data-edit-key="workspace-workspace-3-43" contenteditable="true">레퍼런스 이미지와 함께 사용할 수 있는 기본 카드다.</p></div></div>
+                </article>
+                <article class="dossier-panel" id="workspace-3-panel-c" hidden="">
+                  <div class="dossier-header"><h2 data-edit-key="workspace-workspace-3-44" contenteditable="true">새 탭 1 C</h2><div class="badge-stack"><span class="badge" data-edit-key="workspace-workspace-3-45" contenteditable="true">기본 태그</span><span class="badge" data-edit-key="workspace-workspace-3-46" contenteditable="true">편집 가능</span><span class="badge" data-edit-key="workspace-workspace-3-47" contenteditable="true">이미지 카드</span></div><p data-edit-key="workspace-workspace-3-48" contenteditable="true">이 엔트리는 새 워크스페이스용 기본 도감 C다.</p></div>
+                  <div class="reference-card" data-ref-group="workspace-3-c" data-ref-index="0">
+                    <div class="reference-toolbar"><span class="ref-label" data-edit-key="workspace-workspace-3-49" contenteditable="true">레퍼런스 이미지</span><div class="ref-actions"><button class="ref-btn" type="button" data-ref-action="prev">이전</button><button class="ref-btn" type="button" data-ref-action="next">다음</button><button class="ref-btn" type="button" data-ref-action="add">추가</button><button class="ref-btn" type="button" data-ref-action="delete">삭제</button></div></div>
+                    <div class="reference-frame"><div class="reference-strip"></div><div class="reference-placeholder">새 탭 1 C 레퍼런스 이미지를 이 영역에 추가</div></div>
+                    <div class="reference-meta"><span class="ref-counter" data-edit-key="workspace-workspace-3-50" contenteditable="true">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple="">
+                  </div>
+                  <div class="dossier-grid"><div class="feature-card"><span class="k" data-edit-key="workspace-workspace-3-51" contenteditable="true">역할</span><h4 data-edit-key="workspace-workspace-3-52" contenteditable="true">기본 설명 C</h4><p data-edit-key="workspace-workspace-3-53" contenteditable="true">이 영역을 클릭해서 새 엔트리 설명을 수정한다.</p></div><div class="feature-card"><span class="k" data-edit-key="workspace-workspace-3-54" contenteditable="true">인상</span><h4 data-edit-key="workspace-workspace-3-55" contenteditable="true">기본 설명</h4><p data-edit-key="workspace-workspace-3-56" contenteditable="true">레퍼런스 이미지와 함께 사용할 수 있는 기본 카드다.</p></div></div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </section>
+        <section class="screen" data-screen="loop">
+          <div class="panel"><div class="section-head"><h2 data-edit-key="workspace-workspace-3-57" contenteditable="true">루프 구조</h2><span class="caption" data-edit-key="workspace-workspace-3-58" contenteditable="true">기본 구조</span></div><p data-edit-key="workspace-workspace-3-59" contenteditable="true">새 탭의 루프 구조를 여기서 정리한다.</p></div>
+        </section></div></main>
+  </div>
+      </div>
+    </div>
+
+  <div class="lightbox" id="reference-lightbox" aria-hidden="true">
+    <div class="lightbox-stage">
+      <button class="lightbox-nav" id="lightbox-prev" type="button" aria-label="이전 이미지">‹</button>
+      <img class="lightbox-image" id="lightbox-image" alt="Reference preview">
+      <button class="lightbox-nav" id="lightbox-next" type="button" aria-label="다음 이미지">›</button>
+      <div class="lightbox-meta" id="lightbox-meta">0 / 0</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'character-codex-editable-v2';
+      const REF_STORAGE_KEY = 'character-codex-reference-images-v1';
+      const WORKSPACE_STORAGE_KEY = 'character-codex-workspaces-v1';
+      const LAST_EXPORT_STORAGE_KEY = 'character-codex-last-export-html-v1';
+
+      let lightboxState = { group: '', index: 0 };
+      const workspaceMeta = {
+        character: {
+          brandEyebrow: 'Capital 기록',
+          brandTitle: 'Character Codex',
+          statusTitle: '데이터 동기화',
+          statusSub: '캐릭터 워크스페이스'
+        },
+        environment: {
+          brandEyebrow: 'Outland 환경',
+          brandTitle: 'Environment Codex',
+          statusTitle: '데이터 동기화',
+          statusSub: '환경 워크스페이스'
+        }
+      };
+
+      function byId(id) {
+        return document.getElementById(id);
+      }
+
+      function getWorkspaceStore() {
+        try {
+          const raw = localStorage.getItem(WORKSPACE_STORAGE_KEY);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          console.error('워크스페이스 데이터 복원 실패', error);
+          return [];
+        }
+      }
+
+      function saveWorkspaceStore(list) {
+        localStorage.setItem(WORKSPACE_STORAGE_KEY, JSON.stringify(list));
+      }
+
+      function getWorkspaceLabel(target) {
+        return document.querySelector(`.workspace-tab[data-workspace-target="${target}"]`)?.textContent?.trim() || 'Workspace';
+      }
+
+      function initTabs() {
+        const tabButtons = Array.from(document.querySelectorAll('.tab-btn[data-screen-target]'));
+        if (!tabButtons.length) return;
+
+        tabButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const target = button.dataset.screenTarget;
+            const activePane = document.querySelector('.workspace-pane.active');
+            if (!activePane || !target) return;
+            const screens = Array.from(activePane.querySelectorAll('.screen[data-screen]'));
+            const targetScreen = activePane.querySelector(`.screen[data-screen="${target}"]`);
+            if (!targetScreen) return;
+
+            tabButtons.forEach((btn) => btn.classList.remove('active'));
+            screens.forEach((screen) => screen.classList.remove('active'));
+            button.classList.add('active');
+            targetScreen.classList.add('active');
+
+            if (target === 'dossiers') {
+              activateFirstDossierInPane(activePane);
+            }
+          });
+        });
+      }
+
+      function syncTopTabsForPane(pane) {
+        const screens = Array.from(pane.querySelectorAll('.screen[data-screen]'));
+        const activeScreen = screens.find((screen) => screen.classList.contains('active')) || screens[0];
+        const target = activeScreen ? activeScreen.dataset.screen : 'overview';
+        document.querySelectorAll('.tab-btn[data-screen-target]').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.screenTarget === target);
+        });
+      }
+
+      function updateWorkspaceHeader(target) {
+        const brandEyebrow = byId('brand-eyebrow-text');
+        const brandTitle = byId('brand-title-text');
+        const statusTitle = byId('status-title-text');
+        const statusSub = byId('status-sub-text');
+        if (!brandEyebrow || !brandTitle || !statusTitle || !statusSub) return;
+
+        const fallbackName = getWorkspaceLabel(target);
+        const meta = workspaceMeta[target] || {
+          brandEyebrow: `${fallbackName} 문서`,
+          brandTitle: `${fallbackName} Codex`,
+          statusTitle: '데이터 동기화',
+          statusSub: `${fallbackName} Workspace`
+        };
+
+        brandEyebrow.textContent = meta.brandEyebrow;
+        brandTitle.textContent = meta.brandTitle;
+        statusTitle.textContent = meta.statusTitle;
+        statusSub.textContent = meta.statusSub;
+      }
+
+      function makePaneEditable(pane, prefix) {
+        const editableSelectors = 'h1, h2, h3, h4, p, strong, span, td, th';
+        pane.querySelectorAll(editableSelectors).forEach((node, index) => {
+          if (node.closest('script') || node.closest('style')) return;
+          if (!node.hasAttribute('data-edit-key')) {
+            node.setAttribute('data-edit-key', `${prefix}-${index}`);
+          }
+          node.setAttribute('contenteditable', 'true');
+        });
+      }
+
+      function createWorkspacePane(name, key) {
+        const pane = document.createElement('div');
+        pane.className = 'workspace-pane';
+        pane.dataset.workspacePane = key;
+        pane.innerHTML = `
+        <section class="screen active" data-screen="overview">
+          <div class="hero">
+            <section class="panel">
+              <div class="chip">새 워크스페이스 개요</div>
+              <h1 class="hero-title">${name.toUpperCase()}</h1>
+              <p class="sub">이 워크스페이스는 ${name} 설정을 위한 기본 문서이다. 개요, 관계, 도감, 루프 구조를 자유롭게 편집할 수 있다.</p>
+              <div class="label-row"><span class="chip">개요</span><span class="chip">관계</span><span class="chip">도감</span><span class="chip">루프</span></div>
+            </section>
+            <aside class="hero-side">
+              <div class="stat-box"><div class="k">핵심 규칙</div><div class="v">새 워크스페이스</div><p>이 영역을 클릭해서 텍스트를 자유롭게 수정할 수 있다.</p></div>
+              <div class="stat-box"><div class="k">플레이어 인식</div><div class="v">편집 가능 구조</div><p>기본 문서 구조는 유지하면서 내용만 교체하는 방식으로 사용한다.</p></div>
+            </aside>
+          </div>
+        </section>
+        <section class="screen" data-screen="relationships">
+          <div class="relationship-cards"><article class="relationship-card"><span class="k">NODE A</span><h3>관계 카드 A</h3><p>이 영역은 새 워크스페이스 관계 설명용 기본 카드다.</p></article><article class="relationship-card"><span class="k">NODE B</span><h3>관계 카드 B</h3><p>필요한 구조에 맞게 텍스트를 수정한다.</p></article><article class="relationship-card"><span class="k">NODE C</span><h3>관계 카드 C</h3><p>새 워크스페이스의 핵심 흐름을 요약한다.</p></article></div>
+        </section>
+        <section class="screen" data-screen="dossiers">
+          <div class="dossier-layout">
+            <aside class="side-nav">
+              <h3>도감 선택</h3>
+              <button class="nav-btn active" data-dossier-target="${key}-panel-a"><small>기본 엔트리</small>${name.toUpperCase()} A</button>
+              <button class="nav-btn" data-dossier-target="${key}-panel-b"><small>기본 엔트리</small>${name.toUpperCase()} B</button>
+              <button class="nav-btn" data-dossier-target="${key}-panel-c"><small>기본 엔트리</small>${name.toUpperCase()} C</button>
+            </aside>
+            <section class="dossier-view panel">
+              <div class="dossier-scroll">
+                <article class="dossier-panel active" id="${key}-panel-a">
+                  <div class="dossier-header"><h2>${name.toUpperCase()} A</h2><div class="badge-stack"><span class="badge">기본 태그</span><span class="badge">편집 가능</span><span class="badge">이미지 카드</span></div><p>이 엔트리는 새 워크스페이스용 기본 도감 A다.</p></div>
+                  <div class="reference-card" data-ref-group="${key}-a" data-ref-index="0">
+                    <div class="reference-toolbar"><span class="ref-label">레퍼런스 이미지</span><div class="ref-actions"><button class="ref-btn" type="button" data-ref-action="prev">이전</button><button class="ref-btn" type="button" data-ref-action="next">다음</button><button class="ref-btn" type="button" data-ref-action="add">추가</button><button class="ref-btn" type="button" data-ref-action="delete">삭제</button></div></div>
+                    <div class="reference-frame"><div class="reference-strip"></div><div class="reference-placeholder">${name.toUpperCase()} A 레퍼런스 이미지를 이 영역에 추가</div></div>
+                    <div class="reference-meta"><span class="ref-counter">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple />
+                  </div>
+                  <div class="dossier-grid"><div class="feature-card"><span class="k">역할</span><h4>기본 설명 A</h4><p>이 영역을 클릭해서 새 엔트리 설명을 수정한다.</p></div><div class="feature-card"><span class="k">인상</span><h4>기본 설명</h4><p>레퍼런스 이미지와 함께 사용할 수 있는 기본 카드다.</p></div></div>
+                </article>
+                <article class="dossier-panel" id="${key}-panel-b" hidden>
+                  <div class="dossier-header"><h2>${name.toUpperCase()} B</h2><div class="badge-stack"><span class="badge">기본 태그</span><span class="badge">편집 가능</span><span class="badge">이미지 카드</span></div><p>이 엔트리는 새 워크스페이스용 기본 도감 B다.</p></div>
+                  <div class="reference-card" data-ref-group="${key}-b" data-ref-index="0">
+                    <div class="reference-toolbar"><span class="ref-label">레퍼런스 이미지</span><div class="ref-actions"><button class="ref-btn" type="button" data-ref-action="prev">이전</button><button class="ref-btn" type="button" data-ref-action="next">다음</button><button class="ref-btn" type="button" data-ref-action="add">추가</button><button class="ref-btn" type="button" data-ref-action="delete">삭제</button></div></div>
+                    <div class="reference-frame"><div class="reference-strip"></div><div class="reference-placeholder">${name.toUpperCase()} B 레퍼런스 이미지를 이 영역에 추가</div></div>
+                    <div class="reference-meta"><span class="ref-counter">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple />
+                  </div>
+                  <div class="dossier-grid"><div class="feature-card"><span class="k">역할</span><h4>기본 설명 B</h4><p>이 영역을 클릭해서 새 엔트리 설명을 수정한다.</p></div><div class="feature-card"><span class="k">인상</span><h4>기본 설명</h4><p>레퍼런스 이미지와 함께 사용할 수 있는 기본 카드다.</p></div></div>
+                </article>
+                <article class="dossier-panel" id="${key}-panel-c" hidden>
+                  <div class="dossier-header"><h2>${name.toUpperCase()} C</h2><div class="badge-stack"><span class="badge">기본 태그</span><span class="badge">편집 가능</span><span class="badge">이미지 카드</span></div><p>이 엔트리는 새 워크스페이스용 기본 도감 C다.</p></div>
+                  <div class="reference-card" data-ref-group="${key}-c" data-ref-index="0">
+                    <div class="reference-toolbar"><span class="ref-label">레퍼런스 이미지</span><div class="ref-actions"><button class="ref-btn" type="button" data-ref-action="prev">이전</button><button class="ref-btn" type="button" data-ref-action="next">다음</button><button class="ref-btn" type="button" data-ref-action="add">추가</button><button class="ref-btn" type="button" data-ref-action="delete">삭제</button></div></div>
+                    <div class="reference-frame"><div class="reference-strip"></div><div class="reference-placeholder">${name.toUpperCase()} C 레퍼런스 이미지를 이 영역에 추가</div></div>
+                    <div class="reference-meta"><span class="ref-counter">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple />
+                  </div>
+                  <div class="dossier-grid"><div class="feature-card"><span class="k">역할</span><h4>기본 설명 C</h4><p>이 영역을 클릭해서 새 엔트리 설명을 수정한다.</p></div><div class="feature-card"><span class="k">인상</span><h4>기본 설명</h4><p>레퍼런스 이미지와 함께 사용할 수 있는 기본 카드다.</p></div></div>
+                </article>
+              </div>
+            </section>
+          </div>
+        </section>
+        <section class="screen" data-screen="loop">
+          <div class="panel"><div class="section-head"><h2>루프 구조</h2><span class="caption">기본 구조</span></div><p>새 탭의 루프 구조를 여기서 정리한다.</p></div>
+        </section>`;
+        makePaneEditable(pane, `workspace-${key}`);
+        return pane;
+      }
+
+      function initWorkspaceTabs() {
+        const addButton = byId('add-workspace-btn');
+        const container = document.querySelector('main');
+        if (!addButton || !container) return;
+
+        const stored = getWorkspaceStore();
+        stored.forEach((item) => {
+          if (!item || !item.key || !item.name) return;
+          if (document.querySelector(`.workspace-pane[data-workspace-pane="${item.key}"]`)) return;
+
+          workspaceMeta[item.key] = {
+            brandEyebrow: `${item.name} 문서`,
+            brandTitle: `${item.name} Codex`,
+            statusTitle: '데이터 동기화',
+            statusSub: `${item.name} 워크스페이스`
+          };
+
+          const pane = createWorkspacePane(item.name, item.key);
+          container.appendChild(pane);
+
+          const newButton = document.createElement('button');
+          newButton.className = 'workspace-tab';
+          newButton.type = 'button';
+          newButton.dataset.workspaceTarget = item.key;
+          newButton.textContent = item.name;
+          addButton.parentElement.insertBefore(newButton, addButton);
+        });
+
+        const activateWorkspace = (target) => {
+          const nextPane = document.querySelector(`.workspace-pane[data-workspace-pane="${target}"]`);
+          if (!nextPane) return;
+          document.querySelectorAll('.workspace-pane[data-workspace-pane]').forEach((pane) => pane.classList.remove('active'));
+          document.querySelectorAll('.workspace-tab[data-workspace-target]').forEach((btn) => btn.classList.toggle('active', btn.dataset.workspaceTarget === target));
+          nextPane.classList.add('active');
+          syncTopTabsForPane(nextPane);
+          updateWorkspaceHeader(target);
+          const activeScreen = nextPane.querySelector('.screen.active[data-screen]');
+          if (activeScreen && activeScreen.dataset.screen === 'dossiers') {
+            activateFirstDossierInPane(nextPane);
+          }
+        };
+
+        const bindWorkspaceButton = (button) => {
+          button.addEventListener('click', () => activateWorkspace(button.dataset.workspaceTarget));
+          button.addEventListener('dblclick', () => {
+            const key = button.dataset.workspaceTarget;
+            if (!key || key === 'character' || key === 'environment') return;
+            const nextName = window.prompt('탭 이름을 입력하세요.', button.textContent?.trim() || '새 탭');
+            if (!nextName) return;
+            const safeName = nextName.trim();
+            if (!safeName) return;
+            button.textContent = safeName;
+            workspaceMeta[key] = {
+              brandEyebrow: `${safeName} 문서`,
+              brandTitle: `${safeName} Codex`,
+              statusTitle: '데이터 동기화',
+              statusSub: `${safeName} 워크스페이스`
+            };
+            const list = getWorkspaceStore().map((item) => item.key === key ? { ...item, name: safeName } : item);
+            saveWorkspaceStore(list);
+            if (button.classList.contains('active')) {
+              updateWorkspaceHeader(key);
+            }
+          });
+        };
+
+        document.querySelectorAll('.workspace-tab[data-workspace-target]').forEach(bindWorkspaceButton);
+
+        addButton.addEventListener('click', () => {
+          const count = document.querySelectorAll('.workspace-pane[data-workspace-pane]').length + 1;
+          const key = `workspace-${count}`;
+          const name = `새 탭 ${count - 2}`;
+          workspaceMeta[key] = {
+            brandEyebrow: `${name} 문서`,
+            brandTitle: `${name} Codex`,
+            statusTitle: '데이터 동기화',
+            statusSub: `${name} 워크스페이스`
+          };
+          const pane = createWorkspacePane(name, key);
+          container.appendChild(pane);
+
+          const newButton = document.createElement('button');
+          newButton.className = 'workspace-tab';
+          newButton.type = 'button';
+          newButton.dataset.workspaceTarget = key;
+          newButton.textContent = name;
+          addButton.parentElement.insertBefore(newButton, addButton);
+          bindWorkspaceButton(newButton);
+
+          const list = getWorkspaceStore();
+          list.push({ key, name });
+          saveWorkspaceStore(list);
+
+          initDossiers();
+          initReferenceCards();
+          activateWorkspace(key);
+        });
+
+        activateWorkspace('character');
+      }
+
+      function initRelationshipPanel() {
+        const relNodes = Array.from(document.querySelectorAll('.ring-node[data-rel], .node[data-rel]'));
+        const relPanels = Array.from(document.querySelectorAll('[data-rel-panel]'));
+        const relationshipLoop = byId('relationship-loop');
+        const relationshipDetail = byId('relationship-detail');
+        if (!relNodes.length || !relPanels.length) return;
+
+        const activate = (target) => {
+          if (!target) return;
+          relNodes.forEach((n) => n.classList.remove('active'));
+          relPanels.forEach((panel) => {
+            panel.hidden = true;
+            panel.classList.remove('active');
+          });
+
+          const activeNode = relNodes.find((n) => n.dataset.rel === target);
+          const activePanel = relPanels.find((p) => p.dataset.relPanel === target);
+
+          if (activeNode) activeNode.classList.add('active');
+          if (activePanel) {
+            activePanel.hidden = false;
+            activePanel.classList.add('active');
+          }
+
+          if (relationshipLoop) {
+            relationshipLoop.classList.remove('theme-aria', 'theme-trace', 'theme-vault');
+            relationshipLoop.classList.add(`theme-${target}`);
+          }
+          if (relationshipDetail) {
+            relationshipDetail.classList.remove('theme-aria', 'theme-trace', 'theme-vault');
+            relationshipDetail.classList.add(`theme-${target}`);
+          }
+        };
+
+        relNodes.forEach((node) => {
+          node.addEventListener('click', () => activate(node.dataset.rel));
+          node.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              activate(node.dataset.rel);
+            }
+          });
+        });
+
+        activate('aria');
+      }
+
+      function activateDossierInPane(pane, target) {
+        if (!pane || !target) return;
+        const buttons = Array.from(pane.querySelectorAll('.nav-btn[data-dossier-target]'));
+        const panels = Array.from(pane.querySelectorAll('.dossier-panel'));
+        const activePanel = byId(target);
+        if (!buttons.length || !panels.length || !activePanel || !pane.contains(activePanel)) return;
+
+        buttons.forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.dossierTarget === target);
+        });
+        panels.forEach((panel) => {
+          panel.classList.remove('active');
+          panel.hidden = true;
+        });
+        activePanel.hidden = false;
+        activePanel.classList.add('active');
+      }
+
+      function activateFirstDossierInPane(pane) {
+        if (!pane) return;
+        const firstButton = pane.querySelector('.nav-btn[data-dossier-target]');
+        if (!firstButton) return;
+        activateDossierInPane(pane, firstButton.dataset.dossierTarget);
+      }
+
+      function initDossiers() {
+        const panes = Array.from(document.querySelectorAll('.workspace-pane[data-workspace-pane]'));
+        panes.forEach((pane) => {
+          const buttons = Array.from(pane.querySelectorAll('.nav-btn[data-dossier-target]'));
+          if (!buttons.length) return;
+
+          buttons.forEach((button) => {
+            button.addEventListener('click', () => {
+              activateDossierInPane(pane, button.dataset.dossierTarget);
+            });
+          });
+
+          activateFirstDossierInPane(pane);
+        });
+      }
+
+      function initLoopDetailButtons() {
+        document.querySelectorAll('.loop-flow-card').forEach((card) => {
+          const button = card.querySelector('.loop-detail-btn');
+          const note = card.querySelector('.loop-flow-note');
+          if (!(button instanceof HTMLButtonElement) || !(note instanceof HTMLElement)) return;
+
+          button.addEventListener('click', () => {
+            const isHidden = note.hasAttribute('hidden');
+            if (isHidden) {
+              note.removeAttribute('hidden');
+              button.textContent = '상세 닫기';
+              button.setAttribute('aria-expanded', 'true');
+            } else {
+              note.setAttribute('hidden', '');
+              button.textContent = '루프 상세 보기';
+              button.setAttribute('aria-expanded', 'false');
+            }
+          });
+        });
+      }
+
+      function initEditable() {
+        const editableNodes = Array.from(document.querySelectorAll('[data-edit-key]'));
+        editableNodes.forEach((node) => node.setAttribute('contenteditable', 'true'));
+        document.querySelectorAll('.workspace-pane[data-workspace-pane]').forEach((pane) => {
+          makePaneEditable(pane, pane.dataset.workspacePane || 'workspace');
+        });
+      }
+
+      function readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ''));
+          reader.onerror = () => reject(reader.error || new Error('파일 읽기 실패'));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function loadImage(src) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error('이미지 로드 실패'));
+          img.src = src;
+        });
+      }
+
+      async function optimizeImageFile(file) {
+        const dataUrl = await readFileAsDataURL(file);
+        const img = await loadImage(dataUrl);
+        const maxWidth = 1600;
+        const scale = Math.min(1, maxWidth / Math.max(1, img.width));
+        const width = Math.max(1, Math.round(img.width * scale));
+        const height = Math.max(1, Math.round(img.height * scale));
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return dataUrl;
+        ctx.drawImage(img, 0, 0, width, height);
+        return canvas.toDataURL('image/webp', 0.82);
+      }
+
+      function getReferenceStore() {
+        try {
+          const raw = localStorage.getItem(REF_STORAGE_KEY);
+          const parsed = raw ? JSON.parse(raw) : {};
+          return parsed && typeof parsed === 'object' ? parsed : {};
+        } catch (error) {
+          console.error('레퍼런스 데이터 복원 실패', error);
+          return {};
+        }
+      }
+
+      function saveReferenceStore(store) {
+        try {
+          localStorage.setItem(REF_STORAGE_KEY, JSON.stringify(store));
+          return true;
+        } catch (error) {
+          console.error('레퍼런스 저장 실패', error);
+          alert('이미지 저장 용량이 부족합니다. 이미지 크기를 줄이거나 일부 이미지를 삭제해 주세요.');
+          return false;
+        }
+      }
+
+      function renderReferenceCard(card, store) {
+        const group = card.dataset.refGroup;
+        const strip = card.querySelector('.reference-strip');
+        const placeholder = card.querySelector('.reference-placeholder');
+        const counter = card.querySelector('.ref-counter');
+        if (!group || !strip || !placeholder || !counter) return;
+
+        const items = Array.isArray(store[group]) ? store[group] : [];
+        let index = Number(card.dataset.refIndex || 0);
+        if (!Number.isFinite(index) || index < 0) index = 0;
+
+        if (items.length === 0) {
+          card.dataset.refIndex = '0';
+          strip.innerHTML = '';
+          placeholder.hidden = false;
+          counter.textContent = '0 / 0';
+          return;
+        }
+
+        if (index >= items.length) index = items.length - 1;
+        card.dataset.refIndex = String(index);
+        placeholder.hidden = true;
+
+        strip.innerHTML = '';
+        items.forEach((item, realIndex) => {
+          const thumb = document.createElement('button');
+          thumb.type = 'button';
+          thumb.className = `reference-thumb${realIndex === index ? ' active' : ''}`;
+          thumb.dataset.refThumbIndex = String(realIndex);
+          thumb.setAttribute('aria-label', `${group} reference ${realIndex + 1}`);
+
+          const img = document.createElement('img');
+          img.src = item.src;
+          img.alt = item.name || `${group} reference ${realIndex + 1}`;
+          thumb.appendChild(img);
+
+          const badge = document.createElement('span');
+          badge.className = 'reference-thumb-index';
+          badge.textContent = `${realIndex + 1}`;
+          thumb.appendChild(badge);
+
+          strip.appendChild(thumb);
+        });
+
+        counter.textContent = `${index + 1} / ${items.length}`;
+
+        const activeThumb = strip.querySelector(`.reference-thumb[data-ref-thumb-index="${index}"]`);
+        if (activeThumb instanceof HTMLElement) {
+          activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
+      }
+
+      function openLightbox(group, index) {
+        const lightbox = byId('reference-lightbox');
+        const image = byId('lightbox-image');
+        const meta = byId('lightbox-meta');
+        if (!lightbox || !image || !meta) return;
+
+        const store = getReferenceStore();
+        const items = Array.isArray(store[group]) ? store[group] : [];
+        if (!items.length) return;
+
+        let safeIndex = index;
+        if (!Number.isFinite(safeIndex) || safeIndex < 0) safeIndex = 0;
+        if (safeIndex >= items.length) safeIndex = items.length - 1;
+
+        lightboxState = { group, index: safeIndex };
+        image.src = items[safeIndex].src;
+        image.alt = items[safeIndex].name || `${group} reference ${safeIndex + 1}`;
+        meta.textContent = `${safeIndex + 1} / ${items.length}`;
+        lightbox.classList.add('active');
+        lightbox.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeLightbox() {
+        const lightbox = byId('reference-lightbox');
+        const image = byId('lightbox-image');
+        if (!lightbox || !image) return;
+        lightbox.classList.remove('active');
+        lightbox.setAttribute('aria-hidden', 'true');
+        image.removeAttribute('src');
+      }
+
+      function stepLightbox(direction) {
+        const store = getReferenceStore();
+        const items = Array.isArray(store[lightboxState.group]) ? store[lightboxState.group] : [];
+        if (!items.length) return;
+        const nextIndex = (lightboxState.index + direction + items.length) % items.length;
+        openLightbox(lightboxState.group, nextIndex);
+      }
+
+      function initLightbox() {
+        const lightbox = byId('reference-lightbox');
+        const prevBtn = byId('lightbox-prev');
+        const nextBtn = byId('lightbox-next');
+        const image = byId('lightbox-image');
+        if (!lightbox || !prevBtn || !nextBtn || !image) return;
+
+        prevBtn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          stepLightbox(-1);
+        });
+
+        nextBtn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          stepLightbox(1);
+        });
+
+        image.addEventListener('click', () => {
+          closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (event) => {
+          if (event.target === lightbox) {
+            closeLightbox();
+          }
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (!lightbox.classList.contains('active')) return;
+          if (event.key === 'Escape') closeLightbox();
+          if (event.key === 'ArrowLeft') stepLightbox(-1);
+          if (event.key === 'ArrowRight') stepLightbox(1);
+        });
+      }
+
+      function initReferenceCards() {
+        const cards = Array.from(document.querySelectorAll('.reference-card[data-ref-group]'));
+        if (!cards.length) return;
+
+        const store = getReferenceStore();
+        cards.forEach((card) => renderReferenceCard(card, store));
+
+        cards.forEach((card) => {
+          const fileInput = card.querySelector('.ref-file-input');
+          card.addEventListener('click', async (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+
+            const thumb = target.closest('[data-ref-thumb-index]');
+            if (thumb instanceof HTMLElement) {
+              const nextIndex = Number(thumb.dataset.refThumbIndex || 0);
+              card.dataset.refIndex = String(nextIndex);
+              renderReferenceCard(card, getReferenceStore());
+              const group = card.dataset.refGroup;
+              if (group) openLightbox(group, nextIndex);
+              return;
+            }
+
+            const actionButton = target.closest('[data-ref-action]');
+            if (!(actionButton instanceof HTMLElement)) return;
+
+            const action = actionButton.dataset.refAction;
+            const group = card.dataset.refGroup;
+            if (!group) return;
+
+            const currentStore = getReferenceStore();
+            const items = Array.isArray(currentStore[group]) ? currentStore[group] : [];
+            let index = Number(card.dataset.refIndex || 0);
+            if (!Number.isFinite(index) || index < 0) index = 0;
+
+            if (action === 'prev') {
+              if (!items.length) return;
+              const strip = card.querySelector('.reference-strip');
+              if (strip instanceof HTMLElement) {
+                strip.scrollBy({ left: -(strip.clientWidth * 0.8), behavior: 'smooth' });
+              }
+              index = Math.max(0, index - 1);
+              card.dataset.refIndex = String(index);
+              renderReferenceCard(card, currentStore);
+              return;
+            }
+
+            if (action === 'next') {
+              if (!items.length) return;
+              const strip = card.querySelector('.reference-strip');
+              if (strip instanceof HTMLElement) {
+                strip.scrollBy({ left: strip.clientWidth * 0.8, behavior: 'smooth' });
+              }
+              index = Math.min(items.length - 1, index + 1);
+              card.dataset.refIndex = String(index);
+              renderReferenceCard(card, currentStore);
+              return;
+            }
+
+            if (action === 'add') {
+              if (fileInput) fileInput.click();
+              return;
+            }
+
+            if (action === 'delete') {
+              if (!items.length) return;
+              items.splice(index, 1);
+              currentStore[group] = items;
+              saveReferenceStore(currentStore);
+              if (index >= items.length) index = Math.max(0, items.length - 1);
+              card.dataset.refIndex = String(index);
+              renderReferenceCard(card, currentStore);
+            }
+          });
+
+          if (fileInput) {
+            fileInput.addEventListener('change', async () => {
+              const group = card.dataset.refGroup;
+              if (!group || !fileInput.files || !fileInput.files.length) return;
+              const currentStore = getReferenceStore();
+              const items = Array.isArray(currentStore[group]) ? currentStore[group] : [];
+              const files = Array.from(fileInput.files);
+              const dataList = await Promise.all(files.map(async (file) => ({
+                name: file.name,
+                src: await optimizeImageFile(file)
+              })));
+              currentStore[group] = [...items, ...dataList];
+              const saved = saveReferenceStore(currentStore);
+              if (saved) {
+                card.dataset.refIndex = String(Math.max(0, currentStore[group].length - 1));
+                renderReferenceCard(card, currentStore);
+              }
+              fileInput.value = '';
+            });
+          }
+        });
+      }
+
+      function saveEditableContent() {
+        const payload = {};
+        document.querySelectorAll('[data-edit-key]').forEach((node) => {
+          payload[node.dataset.editKey] = node.innerHTML;
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      }
+
+      function loadEditableContent() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        try {
+          const payload = JSON.parse(raw);
+          Object.entries(payload).forEach(([key, value]) => {
+            const node = document.querySelector(`[data-edit-key="${key}"]`);
+            if (node && typeof value === 'string') {
+              node.innerHTML = value;
+            }
+          });
+        } catch (error) {
+          console.error('저장 데이터 복원 실패', error);
+        }
+      }
+
+      function initSave() {
+        const saveBtn = byId('save-btn');
+        const exportBtn = byId('export-btn');
+        const saveStatus = byId('save-status');
+        if (!saveBtn || !saveStatus) return;
+
+        const markDirty = () => { saveStatus.textContent = '미저장'; };
+
+        let autoTimer = null;
+        const autoSave = () => {
+          if (autoTimer) clearTimeout(autoTimer);
+          autoTimer = setTimeout(() => {
+            saveEditableContent();
+            saveStatus.textContent = '자동 저장';
+          }, 800);
+        };
+
+        document.addEventListener('input', (event) => {
+          if (event.target instanceof HTMLElement && event.target.matches('[data-edit-key]')) {
+            markDirty();
+            autoSave();
+          }
+        });
+
+        saveBtn.addEventListener('click', () => {
+          saveEditableContent();
+          saveStatus.textContent = '저장 완료';
+        });
+
+        function createExportFileName() {
+          const now = new Date();
+          const pad = (n) => String(n).padStart(2, '0');
+          const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+          return `character_codex_${stamp}.html`;
+        }
+
+        function getCleanExportHtml() {
+          saveEditableContent();
+          const clone = document.documentElement.cloneNode(true);
+          clone.querySelectorAll('#export-modal').forEach((node) => node.remove());
+          clone.querySelectorAll('#history-panel').forEach((node) => node.remove());
+          clone.querySelectorAll('.lightbox.active').forEach((node) => node.classList.remove('active'));
+          return '<!DOCTYPE html>\n' + clone.outerHTML;
+        }
+
+        function ensureExportModal() {
+          let modal = byId('export-modal');
+          if (modal) return modal;
+
+          modal = document.createElement('div');
+          modal.id = 'export-modal';
+          modal.style.position = 'fixed';
+          modal.style.inset = '0';
+          modal.style.zIndex = '100000';
+          modal.style.display = 'none';
+          modal.style.alignItems = 'center';
+          modal.style.justifyContent = 'center';
+          modal.style.padding = '24px';
+          modal.style.background = 'rgba(244,240,232,.92)';
+
+          const box = document.createElement('div');
+          box.style.width = 'min(880px, 100%)';
+          box.style.maxHeight = '86vh';
+          box.style.overflow = 'auto';
+          box.style.background = '#fbf8f2';
+          box.style.border = '1px solid rgba(17,17,15,.18)';
+          box.style.padding = '18px';
+          box.style.color = '#11110f';
+          box.style.boxShadow = '0 18px 70px rgba(0,0,0,.16)';
+
+          const title = document.createElement('h2');
+          title.textContent = 'HTML 내보내기';
+          title.style.margin = '0 0 8px';
+          title.style.fontFamily = 'var(--font-display)';
+          title.style.fontWeight = '400';
+
+          const desc = document.createElement('p');
+          desc.textContent = '내보내기 버튼을 누르면 현재 HTML이 자동 저장됩니다. 다운로드가 차단되면 아래 코드를 전체 선택해서 .html 파일로 저장하세요.';
+          desc.style.margin = '0 0 14px';
+          desc.style.color = 'rgba(17,17,15,.66)';
+
+          const filenameLine = document.createElement('div');
+          filenameLine.id = 'export-filename-line';
+          filenameLine.style.margin = '0 0 12px';
+          filenameLine.style.fontFamily = 'monospace';
+          filenameLine.style.fontSize = '12px';
+          filenameLine.style.color = 'rgba(17,17,15,.56)';
+
+          const actions = document.createElement('div');
+          actions.style.display = 'flex';
+          actions.style.flexWrap = 'wrap';
+          actions.style.gap = '8px';
+          actions.style.marginBottom = '12px';
+
+          const makeButton = (label) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = label;
+            button.style.padding = '9px 12px';
+            button.style.border = '1px solid rgba(17,17,15,.18)';
+            button.style.background = 'transparent';
+            button.style.color = '#11110f';
+            button.style.cursor = 'pointer';
+            return button;
+          };
+
+          const downloadLink = document.createElement('a');
+          downloadLink.id = 'export-download-link';
+          downloadLink.textContent = 'HTML 다운로드';
+          downloadLink.style.display = 'inline-block';
+          downloadLink.style.padding = '9px 12px';
+          downloadLink.style.border = '1px solid rgba(17,17,15,.18)';
+          downloadLink.style.color = '#11110f';
+          downloadLink.style.textDecoration = 'none';
+          downloadLink.href = '#';
+
+          const saveAsBtn = makeButton('파일로 저장');
+          saveAsBtn.id = 'export-save-as-btn';
+
+          const copyBtn = makeButton('HTML 복사');
+          copyBtn.id = 'export-copy-btn';
+
+          const selectBtn = makeButton('전체 선택');
+          selectBtn.id = 'export-select-btn';
+
+          const closeBtn = makeButton('닫기');
+          closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+          });
+
+          actions.appendChild(downloadLink);
+          actions.appendChild(saveAsBtn);
+          actions.appendChild(copyBtn);
+          actions.appendChild(selectBtn);
+          actions.appendChild(closeBtn);
+
+          const textarea = document.createElement('textarea');
+          textarea.id = 'export-html-output';
+          textarea.readOnly = true;
+          textarea.style.width = '100%';
+          textarea.style.height = '420px';
+          textarea.style.padding = '12px';
+          textarea.style.border = '1px solid rgba(17,17,15,.14)';
+          textarea.style.background = '#f4f0e8';
+          textarea.style.color = '#11110f';
+          textarea.style.fontFamily = 'monospace';
+          textarea.style.fontSize = '11px';
+          textarea.style.lineHeight = '1.45';
+
+          box.appendChild(title);
+          box.appendChild(desc);
+          box.appendChild(filenameLine);
+          box.appendChild(actions);
+          box.appendChild(textarea);
+          modal.appendChild(box);
+          document.body.appendChild(modal);
+          return modal;
+        }
+
+        async function saveAsFile(htmlContent, filename) {
+          if (!window.showSaveFilePicker) throw new Error('File picker is not available');
+          const handle = await window.showSaveFilePicker({
+            suggestedName: filename,
+            types: [{ description: 'HTML file', accept: { 'text/html': ['.html'] } }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(htmlContent);
+          await writable.close();
+        }
+
+        if (exportBtn) {
+          exportBtn.addEventListener('click', () => {
+            const filename = createExportFileName();
+            const htmlContent = getCleanExportHtml();
+            localStorage.setItem(LAST_EXPORT_STORAGE_KEY, htmlContent);
+            localStorage.setItem('character-codex-last-export-filename-v1', filename);
+
+            const modal = ensureExportModal();
+            const textarea = byId('export-html-output');
+            const filenameLine = byId('export-filename-line');
+            const downloadLink = byId('export-download-link');
+            const saveAsBtn = byId('export-save-as-btn');
+            const copyBtn = byId('export-copy-btn');
+            const selectBtn = byId('export-select-btn');
+
+            if (textarea) textarea.value = htmlContent;
+            if (filenameLine) filenameLine.textContent = `브라우저 저장소 키: ${LAST_EXPORT_STORAGE_KEY} · ${filename}`;
+
+            if (downloadLink) {
+              const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              downloadLink.href = url;
+              downloadLink.download = filename;
+              downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 1500);
+            }
+
+            if (saveAsBtn) {
+              saveAsBtn.style.display = window.showSaveFilePicker ? 'inline-block' : 'none';
+              saveAsBtn.onclick = async () => {
+                try {
+                  await saveAsFile(htmlContent, filename);
+                  saveAsBtn.textContent = '저장됨';
+                } catch (error) {
+                  console.warn('Save As File failed', error);
+                  saveAsBtn.textContent = '저장 차단됨';
+                }
+              };
+            }
+
+            if (copyBtn) {
+              copyBtn.onclick = async () => {
+                try {
+                  await navigator.clipboard.writeText(htmlContent);
+                  copyBtn.textContent = '복사됨';
+                } catch (error) {
+                  if (textarea) {
+                    textarea.focus();
+                    textarea.select();
+                  }
+                  copyBtn.textContent = '텍스트 선택';
+                }
+              };
+            }
+
+            if (selectBtn) {
+              selectBtn.onclick = () => {
+                if (textarea) {
+                  textarea.focus();
+                  textarea.select();
+                  selectBtn.textContent = '선택됨';
+                }
+              };
+            }
+
+            modal.style.display = 'flex';
+            saveStatus.textContent = '내보내기 저장 완료';
+          });
+        }
+      }
+
+      // ===== VERSION HISTORY DISABLED =====
+      function pushVersion() {
+        return;
+      }
+
+      function restoreVersion() {
+        return;
+      }
+
+      function initHistoryUI() {
+        return;
+      }
+
+      function renderHistory() {
+        return;
+      }
+
+      function initCollapsibleWindows() {
+        return;
+      }
+
+      function runSelfChecks() {
+        const checks = [
+          ['탭 버튼 수', document.querySelectorAll('.tab-btn[data-screen-target]').length === 4],
+          ['워크스페이스 탭', document.querySelectorAll('.workspace-tab[data-workspace-target]').length >= 2],
+          ['워크스페이스 추가 버튼', !!byId('add-workspace-btn')],
+          ['관계 루프', !!byId('relationship-loop')],
+          ['관계 노드', document.querySelectorAll('.ring-node[data-rel]').length === 3],
+          ['관계 패널', document.querySelectorAll('[data-rel-panel]').length === 3],
+          ['저장 버튼', !!byId('save-btn')],
+          ['도감 패널', document.querySelectorAll('.dossier-panel').length >= 3],
+          ['도감 버튼', document.querySelectorAll('.nav-btn[data-dossier-target]').length >= 3],
+          ['레퍼런스 카드', document.querySelectorAll('.reference-card[data-ref-group]').length >= 3],
+          ['라이트박스', !!byId('reference-lightbox')]
+        ];
+        checks.forEach(([name, ok]) => {
+          if (!ok) console.warn(`Self-check warning: ${name}`);
+        });
+      }
+
+      function safeStep(name, fn) {
+        try {
+          if (typeof fn === 'function') fn();
+        } catch (error) {
+          console.error(`${name} 초기화 실패`, error);
+        }
+      }
+
+      function init() {
+        safeStep('workspace tabs', initWorkspaceTabs);
+        safeStep('editable content load', loadEditableContent);
+        safeStep('top tabs', initTabs);
+        safeStep('relationship panel', initRelationshipPanel);
+        safeStep('dossiers', initDossiers);
+        safeStep('loop detail buttons', initLoopDetailButtons);
+        safeStep('editable fields', initEditable);
+        safeStep('reference cards', initReferenceCards);
+        safeStep('disabled collapse compatibility', initCollapsibleWindows);
+        safeStep('lightbox', initLightbox);
+        safeStep('save system', initSave);
+        safeStep('self checks', runSelfChecks);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init, { once: true });
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body></html>
