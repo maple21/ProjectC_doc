@@ -1,0 +1,21 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Local environment files
+.env
+.env.*
+
+# Build / cache
+dist/
+build/
+coverage/
+*.tmp
+*.temp
+
+# Dependency directories
+node_modules/
