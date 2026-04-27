@@ -551,6 +551,8 @@
 
       function getReferenceStore() {
         const embeddedStore = getEmbeddedReferenceStore();
+        const embeddedNode = document.querySelector('#embedded-reference-store');
+        if (embeddedNode?.dataset.exportMode === 'folder') return embeddedStore;
         try {
           const raw = localStorage.getItem(REF_STORAGE_KEY);
           const parsed = raw ? JSON.parse(raw) : {};
@@ -586,7 +588,7 @@
         }
       }
 
-      function embedReferenceStore(root, store) {
+      function embedReferenceStore(root, store, options = {}) {
         const doc = root.ownerDocument || document;
         let node = root.querySelector('#embedded-reference-store');
         if (!node) {
@@ -595,6 +597,11 @@
           node.type = 'application/json';
           const body = root.querySelector('body');
           (body || root).appendChild(node);
+        }
+        if (options.exportMode) {
+          node.dataset.exportMode = options.exportMode;
+        } else {
+          node.removeAttribute('data-export-mode');
         }
         node.textContent = JSON.stringify(store || {}).replace(/</g, '\\u003c');
       }
@@ -986,208 +993,193 @@
           return `character_codex_${stamp}.html`;
         }
 
-        function getCleanExportHtml() {
+        function createExportFolderName() {
+          return createExportFileName().replace(/\.html$/, '');
+        }
+
+        function sanitizePathPart(value, fallback = 'item') {
+          const safe = String(value || '')
+            .trim()
+            .replace(/\.[^.]+$/, '')
+            .replace(/[\\/:*?"<>|]+/g, '-')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
+          return safe || fallback;
+        }
+
+        function getImageExtension(mimeType, name = '') {
+          const fromName = String(name).match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase();
+          if (fromName && ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(fromName)) {
+            return fromName === 'jpeg' ? 'jpg' : fromName;
+          }
+          if (mimeType.includes('jpeg')) return 'jpg';
+          if (mimeType.includes('png')) return 'png';
+          if (mimeType.includes('gif')) return 'gif';
+          if (mimeType.includes('svg')) return 'svg';
+          return 'webp';
+        }
+
+        function dataUrlToBlob(dataUrl) {
+          const [header, body] = String(dataUrl).split(',');
+          const mimeType = header.match(/^data:([^;]+)/)?.[1] || 'application/octet-stream';
+          const binary = atob(body || '');
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+          return { blob: new Blob([bytes], { type: mimeType }), mimeType };
+        }
+
+        async function sourceToBlob(src) {
+          if (String(src).startsWith('data:')) return dataUrlToBlob(src);
+          const response = await fetch(src);
+          if (!response.ok) throw new Error(`Image fetch failed: ${src}`);
+          const blob = await response.blob();
+          return { blob, mimeType: blob.type || 'application/octet-stream' };
+        }
+
+        async function writeTextFile(directory, filename, content, type = 'text/plain;charset=utf-8') {
+          const handle = await directory.getFileHandle(filename, { create: true });
+          const writable = await handle.createWritable();
+          await writable.write(new Blob([content], { type }));
+          await writable.close();
+        }
+
+        async function writeBlobFile(directory, filename, blob) {
+          const handle = await directory.getFileHandle(filename, { create: true });
+          const writable = await handle.createWritable();
+          await writable.write(blob);
+          await writable.close();
+        }
+
+        async function readExportAsset(path, label) {
+          const absoluteUrl = new URL(path, document.baseURI).href;
+          try {
+            const response = await fetch(absoluteUrl);
+            if (!response.ok) throw new Error(`${label} export failed: ${path}`);
+            return { absoluteUrl, text: await response.text() };
+          } catch (error) {
+            console.warn(`${label} inline export skipped`, error);
+            return { absoluteUrl, text: null };
+          }
+        }
+
+        async function inlineExportAssets(clone) {
+          const doc = clone.ownerDocument || document;
+          const styleLinks = Array.from(clone.querySelectorAll('link[rel="stylesheet"][href]'));
+          for (const link of styleLinks) {
+            const href = link.getAttribute('href');
+            if (!href) continue;
+            const asset = await readExportAsset(href, 'CSS');
+            if (!asset.text) {
+              link.setAttribute('href', asset.absoluteUrl);
+              continue;
+            }
+            const style = doc.createElement('style');
+            style.textContent = asset.text;
+            link.replaceWith(style);
+          }
+
+          const scripts = Array.from(clone.querySelectorAll('script[src]'));
+          for (const script of scripts) {
+            const src = script.getAttribute('src');
+            if (!src) continue;
+            const asset = await readExportAsset(src, 'JS');
+            if (!asset.text) {
+              script.setAttribute('src', asset.absoluteUrl);
+              continue;
+            }
+            const inlineScript = doc.createElement('script');
+            inlineScript.textContent = asset.text;
+            script.replaceWith(inlineScript);
+          }
+        }
+
+        async function createFolderReferenceStore(referenceStore, imagesDirectory) {
+          const exportStore = {};
+          const imageList = [];
+
+          for (const [group, items] of Object.entries(referenceStore || {})) {
+            if (!Array.isArray(items)) continue;
+            const safeGroup = sanitizePathPart(group, 'group');
+            const groupDirectory = await imagesDirectory.getDirectoryHandle(safeGroup, { create: true });
+            exportStore[group] = [];
+
+            for (const [index, item] of items.entries()) {
+              if (!item?.src) continue;
+              const { blob, mimeType } = await sourceToBlob(item.src);
+              const ext = getImageExtension(mimeType, item.name);
+              const fileName = `${String(index + 1).padStart(3, '0')}-${sanitizePathPart(item.name, 'image')}.${ext}`;
+              await writeBlobFile(groupDirectory, fileName, blob);
+
+              const imagePath = `images/${safeGroup}/${fileName}`;
+              exportStore[group].push({
+                ...item,
+                src: imagePath
+              });
+              imageList.push({ group, name: item.name || fileName, path: imagePath, caption: item.caption || '' });
+            }
+          }
+
+          return { exportStore, imageList };
+        }
+
+        async function getCleanExportHtml(referenceStore = getReferenceStore(), options = {}) {
           saveEditableContent();
-          const referenceStore = getReferenceStore();
           const clone = document.documentElement.cloneNode(true);
           clone.querySelectorAll('#export-modal').forEach((node) => node.remove());
           clone.querySelectorAll('#history-panel').forEach((node) => node.remove());
           clone.querySelectorAll('.lightbox.active').forEach((node) => node.classList.remove('active'));
-          embedReferenceStore(clone, referenceStore);
+          if (options.inlineAssets) await inlineExportAssets(clone);
+          embedReferenceStore(clone, referenceStore, { exportMode: options.exportMode });
           return '<!DOCTYPE html>\n' + clone.outerHTML;
         }
 
-        function ensureExportModal() {
-          let modal = byId('export-modal');
-          if (modal) return modal;
+        async function exportToFolder() {
+          if (!window.showDirectoryPicker) {
+            throw new Error('이 브라우저는 폴더 내보내기를 지원하지 않습니다. Chrome 또는 Edge에서 다시 시도해 주세요.');
+          }
 
-          modal = document.createElement('div');
-          modal.id = 'export-modal';
-          modal.style.position = 'fixed';
-          modal.style.inset = '0';
-          modal.style.zIndex = '100000';
-          modal.style.display = 'none';
-          modal.style.alignItems = 'center';
-          modal.style.justifyContent = 'center';
-          modal.style.padding = '24px';
-          modal.style.background = 'rgba(244,240,232,.92)';
+          saveEditableContent();
+          saveStatus.textContent = '내보내기 준비 중';
 
-          const box = document.createElement('div');
-          box.style.width = 'min(880px, 100%)';
-          box.style.maxHeight = '86vh';
-          box.style.overflow = 'auto';
-          box.style.background = '#fbf8f2';
-          box.style.border = '1px solid rgba(17,17,15,.18)';
-          box.style.padding = '18px';
-          box.style.color = '#11110f';
-          box.style.boxShadow = '0 18px 70px rgba(0,0,0,.16)';
+          const rootDirectory = await window.showDirectoryPicker({ mode: 'readwrite' });
+          const exportFolderName = createExportFolderName();
+          const exportDirectory = await rootDirectory.getDirectoryHandle(exportFolderName, { create: true });
+          const imagesDirectory = await exportDirectory.getDirectoryHandle('images', { create: true });
+          const dataDirectory = await exportDirectory.getDirectoryHandle('data', { create: true });
 
-          const title = document.createElement('h2');
-          title.textContent = 'HTML 내보내기';
-          title.style.margin = '0 0 8px';
-          title.style.fontFamily = 'var(--font-display)';
-          title.style.fontWeight = '400';
-
-          const desc = document.createElement('p');
-          desc.textContent = '내보내기 버튼을 누르면 현재 HTML이 자동 저장됩니다. 다운로드가 차단되면 아래 코드를 전체 선택해서 .html 파일로 저장하세요.';
-          desc.style.margin = '0 0 14px';
-          desc.style.color = 'rgba(17,17,15,.66)';
-
-          const filenameLine = document.createElement('div');
-          filenameLine.id = 'export-filename-line';
-          filenameLine.style.margin = '0 0 12px';
-          filenameLine.style.fontFamily = 'monospace';
-          filenameLine.style.fontSize = '12px';
-          filenameLine.style.color = 'rgba(17,17,15,.56)';
-
-          const actions = document.createElement('div');
-          actions.style.display = 'flex';
-          actions.style.flexWrap = 'wrap';
-          actions.style.gap = '8px';
-          actions.style.marginBottom = '12px';
-
-          const makeButton = (label) => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.textContent = label;
-            button.style.padding = '9px 12px';
-            button.style.border = '1px solid rgba(17,17,15,.18)';
-            button.style.background = 'transparent';
-            button.style.color = '#11110f';
-            button.style.cursor = 'pointer';
-            return button;
-          };
-
-          const downloadLink = document.createElement('a');
-          downloadLink.id = 'export-download-link';
-          downloadLink.textContent = 'HTML 다운로드';
-          downloadLink.style.display = 'inline-block';
-          downloadLink.style.padding = '9px 12px';
-          downloadLink.style.border = '1px solid rgba(17,17,15,.18)';
-          downloadLink.style.color = '#11110f';
-          downloadLink.style.textDecoration = 'none';
-          downloadLink.href = '#';
-
-          const saveAsBtn = makeButton('파일로 저장');
-          saveAsBtn.id = 'export-save-as-btn';
-
-          const copyBtn = makeButton('HTML 복사');
-          copyBtn.id = 'export-copy-btn';
-
-          const selectBtn = makeButton('전체 선택');
-          selectBtn.id = 'export-select-btn';
-
-          const closeBtn = makeButton('닫기');
-          closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
+          const referenceStore = getReferenceStore();
+          const { exportStore, imageList } = await createFolderReferenceStore(referenceStore, imagesDirectory);
+          const htmlContent = await getCleanExportHtml(exportStore, {
+            inlineAssets: true,
+            exportMode: 'folder'
           });
 
-          actions.appendChild(downloadLink);
-          actions.appendChild(saveAsBtn);
-          actions.appendChild(copyBtn);
-          actions.appendChild(selectBtn);
-          actions.appendChild(closeBtn);
+          await writeTextFile(exportDirectory, 'index.html', htmlContent, 'text/html;charset=utf-8');
+          await writeTextFile(dataDirectory, 'reference-images.json', JSON.stringify(exportStore, null, 2), 'application/json;charset=utf-8');
+          await writeTextFile(dataDirectory, 'image-manifest.json', JSON.stringify(imageList, null, 2), 'application/json;charset=utf-8');
 
-          const textarea = document.createElement('textarea');
-          textarea.id = 'export-html-output';
-          textarea.readOnly = true;
-          textarea.style.width = '100%';
-          textarea.style.height = '420px';
-          textarea.style.padding = '12px';
-          textarea.style.border = '1px solid rgba(17,17,15,.14)';
-          textarea.style.background = '#f4f0e8';
-          textarea.style.color = '#11110f';
-          textarea.style.fontFamily = 'monospace';
-          textarea.style.fontSize = '11px';
-          textarea.style.lineHeight = '1.45';
-
-          box.appendChild(title);
-          box.appendChild(desc);
-          box.appendChild(filenameLine);
-          box.appendChild(actions);
-          box.appendChild(textarea);
-          modal.appendChild(box);
-          document.body.appendChild(modal);
-          return modal;
-        }
-
-        async function saveAsFile(htmlContent, filename) {
-          if (!window.showSaveFilePicker) throw new Error('File picker is not available');
-          const handle = await window.showSaveFilePicker({
-            suggestedName: filename,
-            types: [{ description: 'HTML file', accept: { 'text/html': ['.html'] } }]
-          });
-          const writable = await handle.createWritable();
-          await writable.write(htmlContent);
-          await writable.close();
+          localStorage.setItem(LAST_EXPORT_STORAGE_KEY, htmlContent);
+          localStorage.setItem('character-codex-last-export-filename-v1', `${exportFolderName}/index.html`);
+          saveStatus.textContent = `내보내기 완료: ${exportFolderName}`;
         }
 
         if (exportBtn) {
-          exportBtn.addEventListener('click', () => {
-            const filename = createExportFileName();
-            const htmlContent = getCleanExportHtml();
-            localStorage.setItem(LAST_EXPORT_STORAGE_KEY, htmlContent);
-            localStorage.setItem('character-codex-last-export-filename-v1', filename);
-
-            const modal = ensureExportModal();
-            const textarea = byId('export-html-output');
-            const filenameLine = byId('export-filename-line');
-            const downloadLink = byId('export-download-link');
-            const saveAsBtn = byId('export-save-as-btn');
-            const copyBtn = byId('export-copy-btn');
-            const selectBtn = byId('export-select-btn');
-
-            if (textarea) textarea.value = htmlContent;
-            if (filenameLine) filenameLine.textContent = `브라우저 저장소 키: ${LAST_EXPORT_STORAGE_KEY} · ${filename}`;
-
-            if (downloadLink) {
-              const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-              const url = URL.createObjectURL(blob);
-              downloadLink.href = url;
-              downloadLink.download = filename;
-              downloadLink.onclick = () => setTimeout(() => URL.revokeObjectURL(url), 1500);
+          exportBtn.addEventListener('click', async () => {
+            exportBtn.disabled = true;
+            try {
+              await exportToFolder();
+            } catch (error) {
+              if (error?.name === 'AbortError') {
+                saveStatus.textContent = '내보내기 취소';
+              } else {
+                console.error('Folder export failed', error);
+                saveStatus.textContent = '내보내기 실패';
+                alert(error?.message || '내보내기 중 오류가 발생했습니다.');
+              }
+            } finally {
+              exportBtn.disabled = false;
             }
-
-            if (saveAsBtn) {
-              saveAsBtn.style.display = window.showSaveFilePicker ? 'inline-block' : 'none';
-              saveAsBtn.onclick = async () => {
-                try {
-                  await saveAsFile(htmlContent, filename);
-                  saveAsBtn.textContent = '저장됨';
-                } catch (error) {
-                  console.warn('Save As File failed', error);
-                  saveAsBtn.textContent = '저장 차단됨';
-                }
-              };
-            }
-
-            if (copyBtn) {
-              copyBtn.onclick = async () => {
-                try {
-                  await navigator.clipboard.writeText(htmlContent);
-                  copyBtn.textContent = '복사됨';
-                } catch (error) {
-                  if (textarea) {
-                    textarea.focus();
-                    textarea.select();
-                  }
-                  copyBtn.textContent = '텍스트 선택';
-                }
-              };
-            }
-
-            if (selectBtn) {
-              selectBtn.onclick = () => {
-                if (textarea) {
-                  textarea.focus();
-                  textarea.select();
-                  selectBtn.textContent = '선택됨';
-                }
-              };
-            }
-
-            modal.style.display = 'flex';
-            saveStatus.textContent = '내보내기 저장 완료';
           });
         }
       }
