@@ -624,28 +624,64 @@
 
         strip.innerHTML = '';
         items.forEach((item, realIndex) => {
-          const thumb = document.createElement('button');
-          thumb.type = 'button';
+          const thumb = document.createElement('article');
           thumb.className = `reference-thumb${realIndex === index ? ' active' : ''}`;
-          thumb.dataset.refThumbIndex = String(realIndex);
-          thumb.setAttribute('aria-label', `${group} reference ${realIndex + 1}`);
+
+          const preview = document.createElement('button');
+          preview.type = 'button';
+          preview.className = 'reference-thumb-preview';
+          preview.dataset.refThumbIndex = String(realIndex);
+          preview.setAttribute('aria-label', `${group} reference ${realIndex + 1}`);
 
           const img = document.createElement('img');
           img.src = item.src;
           img.alt = item.name || `${group} reference ${realIndex + 1}`;
-          thumb.appendChild(img);
+          preview.appendChild(img);
 
           const badge = document.createElement('span');
           badge.className = 'reference-thumb-index';
           badge.textContent = `${realIndex + 1}`;
-          thumb.appendChild(badge);
+          preview.appendChild(badge);
 
+          const caption = document.createElement('textarea');
+          caption.className = 'reference-caption-input';
+          caption.dataset.refCaptionIndex = String(realIndex);
+          caption.placeholder = '이미지 설명';
+          caption.rows = 2;
+          caption.value = item.caption || '';
+          caption.setAttribute('aria-label', `${group} reference ${realIndex + 1} 설명`);
+
+          const orderTools = document.createElement('div');
+          orderTools.className = 'reference-order-tools';
+
+          const movePrev = document.createElement('button');
+          movePrev.type = 'button';
+          movePrev.className = 'reference-order-btn';
+          movePrev.dataset.refMove = 'prev';
+          movePrev.dataset.refMoveIndex = String(realIndex);
+          movePrev.disabled = realIndex === 0;
+          movePrev.textContent = '앞으로';
+
+          const moveNext = document.createElement('button');
+          moveNext.type = 'button';
+          moveNext.className = 'reference-order-btn';
+          moveNext.dataset.refMove = 'next';
+          moveNext.dataset.refMoveIndex = String(realIndex);
+          moveNext.disabled = realIndex === items.length - 1;
+          moveNext.textContent = '뒤로';
+
+          orderTools.appendChild(movePrev);
+          orderTools.appendChild(moveNext);
+
+          thumb.appendChild(preview);
+          thumb.appendChild(caption);
+          thumb.appendChild(orderTools);
           strip.appendChild(thumb);
         });
 
         counter.textContent = `${index + 1} / ${items.length}`;
 
-        const activeThumb = strip.querySelector(`.reference-thumb[data-ref-thumb-index="${index}"]`);
+        const activeThumb = strip.querySelector(`.reference-thumb-preview[data-ref-thumb-index="${index}"]`);
         if (activeThumb instanceof HTMLElement) {
           activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
@@ -734,9 +770,50 @@
 
         cards.forEach((card) => {
           const fileInput = card.querySelector('.ref-file-input');
+          card.addEventListener('input', (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLTextAreaElement)) return;
+            const captionIndex = Number(target.dataset.refCaptionIndex);
+            const group = card.dataset.refGroup;
+            if (!group || !Number.isFinite(captionIndex)) return;
+
+            const currentStore = getReferenceStore();
+            const items = Array.isArray(currentStore[group]) ? currentStore[group] : [];
+            if (!items[captionIndex]) return;
+
+            items[captionIndex] = {
+              ...items[captionIndex],
+              caption: target.value
+            };
+            currentStore[group] = items;
+            saveReferenceStore(currentStore);
+          });
+
           card.addEventListener('click', async (event) => {
             const target = event.target;
             if (!(target instanceof HTMLElement)) return;
+
+            const moveButton = target.closest('[data-ref-move]');
+            if (moveButton instanceof HTMLButtonElement) {
+              const group = card.dataset.refGroup;
+              const move = moveButton.dataset.refMove;
+              const moveIndex = Number(moveButton.dataset.refMoveIndex);
+              if (!group || !Number.isFinite(moveIndex)) return;
+
+              const currentStore = getReferenceStore();
+              const items = Array.isArray(currentStore[group]) ? currentStore[group] : [];
+              const targetIndex = move === 'prev' ? moveIndex - 1 : moveIndex + 1;
+              if (!items[moveIndex] || targetIndex < 0 || targetIndex >= items.length) return;
+
+              [items[moveIndex], items[targetIndex]] = [items[targetIndex], items[moveIndex]];
+              currentStore[group] = items;
+              const saved = saveReferenceStore(currentStore);
+              if (saved) {
+                card.dataset.refIndex = String(targetIndex);
+                renderReferenceCard(card, currentStore);
+              }
+              return;
+            }
 
             const thumb = target.closest('[data-ref-thumb-index]');
             if (thumb instanceof HTMLElement) {
@@ -809,7 +886,8 @@
               const files = Array.from(fileInput.files);
               const dataList = await Promise.all(files.map(async (file) => ({
                 name: file.name,
-                src: await optimizeImageFile(file)
+                src: await optimizeImageFile(file),
+                caption: ''
               })));
               currentStore[group] = [...items, ...dataList];
               const saved = saveReferenceStore(currentStore);

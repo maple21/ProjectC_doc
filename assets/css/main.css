@@ -539,9 +539,21 @@
       background: rgba(255,255,255,.03);
       position: relative;
       overflow: hidden;
-      cursor: pointer;
       transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease, opacity .18s ease;
       opacity: .82;
+    }
+
+    .reference-thumb-preview {
+      appearance: none;
+      display: block;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
     }
 
     .reference-thumb:hover {
@@ -561,6 +573,64 @@
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    .reference-caption-input {
+      width: 100%;
+      min-height: 72px;
+      resize: vertical;
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.16);
+      color: var(--text);
+      padding: 10px 11px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    .reference-caption-input::placeholder {
+      color: rgba(255,255,255,.34);
+    }
+
+    .reference-caption-input:focus {
+      background: rgba(0,0,0,.24);
+      box-shadow: inset 0 0 0 1px rgba(112,224,201,.24);
+    }
+
+    .reference-order-tools {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+      padding: 8px 10px 10px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.12);
+    }
+
+    .reference-order-btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.12);
+      background: transparent;
+      color: var(--muted);
+      padding: 5px 9px;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .reference-order-btn:hover:not(:disabled),
+    .reference-order-btn:focus-visible {
+      color: var(--text);
+      border-color: rgba(255,255,255,.24);
+      background: rgba(255,255,255,.04);
+      outline: none;
+    }
+
+    .reference-order-btn:disabled {
+      opacity: .32;
+      cursor: default;
     }
 
     .reference-thumb-index {
@@ -2754,10 +2824,16 @@
 
     .reference-thumb {
       flex: 1 1 320px;
-      display: block;
+      display: flex;
+      flex-direction: column;
       height: auto;
       min-height: 0;
       padding: 0;
+      overflow: visible;
+    }
+
+    .reference-thumb-preview {
+      flex: 0 0 auto;
       overflow: visible;
     }
 
@@ -2765,6 +2841,33 @@
       width: 100%;
       height: auto;
       object-fit: contain;
+    }
+
+    .reference-caption-input {
+      color: inherit;
+      background: rgba(17,17,15,.035);
+      border-top-color: rgba(17,17,15,.12);
+    }
+
+    .reference-caption-input::placeholder {
+      color: rgba(17,17,15,.42);
+    }
+
+    .reference-order-tools {
+      background: rgba(17,17,15,.025);
+      border-top-color: rgba(17,17,15,.12);
+    }
+
+    .reference-order-btn {
+      color: rgba(17,17,15,.62);
+      border-color: rgba(17,17,15,.16);
+    }
+
+    .reference-order-btn:hover:not(:disabled),
+    .reference-order-btn:focus-visible {
+      color: #11110f;
+      border-color: rgba(17,17,15,.32);
+      background: rgba(17,17,15,.045);
     }
 
     .reference-placeholder {
