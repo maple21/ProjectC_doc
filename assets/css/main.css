@@ -278,6 +278,12 @@
       font-weight: 500;
     }
 
+    .export-ready-link {
+      color: var(--text);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
     .status {
       display: flex;
       align-items: center;

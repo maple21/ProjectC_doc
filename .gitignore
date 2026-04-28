@@ -16,6 +16,7 @@ build/
 coverage/
 *.tmp
 *.temp
+exports/
 
 # Dependency directories
 node_modules/

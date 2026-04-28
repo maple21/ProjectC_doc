@@ -5,6 +5,7 @@
       const REF_STORAGE_KEY = 'character-codex-reference-images-v1';
       const WORKSPACE_STORAGE_KEY = 'character-codex-workspaces-v1';
       const LAST_EXPORT_STORAGE_KEY = 'character-codex-last-export-html-v1';
+      const LOCAL_EXPORT_ENDPOINT = 'http://127.0.0.1:53175/export';
       const BRIEF_CONTENT_STORAGE_KEY = 'character-codex-brief-content-v1';
 
       const BRIEF_CHARACTER_CONTENT = {
@@ -962,8 +963,12 @@
         const exportBtn = byId('export-btn');
         const saveStatus = byId('save-status');
         if (!saveBtn || !saveStatus) return;
+        let pendingExportDownloadUrl = null;
 
-        const markDirty = () => { saveStatus.textContent = '미저장'; };
+        const markDirty = () => {
+          clearPendingExportDownload();
+          saveStatus.textContent = '미저장';
+        };
 
         let autoTimer = null;
         const autoSave = () => {
@@ -1037,18 +1042,21 @@
           return { blob, mimeType: blob.type || 'application/octet-stream' };
         }
 
-        async function writeTextFile(directory, filename, content, type = 'text/plain;charset=utf-8') {
-          const handle = await directory.getFileHandle(filename, { create: true });
-          const writable = await handle.createWritable();
-          await writable.write(new Blob([content], { type }));
-          await writable.close();
+        function clearPendingExportDownload() {
+          if (!pendingExportDownloadUrl) return;
+          URL.revokeObjectURL(pendingExportDownloadUrl);
+          pendingExportDownloadUrl = null;
         }
 
-        async function writeBlobFile(directory, filename, blob) {
-          const handle = await directory.getFileHandle(filename, { create: true });
-          const writable = await handle.createWritable();
-          await writable.write(blob);
-          await writable.close();
+        function setExportProgress(percent, label) {
+          if (percent < 100) clearPendingExportDownload();
+          const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+          saveStatus.textContent = `${label} ${safePercent}%`;
+        }
+
+        async function updateExportProgress(percent, label) {
+          setExportProgress(percent, label);
+          await new Promise((resolve) => requestAnimationFrame(resolve));
         }
 
         async function readExportAsset(path, label) {
@@ -1094,33 +1102,47 @@
           }
         }
 
-        async function createFolderReferenceStore(referenceStore, imagesDirectory) {
+        async function createReferenceExportBundle(referenceStore, onProgress = async () => {}) {
           const exportStore = {};
           const imageList = [];
+          const imageFiles = [];
+          const totalImages = Object.values(referenceStore || {})
+            .filter(Array.isArray)
+            .reduce((sum, items) => sum + items.filter((item) => item?.src).length, 0);
+          let processedImages = 0;
+
+          await onProgress(0, totalImages ? '이미지 정리 중' : '이미지 없음');
 
           for (const [group, items] of Object.entries(referenceStore || {})) {
             if (!Array.isArray(items)) continue;
             const safeGroup = sanitizePathPart(group, 'group');
-            const groupDirectory = await imagesDirectory.getDirectoryHandle(safeGroup, { create: true });
             exportStore[group] = [];
 
             for (const [index, item] of items.entries()) {
               if (!item?.src) continue;
-              const { blob, mimeType } = await sourceToBlob(item.src);
-              const ext = getImageExtension(mimeType, item.name);
-              const fileName = `${String(index + 1).padStart(3, '0')}-${sanitizePathPart(item.name, 'image')}.${ext}`;
-              await writeBlobFile(groupDirectory, fileName, blob);
+              try {
+                const { blob, mimeType } = await sourceToBlob(item.src);
+                const ext = getImageExtension(mimeType, item.name);
+                const fileName = `${String(index + 1).padStart(3, '0')}-${sanitizePathPart(item.name, 'image')}.${ext}`;
+                const imagePath = `images/${safeGroup}/${fileName}`;
 
-              const imagePath = `images/${safeGroup}/${fileName}`;
-              exportStore[group].push({
-                ...item,
-                src: imagePath
-              });
-              imageList.push({ group, name: item.name || fileName, path: imagePath, caption: item.caption || '' });
+                exportStore[group].push({
+                  ...item,
+                  src: imagePath
+                });
+                imageList.push({ group, name: item.name || fileName, path: imagePath, caption: item.caption || '' });
+                imageFiles.push({ path: imagePath, blob });
+              } catch (error) {
+                console.warn('Image export skipped', { group, name: item.name, error });
+              } finally {
+                processedImages += 1;
+                const percent = totalImages ? (processedImages / totalImages) * 100 : 100;
+                await onProgress(percent, '이미지 정리 중');
+              }
             }
           }
 
-          return { exportStore, imageList };
+          return { exportStore, imageList, imageFiles };
         }
 
         async function getCleanExportHtml(referenceStore = getReferenceStore(), options = {}) {
@@ -1134,41 +1156,285 @@
           return '<!DOCTYPE html>\n' + clone.outerHTML;
         }
 
-        async function exportToFolder() {
-          if (!window.showDirectoryPicker) {
-            throw new Error('이 브라우저는 폴더 내보내기를 지원하지 않습니다. Chrome 또는 Edge에서 다시 시도해 주세요.');
+        function getZipCrcTable() {
+          if (getZipCrcTable.table) return getZipCrcTable.table;
+          getZipCrcTable.table = Array.from({ length: 256 }, (_, index) => {
+            let value = index;
+            for (let bit = 0; bit < 8; bit += 1) {
+              value = value & 1 ? 0xedb88320 ^ (value >>> 1) : value >>> 1;
+            }
+            return value >>> 0;
+          });
+          return getZipCrcTable.table;
+        }
+
+        function crc32(bytes) {
+          const table = getZipCrcTable();
+          let crc = 0xffffffff;
+          for (const byte of bytes) crc = table[(crc ^ byte) & 0xff] ^ (crc >>> 8);
+          return (crc ^ 0xffffffff) >>> 0;
+        }
+
+        function getZipDosDateTime(date = new Date()) {
+          const year = Math.max(1980, date.getFullYear());
+          const dosTime = (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2);
+          const dosDate = ((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
+          return { dosDate, dosTime };
+        }
+
+        function createZipHeader(size, signature) {
+          const bytes = new Uint8Array(size);
+          new DataView(bytes.buffer).setUint32(0, signature, true);
+          return bytes;
+        }
+
+        function concatBytes(chunks) {
+          const total = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
+          const output = new Uint8Array(total);
+          let offset = 0;
+          for (const chunk of chunks) {
+            output.set(chunk, offset);
+            offset += chunk.length;
+          }
+          return output;
+        }
+
+        async function createZipBlob(entries, onProgress = async () => {}) {
+          const encoder = new TextEncoder();
+          const localParts = [];
+          const centralParts = [];
+          let offset = 0;
+          const { dosDate, dosTime } = getZipDosDateTime();
+          let processedEntries = 0;
+
+          await onProgress(0, 'ZIP 생성 중');
+
+          for (const entry of entries) {
+            const nameBytes = encoder.encode(entry.path.replace(/\\/g, '/'));
+            const dataBytes = new Uint8Array(await entry.blob.arrayBuffer());
+            const checksum = crc32(dataBytes);
+
+            const localHeader = createZipHeader(30 + nameBytes.length, 0x04034b50);
+            const localView = new DataView(localHeader.buffer);
+            localView.setUint16(4, 20, true);
+            localView.setUint16(6, 0x0800, true);
+            localView.setUint16(8, 0, true);
+            localView.setUint16(10, dosTime, true);
+            localView.setUint16(12, dosDate, true);
+            localView.setUint32(14, checksum, true);
+            localView.setUint32(18, dataBytes.length, true);
+            localView.setUint32(22, dataBytes.length, true);
+            localView.setUint16(26, nameBytes.length, true);
+            localHeader.set(nameBytes, 30);
+
+            const centralHeader = createZipHeader(46 + nameBytes.length, 0x02014b50);
+            const centralView = new DataView(centralHeader.buffer);
+            centralView.setUint16(4, 20, true);
+            centralView.setUint16(6, 20, true);
+            centralView.setUint16(8, 0x0800, true);
+            centralView.setUint16(10, 0, true);
+            centralView.setUint16(12, dosTime, true);
+            centralView.setUint16(14, dosDate, true);
+            centralView.setUint32(16, checksum, true);
+            centralView.setUint32(20, dataBytes.length, true);
+            centralView.setUint32(24, dataBytes.length, true);
+            centralView.setUint16(28, nameBytes.length, true);
+            centralView.setUint32(42, offset, true);
+            centralHeader.set(nameBytes, 46);
+
+            localParts.push(localHeader, dataBytes);
+            centralParts.push(centralHeader);
+            offset += localHeader.length + dataBytes.length;
+            processedEntries += 1;
+            await onProgress((processedEntries / entries.length) * 100, 'ZIP 생성 중');
           }
 
+          const centralDirectory = concatBytes(centralParts);
+          const endRecord = createZipHeader(22, 0x06054b50);
+          const endView = new DataView(endRecord.buffer);
+          endView.setUint16(8, entries.length, true);
+          endView.setUint16(10, entries.length, true);
+          endView.setUint32(12, centralDirectory.length, true);
+          endView.setUint32(16, offset, true);
+
+          return new Blob([...localParts, centralDirectory, endRecord], { type: 'application/zip' });
+        }
+
+        function downloadBlob(blob, filename) {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1500);
+        }
+
+        function formatBytes(bytes) {
+          if (bytes < 1024) return `${bytes}B`;
+          if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)}KB`;
+          return `${(bytes / 1024 / 1024).toFixed(1)}MB`;
+        }
+
+        function showDownloadFallbackLink(blob, filename) {
+          clearPendingExportDownload();
+          pendingExportDownloadUrl = URL.createObjectURL(blob);
+          saveStatus.textContent = `ZIP 준비 완료 100% · ${formatBytes(blob.size)} · `;
+          const link = document.createElement('a');
+          link.className = 'export-ready-link';
+          link.href = pendingExportDownloadUrl;
+          link.download = filename;
+          link.textContent = '다운로드';
+          saveStatus.appendChild(link);
+        }
+
+        async function saveZipViaLocalServer(blob, filename) {
+          try {
+            const response = await fetch(LOCAL_EXPORT_ENDPOINT, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/zip',
+                'X-Export-Filename': encodeURIComponent(filename)
+              },
+              body: blob
+            });
+            if (!response.ok) throw new Error(`Local export server returned ${response.status}`);
+            return await response.json();
+          } catch (error) {
+            console.warn('Local export server unavailable', error);
+            return null;
+          }
+        }
+
+        async function createAssetExportEntries() {
+          const assets = [
+            { path: 'assets/css/main.css', type: 'text/css;charset=utf-8', label: 'CSS' },
+            { path: 'assets/js/app.js', type: 'text/javascript;charset=utf-8', label: 'JS' }
+          ];
+          const entries = [];
+
+          for (const asset of assets) {
+            const result = await readExportAsset(asset.path, asset.label);
+            if (!result.text) continue;
+            entries.push({
+              path: asset.path,
+              blob: new Blob([result.text], { type: asset.type })
+            });
+          }
+
+          return entries;
+        }
+
+        async function inspectZipBlob(blob) {
+          if (!blob.size) throw new Error('ZIP 파일 생성 결과가 0KB입니다.');
+
+          const bytes = new Uint8Array(await blob.arrayBuffer());
+          let endOffset = -1;
+          for (let index = bytes.length - 22; index >= 0; index -= 1) {
+            if (
+              bytes[index] === 0x50 &&
+              bytes[index + 1] === 0x4b &&
+              bytes[index + 2] === 0x05 &&
+              bytes[index + 3] === 0x06
+            ) {
+              endOffset = index;
+              break;
+            }
+          }
+          if (endOffset < 0) throw new Error('ZIP 중앙 디렉터리를 찾을 수 없습니다.');
+
+          const view = new DataView(bytes.buffer);
+          const entryCount = view.getUint16(endOffset + 10, true);
+          const centralSize = view.getUint32(endOffset + 12, true);
+          const centralOffset = view.getUint32(endOffset + 16, true);
+          if (!entryCount || !centralSize || centralOffset + centralSize > bytes.length) {
+            throw new Error('ZIP 내부 목록 정보가 올바르지 않습니다.');
+          }
+
+          const decoder = new TextDecoder();
+          const names = [];
+          let cursor = centralOffset;
+          for (let index = 0; index < entryCount; index += 1) {
+            if (view.getUint32(cursor, true) !== 0x02014b50) {
+              throw new Error('ZIP 파일 항목 정보가 손상되었습니다.');
+            }
+            const nameLength = view.getUint16(cursor + 28, true);
+            const extraLength = view.getUint16(cursor + 30, true);
+            const commentLength = view.getUint16(cursor + 32, true);
+            const nameStart = cursor + 46;
+            names.push(decoder.decode(bytes.slice(nameStart, nameStart + nameLength)));
+            cursor = nameStart + nameLength + extraLength + commentLength;
+          }
+
+          return names;
+        }
+
+        async function exportToZip() {
           saveEditableContent();
-          saveStatus.textContent = '내보내기 준비 중';
-
-          const rootDirectory = await window.showDirectoryPicker({ mode: 'readwrite' });
           const exportFolderName = createExportFolderName();
-          const exportDirectory = await rootDirectory.getDirectoryHandle(exportFolderName, { create: true });
-          const imagesDirectory = await exportDirectory.getDirectoryHandle('images', { create: true });
-          const dataDirectory = await exportDirectory.getDirectoryHandle('data', { create: true });
+          const zipFileName = `${exportFolderName}.zip`;
 
+          setExportProgress(0, 'ZIP 내보내기 준비 중');
           const referenceStore = getReferenceStore();
-          const { exportStore, imageList } = await createFolderReferenceStore(referenceStore, imagesDirectory);
+          const { exportStore, imageList, imageFiles } = await createReferenceExportBundle(
+            referenceStore,
+            (percent, label) => updateExportProgress(5 + percent * 0.4, label)
+          );
+          await updateExportProgress(50, 'HTML 정리 중');
           const htmlContent = await getCleanExportHtml(exportStore, {
             inlineAssets: true,
             exportMode: 'folder'
           });
+          const entries = [
+            { path: `${exportFolderName}/index.html`, blob: new Blob([htmlContent], { type: 'text/html;charset=utf-8' }) },
+            { path: `${exportFolderName}/data/reference-images.json`, blob: new Blob([JSON.stringify(exportStore, null, 2)], { type: 'application/json;charset=utf-8' }) },
+            { path: `${exportFolderName}/data/image-manifest.json`, blob: new Blob([JSON.stringify(imageList, null, 2)], { type: 'application/json;charset=utf-8' }) },
+            ...(await createAssetExportEntries()).map((entry) => ({ ...entry, path: `${exportFolderName}/${entry.path}` })),
+            ...imageFiles.map((file) => ({ path: `${exportFolderName}/${file.path}`, blob: file.blob }))
+          ];
 
-          await writeTextFile(exportDirectory, 'index.html', htmlContent, 'text/html;charset=utf-8');
-          await writeTextFile(dataDirectory, 'reference-images.json', JSON.stringify(exportStore, null, 2), 'application/json;charset=utf-8');
-          await writeTextFile(dataDirectory, 'image-manifest.json', JSON.stringify(imageList, null, 2), 'application/json;charset=utf-8');
+          const zipBlob = await createZipBlob(
+            entries,
+            (percent, label) => updateExportProgress(55 + percent * 0.35, label)
+          );
+          const zipEntries = await inspectZipBlob(zipBlob);
+          const requiredEntries = [
+            `${exportFolderName}/index.html`,
+            `${exportFolderName}/assets/css/main.css`,
+            `${exportFolderName}/assets/js/app.js`,
+            `${exportFolderName}/data/reference-images.json`,
+            `${exportFolderName}/data/image-manifest.json`
+          ];
+          const missingEntries = requiredEntries.filter((entry) => !zipEntries.includes(entry));
+          if (missingEntries.length) {
+            throw new Error(`ZIP 필수 파일 누락: ${missingEntries.join(', ')}`);
+          }
+
+          await updateExportProgress(92, '로컬 저장 시도 중');
+          const localExport = await saveZipViaLocalServer(zipBlob, zipFileName);
+          if (localExport?.ok) {
+            await updateExportProgress(100, `내보내기 완료: ${localExport.relativePath || zipFileName}`);
+          } else {
+            await updateExportProgress(94, '다운로드 준비 중');
+            downloadBlob(zipBlob, zipFileName);
+            showDownloadFallbackLink(zipBlob, zipFileName);
+          }
 
           localStorage.setItem(LAST_EXPORT_STORAGE_KEY, htmlContent);
           localStorage.setItem('character-codex-last-export-filename-v1', `${exportFolderName}/index.html`);
-          saveStatus.textContent = `내보내기 완료: ${exportFolderName}`;
+        }
+
+        async function exportCodex() {
+          await exportToZip();
         }
 
         if (exportBtn) {
           exportBtn.addEventListener('click', async () => {
             exportBtn.disabled = true;
             try {
-              await exportToFolder();
+              await exportCodex();
             } catch (error) {
               if (error?.name === 'AbortError') {
                 saveStatus.textContent = '내보내기 취소';
