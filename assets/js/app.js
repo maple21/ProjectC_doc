@@ -148,6 +148,7 @@
             if (target === 'dossiers' || target === 'behaviors') {
               activateFirstDossierInPane(targetScreen);
             }
+            queueReferenceMosaicLayout(targetScreen);
           });
         });
       }
@@ -333,6 +334,7 @@
           if (activeScreen && activeScreen.dataset.screen === 'dossiers') {
             activateFirstDossierInPane(nextPane);
           }
+          queueReferenceMosaicLayout(nextPane);
         };
 
         const bindWorkspaceButton = (button) => {
@@ -607,6 +609,37 @@
         node.textContent = JSON.stringify(store || {}).replace(/</g, '\\u003c');
       }
 
+      function queueReferenceMosaicLayout(scope = document) {
+        requestAnimationFrame(() => {
+          const target = scope instanceof HTMLElement || scope === document ? scope : document;
+          target.querySelectorAll('.reference-strip').forEach(layoutReferenceMosaic);
+        });
+      }
+
+      function layoutReferenceMosaic(strip) {
+        if (!(strip instanceof HTMLElement)) return;
+        const styles = getComputedStyle(strip);
+        const rowHeight = Number.parseFloat(styles.getPropertyValue('--mosaic-row-height')) || 8;
+        const gap = Number.parseFloat(styles.rowGap || styles.gap) || 14;
+        const thumbs = Array.from(strip.querySelectorAll('.reference-thumb'));
+
+        thumbs.forEach((thumb) => {
+          if (!(thumb instanceof HTMLElement)) return;
+          thumb.style.gridRowEnd = 'auto';
+        });
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            thumbs.forEach((thumb) => {
+              if (!(thumb instanceof HTMLElement)) return;
+              const height = thumb.scrollHeight;
+              const span = Math.max(1, Math.ceil((height + gap) / (rowHeight + gap)));
+              thumb.style.gridRowEnd = `span ${span}`;
+            });
+          });
+        });
+      }
+
       function renderReferenceCard(card, store) {
         const group = card.dataset.refGroup;
         const strip = card.querySelector('.reference-strip');
@@ -642,8 +675,10 @@
           preview.setAttribute('aria-label', `${group} reference ${realIndex + 1}`);
 
           const img = document.createElement('img');
-          img.src = item.src;
+          img.addEventListener('load', () => layoutReferenceMosaic(strip), { once: true });
           img.alt = item.name || `${group} reference ${realIndex + 1}`;
+          img.src = item.src;
+          if (img.complete) requestAnimationFrame(() => layoutReferenceMosaic(strip));
           preview.appendChild(img);
 
           const badge = document.createElement('span');
@@ -678,8 +713,15 @@
           moveNext.disabled = realIndex === items.length - 1;
           moveNext.textContent = '뒤로';
 
+          const deleteImage = document.createElement('button');
+          deleteImage.type = 'button';
+          deleteImage.className = 'reference-order-btn reference-order-delete';
+          deleteImage.dataset.refDeleteIndex = String(realIndex);
+          deleteImage.textContent = '삭제';
+
           orderTools.appendChild(movePrev);
           orderTools.appendChild(moveNext);
+          orderTools.appendChild(deleteImage);
 
           thumb.appendChild(preview);
           thumb.appendChild(caption);
@@ -688,6 +730,7 @@
         });
 
         counter.textContent = `${index + 1} / ${items.length}`;
+        layoutReferenceMosaic(strip);
 
         const activeThumb = strip.querySelector(`.reference-thumb-preview[data-ref-thumb-index="${index}"]`);
         if (activeThumb instanceof HTMLElement) {
@@ -776,6 +819,17 @@
         const store = getReferenceStore();
         cards.forEach((card) => renderReferenceCard(card, store));
 
+        if (!initReferenceCards.hasMosaicResizeListener) {
+          let mosaicResizeTimer = null;
+          window.addEventListener('resize', () => {
+            window.clearTimeout(mosaicResizeTimer);
+            mosaicResizeTimer = window.setTimeout(() => {
+              document.querySelectorAll('.reference-strip').forEach(layoutReferenceMosaic);
+            }, 120);
+          });
+          initReferenceCards.hasMosaicResizeListener = true;
+        }
+
         cards.forEach((card) => {
           const fileInput = card.querySelector('.ref-file-input');
           card.addEventListener('input', (event) => {
@@ -818,6 +872,31 @@
               const saved = saveReferenceStore(currentStore);
               if (saved) {
                 card.dataset.refIndex = String(targetIndex);
+                renderReferenceCard(card, currentStore);
+              }
+              return;
+            }
+
+            const deleteButton = target.closest('[data-ref-delete-index]');
+            if (deleteButton instanceof HTMLButtonElement) {
+              const group = card.dataset.refGroup;
+              const deleteIndex = Number(deleteButton.dataset.refDeleteIndex);
+              if (!group || !Number.isFinite(deleteIndex)) return;
+              if (!window.confirm('이 이미지를 삭제할까요?')) return;
+
+              const currentStore = getReferenceStore();
+              const items = Array.isArray(currentStore[group]) ? currentStore[group] : [];
+              if (!items[deleteIndex]) return;
+
+              items.splice(deleteIndex, 1);
+              currentStore[group] = items;
+              const saved = saveReferenceStore(currentStore);
+              if (saved) {
+                let nextIndex = Number(card.dataset.refIndex || 0);
+                if (!Number.isFinite(nextIndex) || nextIndex < 0) nextIndex = 0;
+                if (deleteIndex < nextIndex) nextIndex -= 1;
+                if (nextIndex >= items.length) nextIndex = Math.max(0, items.length - 1);
+                card.dataset.refIndex = String(nextIndex);
                 renderReferenceCard(card, currentStore);
               }
               return;
@@ -876,12 +955,15 @@
 
             if (action === 'delete') {
               if (!items.length) return;
+              if (!window.confirm('현재 선택한 이미지를 삭제할까요?')) return;
               items.splice(index, 1);
               currentStore[group] = items;
-              saveReferenceStore(currentStore);
-              if (index >= items.length) index = Math.max(0, items.length - 1);
-              card.dataset.refIndex = String(index);
-              renderReferenceCard(card, currentStore);
+              const saved = saveReferenceStore(currentStore);
+              if (saved) {
+                if (index >= items.length) index = Math.max(0, items.length - 1);
+                card.dataset.refIndex = String(index);
+                renderReferenceCard(card, currentStore);
+              }
             }
           });
 
