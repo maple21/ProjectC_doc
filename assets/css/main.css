@@ -4027,3 +4027,277 @@
         padding-right: 16px !important;
       }
     }
+
+    /* ===== FINAL FIX: CHARACTER DOSSIER TOP TABS ===== */
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .dossier-layout {
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .side-nav {
+      position: static !important;
+      height: auto !important;
+      display: grid !important;
+      grid-template-columns: auto repeat(3, minmax(0, 1fr)) !important;
+      align-items: end !important;
+      gap: 8px !important;
+      padding: 0 0 14px !important;
+      border: 0 !important;
+      border-bottom: 1px solid rgba(17,17,15,.14) !important;
+      background: transparent !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .side-nav h3 {
+      align-self: center !important;
+      margin: 0 20px 0 0 !important;
+      min-width: 72px !important;
+      color: rgba(17,17,15,.56) !important;
+      font-family: var(--font-ui) !important;
+      font-size: var(--text-caption) !important;
+      font-weight: 700 !important;
+      letter-spacing: .08em !important;
+      text-transform: none !important;
+      line-height: 1.2 !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .nav-btn {
+      width: 100% !important;
+      min-height: 42px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 10px 14px !important;
+      border: 1px solid rgba(17,17,15,.14) !important;
+      background: transparent !important;
+      color: rgba(17,17,15,.64) !important;
+      font-family: var(--font-ui) !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0 !important;
+      text-align: center !important;
+      text-transform: none !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .nav-btn small {
+      display: none !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .nav-btn:hover,
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .nav-btn:active,
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .nav-btn.active {
+      color: #11110f !important;
+      border-color: rgba(17,17,15,.28) !important;
+      background: rgba(17,17,15,.055) !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .nav-btn:focus {
+      outline: none !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .nav-btn:focus-visible {
+      outline: 1px solid rgba(17,17,15,.28) !important;
+      outline-offset: 2px !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .dossier-view {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    @media (max-width: 720px) {
+      .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .side-nav {
+        grid-template-columns: 1fr !important;
+      }
+
+      .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .side-nav h3 {
+        margin: 0 0 2px !important;
+      }
+    }
+
+    /* ===== FINAL FIX: ENVIRONMENT DOSSIER TOP TABS ===== */
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .dossier-layout {
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+    }
+
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .side-nav {
+      position: static !important;
+      height: auto !important;
+      display: grid !important;
+      grid-template-columns: auto repeat(4, minmax(0, 1fr)) !important;
+      align-items: end !important;
+      gap: 8px !important;
+      padding: 0 0 14px !important;
+      border: 0 !important;
+      border-bottom: 1px solid rgba(17,17,15,.14) !important;
+      background: transparent !important;
+    }
+
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .side-nav h3 {
+      align-self: center !important;
+      margin: 0 20px 0 0 !important;
+      min-width: 72px !important;
+      color: rgba(17,17,15,.56) !important;
+      font-family: var(--font-ui) !important;
+      font-size: var(--text-caption) !important;
+      font-weight: 700 !important;
+      letter-spacing: .08em !important;
+      text-transform: none !important;
+      line-height: 1.2 !important;
+    }
+
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .nav-btn {
+      width: 100% !important;
+      min-height: 42px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 10px 14px !important;
+      border: 1px solid rgba(17,17,15,.14) !important;
+      background: transparent !important;
+      color: rgba(17,17,15,.64) !important;
+      font-family: var(--font-ui) !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0 !important;
+      text-align: center !important;
+      text-transform: none !important;
+    }
+
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .nav-btn small {
+      display: none !important;
+    }
+
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .nav-btn:hover,
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .nav-btn:active,
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .nav-btn.active {
+      color: #11110f !important;
+      border-color: rgba(17,17,15,.28) !important;
+      background: rgba(17,17,15,.055) !important;
+    }
+
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .nav-btn:focus {
+      outline: none !important;
+    }
+
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .nav-btn:focus-visible {
+      outline: 1px solid rgba(17,17,15,.28) !important;
+      outline-offset: 2px !important;
+    }
+
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .dossier-view {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    @media (max-width: 820px) {
+      .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .side-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .side-nav h3 {
+        grid-column: 1 / -1 !important;
+        margin: 0 0 2px !important;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .side-nav {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    /* ===== FINAL FIX: UNIFORM REFERENCE THUMBNAILS ===== */
+    .reference-card:not(.growth-part-map-card) .reference-strip {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+      grid-auto-rows: auto !important;
+      grid-auto-flow: row !important;
+      align-items: stretch !important;
+      align-content: start !important;
+      gap: 14px !important;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+    }
+
+    .reference-card:not(.growth-part-map-card) .reference-thumb {
+      grid-row-end: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+      background: #fbf8f2 !important;
+    }
+
+    .reference-card:not(.growth-part-map-card) .reference-thumb-preview {
+      flex: 0 0 auto !important;
+      width: 100% !important;
+      aspect-ratio: 4 / 3 !important;
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      overflow: hidden !important;
+      background: #f0ece4 !important;
+    }
+
+    .reference-card:not(.growth-part-map-card) .reference-thumb img {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+
+    .reference-card:not(.growth-part-map-card) .reference-caption-input {
+      flex: 0 0 auto !important;
+      height: 72px !important;
+      min-height: 72px !important;
+      max-height: 72px !important;
+      resize: none !important;
+    }
+
+    .reference-card:not(.growth-part-map-card) .reference-order-tools {
+      flex: 0 0 auto !important;
+      min-height: 42px !important;
+    }
+
+    .growth-part-map-card .reference-strip {
+      display: flex !important;
+      grid-template-columns: none !important;
+      grid-auto-rows: auto !important;
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+
+    .growth-part-map-card .reference-thumb {
+      grid-row-end: auto !important;
+      flex: 1 1 100% !important;
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+
+    .growth-part-map-card .reference-thumb-preview {
+      aspect-ratio: auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .growth-part-map-card .reference-thumb img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+    }
+
+    @media (max-width: 720px) {
+      .reference-card:not(.growth-part-map-card) .reference-strip {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+      }
+    }
