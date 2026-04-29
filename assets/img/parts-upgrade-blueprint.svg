@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 680" role="img" aria-labelledby="title desc">
+  <title id="title">LYRA Parts Upgrade Blueprint</title>
+  <desc id="desc">A four-column blueprint image showing Head, Body, Arm, and Lower Body part upgrade trees from tier one to tier four.</desc>
+  <defs>
+    <style>
+      .paper { fill: #fbf8f2; }
+      .ink { fill: #242827; }
+      .muted { fill: #6c6a63; }
+      .frame { fill: none; stroke: #aaa69c; stroke-width: 1; }
+      .divider { stroke: #d0cbc1; stroke-width: 1; }
+      .tier-line { stroke: #d6d0c6; stroke-width: 1; stroke-dasharray: 4 8; }
+      .label { font: 700 20px "Arial Narrow", "Segoe UI", sans-serif; letter-spacing: 2px; }
+      .small { font: 500 14px "Arial Narrow", "Segoe UI", sans-serif; letter-spacing: .8px; }
+      .tiny { font: 500 11px "Arial Narrow", "Segoe UI", sans-serif; letter-spacing: .4px; }
+      .nodeText { font: 500 13px "Arial Narrow", "Segoe UI", sans-serif; fill: #343736; }
+      .tier { font: 700 17px "Arial Narrow", "Segoe UI", sans-serif; letter-spacing: 1px; fill: #2e3331; }
+      .tierSub { font: 500 10px "Arial Narrow", "Segoe UI", sans-serif; letter-spacing: .8px; fill: #6c6a63; }
+      .headStroke { stroke: #5b93d1; }
+      .bodyStroke { stroke: #8aa36c; }
+      .armStroke { stroke: #c8883d; }
+      .lowerStroke { stroke: #8d75bd; }
+      .headFill { fill: #f8fbff; }
+      .bodyFill { fill: #fbfdf6; }
+      .armFill { fill: #fffaf3; }
+      .lowerFill { fill: #fbf8ff; }
+      .node { stroke-width: 1.2; rx: 4; }
+      .link { fill: none; stroke-width: 1.2; }
+      .ghost { fill: none; stroke-width: 1; stroke-dasharray: 5 5; opacity: .8; }
+    </style>
+  </defs>
+
+  <rect class="paper" width="1600" height="680"/>
+  <rect class="frame" x="18" y="18" width="1564" height="644"/>
+  <text class="label ink" x="38" y="55">02. PARTS UPGRADE BLUEPRINT</text>
+  <line class="divider" x1="38" y1="78" x2="1560" y2="78"/>
+
+  <line class="divider" x1="490" y1="96" x2="490" y2="642"/>
+  <line class="divider" x1="820" y1="96" x2="820" y2="642"/>
+  <line class="divider" x1="1150" y1="96" x2="1150" y2="642"/>
+  <line class="tier-line" x1="74" y1="188" x2="1560" y2="188"/>
+  <line class="tier-line" x1="74" y1="302" x2="1560" y2="302"/>
+  <line class="tier-line" x1="74" y1="416" x2="1560" y2="416"/>
+  <line class="tier-line" x1="74" y1="530" x2="1560" y2="530"/>
+
+  <g transform="translate(42 0)">
+    <text class="tier" x="0" y="180">T1</text>
+    <text class="tierSub" x="0" y="198">BASIC</text>
+    <text class="tier" x="0" y="294">T2</text>
+    <text class="tierSub" x="0" y="312">ADVANCED</text>
+    <text class="tier" x="0" y="408">T3</text>
+    <text class="tierSub" x="0" y="426">SPECIAL</text>
+    <text class="tier" x="0" y="522">T4</text>
+    <text class="tierSub" x="0" y="540">UNIQUE</text>
+  </g>
+
+  <g id="head" transform="translate(120 0)">
+    <text class="label" x="135" y="112" text-anchor="middle" fill="#336fb0">HEAD</text>
+    <text class="small" x="135" y="132" text-anchor="middle" fill="#336fb0">INTELLIGENCE</text>
+    <path class="link headStroke" d="M135 146 V160 M82 160 H188 M82 160 V174 M188 160 V174"/>
+    <rect class="node headFill headStroke" x="27" y="174" width="110" height="48"/>
+    <text class="nodeText" x="82" y="202" text-anchor="middle">Scan Module</text>
+    <rect class="node headFill headStroke" x="170" y="174" width="110" height="48"/>
+    <text class="nodeText" x="225" y="202" text-anchor="middle">Signal Amplifier</text>
+    <path class="link headStroke" d="M82 222 V264 M225 222 V264"/>
+    <rect class="node headFill headStroke" x="27" y="264" width="110" height="48"/>
+    <text class="nodeText" x="82" y="292" text-anchor="middle">Threat Predictor</text>
+    <rect class="node headFill headStroke" x="170" y="264" width="110" height="48"/>
+    <text class="nodeText" x="225" y="292" text-anchor="middle">Memory Reader</text>
+    <path class="link headStroke" d="M82 312 V378 M225 312 V378"/>
+    <rect class="node headFill headStroke" x="27" y="378" width="110" height="48"/>
+    <text class="nodeText" x="82" y="406" text-anchor="middle">Device Hack</text>
+    <rect class="node headFill headStroke" x="170" y="378" width="110" height="48"/>
+    <text class="nodeText" x="225" y="406" text-anchor="middle">Data Analyzer</text>
+    <path class="link headStroke" d="M82 426 V486 Q82 505 101 505 H206 Q225 505 225 486 V426"/>
+    <path class="link headStroke" d="M153 505 V528"/>
+    <rect class="node headFill headStroke" x="93" y="528" width="120" height="50"/>
+    <text class="nodeText" x="153" y="557" text-anchor="middle">Loop Awareness</text>
+    <circle class="ghost headStroke" cx="82" cy="168" r="9"/>
+    <circle class="ghost headStroke" cx="225" cy="168" r="9"/>
+  </g>
+
+  <g id="body" transform="translate(500 0)">
+    <text class="label" x="135" y="112" text-anchor="middle" fill="#617d43">BODY</text>
+    <text class="small" x="135" y="132" text-anchor="middle" fill="#617d43">STAMINA</text>
+    <path class="link bodyStroke" d="M135 146 V160 M82 160 H188 M82 160 V174 M188 160 V174"/>
+    <rect class="node bodyFill bodyStroke" x="27" y="174" width="110" height="48"/>
+    <text class="nodeText" x="82" y="202" text-anchor="middle">HP Boost</text>
+    <rect class="node bodyFill bodyStroke" x="170" y="174" width="110" height="48"/>
+    <text class="nodeText" x="225" y="202" text-anchor="middle">Poison Resist</text>
+    <path class="link bodyStroke" d="M82 222 V264 M225 222 V264"/>
+    <rect class="node bodyFill bodyStroke" x="27" y="264" width="110" height="48"/>
+    <text class="nodeText" x="82" y="292" text-anchor="middle">Enviro Shield</text>
+    <rect class="node bodyFill bodyStroke" x="170" y="264" width="110" height="48"/>
+    <text class="nodeText" x="225" y="292" text-anchor="middle">Stamina Regen</text>
+    <path class="link bodyStroke" d="M82 312 V378 M225 312 V378"/>
+    <rect class="node bodyFill bodyStroke" x="27" y="378" width="110" height="48"/>
+    <text class="nodeText" x="82" y="406" text-anchor="middle">Last Stand</text>
+    <rect class="node bodyFill bodyStroke" x="170" y="378" width="110" height="48"/>
+    <text class="nodeText" x="225" y="406" text-anchor="middle">Pain Suppression</text>
+    <path class="link bodyStroke" d="M82 426 V486 Q82 505 101 505 H206 Q225 505 225 486 V426"/>
+    <path class="link bodyStroke" d="M153 505 V528"/>
+    <rect class="node bodyFill bodyStroke" x="93" y="528" width="120" height="50"/>
+    <text class="nodeText" x="153" y="557" text-anchor="middle">Overload Core</text>
+  </g>
+
+  <g id="arm" transform="translate(840 0)">
+    <text class="label" x="135" y="112" text-anchor="middle" fill="#a2672e">ARM (L / R)</text>
+    <text class="small" x="135" y="132" text-anchor="middle" fill="#a2672e">COMBAT</text>
+    <path class="link armStroke" d="M135 146 V160 M82 160 H188 M82 160 V174 M188 160 V174"/>
+    <rect class="node armFill armStroke" x="27" y="174" width="110" height="48"/>
+    <text class="nodeText" x="82" y="202" text-anchor="middle">Melee Boost</text>
+    <rect class="node armFill armStroke" x="170" y="174" width="110" height="48"/>
+    <text class="nodeText" x="225" y="202" text-anchor="middle">Aim Stability</text>
+    <path class="link armStroke" d="M82 222 V264 M225 222 V264"/>
+    <rect class="node armFill armStroke" x="27" y="264" width="110" height="48"/>
+    <text class="nodeText" x="82" y="292" text-anchor="middle">Reload Speed</text>
+    <rect class="node armFill armStroke" x="170" y="264" width="110" height="48"/>
+    <text class="nodeText" x="225" y="292" text-anchor="middle">Weak Point</text>
+    <path class="link armStroke" d="M82 312 V378 M225 312 V378"/>
+    <rect class="node armFill armStroke" x="27" y="378" width="110" height="48"/>
+    <text class="nodeText" x="82" y="406" text-anchor="middle">Dual Function</text>
+    <rect class="node armFill armStroke" x="170" y="378" width="110" height="48"/>
+    <text class="nodeText" x="225" y="406" text-anchor="middle">Finisher</text>
+    <path class="link armStroke" d="M82 426 V486 Q82 505 101 505 H206 Q225 505 225 486 V426"/>
+    <path class="link armStroke" d="M153 505 V528"/>
+    <rect class="node armFill armStroke" x="93" y="528" width="120" height="50"/>
+    <text class="nodeText" x="153" y="557" text-anchor="middle">Adaptive Weapon</text>
+  </g>
+
+  <g id="lower" transform="translate(1180 0)">
+    <text class="label" x="135" y="112" text-anchor="middle" fill="#7158a8">LOWER BODY</text>
+    <text class="small" x="135" y="132" text-anchor="middle" fill="#7158a8">MOVEMENT</text>
+    <path class="link lowerStroke" d="M135 146 V160 M82 160 H188 M82 160 V174 M188 160 V174"/>
+    <rect class="node lowerFill lowerStroke" x="27" y="174" width="110" height="48"/>
+    <text class="nodeText" x="82" y="202" text-anchor="middle">Sprint Speed</text>
+    <rect class="node lowerFill lowerStroke" x="170" y="174" width="110" height="48"/>
+    <text class="nodeText" x="225" y="202" text-anchor="middle">Climb Speed</text>
+    <path class="link lowerStroke" d="M82 222 V264 M225 222 V264"/>
+    <rect class="node lowerFill lowerStroke" x="27" y="264" width="110" height="48"/>
+    <text class="nodeText" x="82" y="292" text-anchor="middle">Dodge Roll</text>
+    <rect class="node lowerFill lowerStroke" x="170" y="264" width="110" height="48"/>
+    <text class="nodeText" x="225" y="292" text-anchor="middle">Silent Move</text>
+    <path class="link lowerStroke" d="M82 312 V378 M225 312 V378"/>
+    <rect class="node lowerFill lowerStroke" x="27" y="378" width="110" height="48"/>
+    <text class="nodeText" x="82" y="406" text-anchor="middle">Dash</text>
+    <rect class="node lowerFill lowerStroke" x="170" y="378" width="110" height="48"/>
+    <text class="nodeText" x="225" y="406" text-anchor="middle">Vertical Jump</text>
+    <path class="link lowerStroke" d="M82 426 V486 Q82 505 101 505 H206 Q225 505 225 486 V426"/>
+    <path class="link lowerStroke" d="M153 505 V528"/>
+    <rect class="node lowerFill lowerStroke" x="93" y="528" width="120" height="50"/>
+    <text class="nodeText" x="153" y="557" text-anchor="middle">Air Control</text>
+  </g>
+
+</svg>

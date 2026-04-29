@@ -127,6 +127,112 @@
         return document.querySelector(`.workspace-tab[data-workspace-target="${target}"]`)?.textContent?.trim() || 'Workspace';
       }
 
+      const SECTION_LABELS = {
+        overview: '개요',
+        relationships: '관계',
+        dossiers: '도감',
+        growth: '성장',
+        behaviors: '행동 패턴',
+        loop: '루프'
+      };
+
+      function getSectionLabel(target) {
+        return document.querySelector(`.tab-btn[data-screen-target="${target}"]`)?.textContent?.trim()
+          || SECTION_LABELS[target]
+          || '페이지';
+      }
+
+      function updateNavigationSummary(workspaceTarget, screenTarget) {
+        const workspaceLabel = byId('active-workspace-label');
+        const sectionLabel = byId('active-section-label');
+        const pageTitle = byId('workspace-page-title');
+        if (workspaceLabel && workspaceTarget) workspaceLabel.textContent = getWorkspaceLabel(workspaceTarget);
+        if (sectionLabel && screenTarget) sectionLabel.textContent = getSectionLabel(screenTarget);
+        if (pageTitle && screenTarget) pageTitle.textContent = getSectionLabel(screenTarget);
+      }
+
+      function closeWorkspaceMenu() {
+        const menu = byId('workspace-menu');
+        if (menu instanceof HTMLDetailsElement) menu.open = false;
+      }
+
+      function getSectionNav() {
+        return document.querySelector('.topnav-tabs[data-section-nav="true"], .topnav-tabs');
+      }
+
+      function syncWorkspaceSectionNav(workspaceTarget) {
+        const nav = getSectionNav();
+        const activeButton = document.querySelector(`.workspace-tab[data-workspace-target="${workspaceTarget}"]`);
+        if (!nav || !activeButton) return;
+        nav.classList.add('workspace-section-nav');
+        nav.dataset.sectionNav = 'true';
+        activeButton.after(nav);
+      }
+
+      function ensureReferenceWorkspaceLayout() {
+        const shell = document.querySelector('.shell');
+        const layout = document.querySelector('.workspace-layout');
+        const content = document.querySelector('.workspace-content');
+        const header = document.querySelector('.topbar.topnav');
+        const sidebar = document.querySelector('.workspace-sidebar');
+        const nav = getSectionNav();
+        if (!shell || !layout || !content || !header || !sidebar || !nav) return;
+
+        if (header.parentElement !== shell) {
+          shell.insertBefore(header, layout);
+        }
+
+        sidebar.classList.add('reference-workspace-sidebar');
+        nav.classList.add('workspace-section-nav');
+        nav.dataset.sectionNav = 'true';
+
+        if (sidebar.parentElement !== layout) {
+          layout.insertBefore(sidebar, content);
+        }
+
+        const main = content.querySelector('main');
+        if (main && !byId('workspace-page-title')) {
+          const pageTitle = document.createElement('div');
+          pageTitle.id = 'workspace-page-title';
+          pageTitle.className = 'workspace-page-title';
+          pageTitle.textContent = getSectionLabel('overview');
+          content.insertBefore(pageTitle, main);
+        }
+
+        const sidebarTitle = sidebar.querySelector('.workspace-sidebar-title');
+        if (sidebarTitle) sidebarTitle.textContent = '워크스페이스';
+
+        const addButton = byId('add-workspace-btn');
+        if (addButton) {
+          addButton.textContent = '+';
+          addButton.setAttribute('aria-label', '워크스페이스 추가');
+        }
+
+        const activeWorkspace = sidebar.querySelector('.workspace-tab.active[data-workspace-target]')
+          || sidebar.querySelector('.workspace-tab[data-workspace-target="character"]');
+        syncWorkspaceSectionNav(activeWorkspace?.dataset.workspaceTarget || 'character');
+
+        const legacyMenu = byId('workspace-menu');
+        if (legacyMenu) legacyMenu.remove();
+      }
+
+      function updateStickyHeaderHeight() {
+        const header = document.querySelector('.topbar.topnav');
+        if (!header) return;
+        const height = Math.ceil(header.getBoundingClientRect().height);
+        document.documentElement.style.setProperty('--sticky-header-height', `${height}px`);
+      }
+
+      function initStickyHeaderSizing() {
+        updateStickyHeaderHeight();
+        window.addEventListener('resize', updateStickyHeaderHeight, { passive: true });
+        window.addEventListener('load', updateStickyHeaderHeight, { once: true });
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(updateStickyHeaderHeight).catch(() => {});
+        }
+        requestAnimationFrame(updateStickyHeaderHeight);
+      }
+
       function initTabs() {
         const tabButtons = Array.from(document.querySelectorAll('.tab-btn[data-screen-target]'));
         if (!tabButtons.length) return;
@@ -148,6 +254,8 @@
             if (target === 'dossiers' || target === 'behaviors') {
               activateFirstDossierInPane(targetScreen);
             }
+            updateNavigationSummary(activePane.dataset.workspacePane, target);
+            closeWorkspaceMenu();
             queueReferenceMosaicLayout(targetScreen);
           });
         });
@@ -186,6 +294,7 @@
         document.querySelectorAll('.tab-btn[data-screen-target]').forEach((btn) => {
           btn.classList.toggle('active', btn.dataset.screenTarget === target);
         });
+        updateNavigationSummary(pane.dataset.workspacePane, target);
       }
 
       function updateWorkspaceHeader(target) {
@@ -196,6 +305,7 @@
         if (!brandEyebrow || !brandTitle || !statusTitle || !statusSub) return;
 
         const fallbackName = getWorkspaceLabel(target);
+        updateNavigationSummary(target);
         const meta = workspaceMeta[target] || {
           brandEyebrow: `${fallbackName} 문서`,
           brandTitle: `${fallbackName} Codex`,
@@ -230,8 +340,8 @@
             <section class="panel">
               <div class="chip">새 워크스페이스 개요</div>
               <h1 class="hero-title">${name.toUpperCase()}</h1>
-              <p class="sub">이 워크스페이스는 ${name} 설정을 위한 기본 문서이다. 개요, 관계, 도감, 행동 패턴, 루프 구조를 자유롭게 편집할 수 있다.</p>
-              <div class="label-row"><span class="chip">개요</span><span class="chip">관계</span><span class="chip">도감</span><span class="chip">행동 패턴</span><span class="chip">루프</span></div>
+              <p class="sub">이 워크스페이스는 ${name} 설정을 위한 기본 문서이다. 개요, 관계, 도감, 성장, 행동 패턴, 루프 구조를 자유롭게 편집할 수 있다.</p>
+              <div class="label-row"><span class="chip">개요</span><span class="chip">관계</span><span class="chip">도감</span><span class="chip">성장</span><span class="chip">행동 패턴</span><span class="chip">루프</span></div>
             </section>
             <aside class="hero-side">
               <div class="stat-box"><div class="k">핵심 규칙</div><div class="v">새 워크스페이스</div><p>이 영역을 클릭해서 텍스트를 자유롭게 수정할 수 있다.</p></div>
@@ -287,6 +397,20 @@
             </section>
           </div>
         </section>
+        <section class="screen" data-screen="growth">
+          <div class="growth-layout">
+            <section class="panel growth-brief">
+              <div class="section-head"><h2>성장 구조</h2><span class="caption">기본 성장 탭</span></div>
+              <p class="sub">새 워크스페이스의 성장, 강화, 누적 규칙을 정리하는 영역이다. 도감 항목이 어떤 방식으로 변화하고 다음 루프에 무엇이 남는지 간략하게 기록한다.</p>
+              <div class="growth-part-grid">
+                <article class="growth-part-card theme-head"><span>STEP 1</span><h3>선택</h3><p>성장시킬 대상을 고른다.</p></article>
+                <article class="growth-part-card theme-body"><span>STEP 2</span><h3>획득</h3><p>필요한 자원이나 조건을 확보한다.</p></article>
+                <article class="growth-part-card theme-arm"><span>STEP 3</span><h3>적용</h3><p>새 능력이나 상태를 반영한다.</p></article>
+                <article class="growth-part-card theme-lower"><span>STEP 4</span><h3>반복</h3><p>다음 루프에 남길 요소를 정한다.</p></article>
+              </div>
+            </section>
+          </div>
+        </section>
         <section class="screen" data-screen="behaviors">
           <div class="panel"><div class="section-head"><h2>행동 패턴</h2><span class="caption">기본 구조</span></div><p>${name}의 행동 패턴을 여기서 정리한다.</p></div>
         </section>`;
@@ -327,6 +451,7 @@
           if (!nextPane) return;
           document.querySelectorAll('.workspace-pane[data-workspace-pane]').forEach((pane) => pane.classList.remove('active'));
           document.querySelectorAll('.workspace-tab[data-workspace-target]').forEach((btn) => btn.classList.toggle('active', btn.dataset.workspaceTarget === target));
+          syncWorkspaceSectionNav(target);
           nextPane.classList.add('active');
           syncTopTabsForPane(nextPane);
           updateWorkspaceHeader(target);
@@ -459,6 +584,7 @@
         });
         activePanel.hidden = false;
         activePanel.classList.add('active');
+        queueReferenceMosaicLayout(activePanel);
       }
 
       function activateFirstDossierInPane(container) {
@@ -609,35 +735,247 @@
         node.textContent = JSON.stringify(store || {}).replace(/</g, '\\u003c');
       }
 
+      function getSafeRefKey(value) {
+        return String(value || 'reference').replace(/[^a-z0-9_-]+/gi, '-').replace(/^-+|-+$/g, '') || 'reference';
+      }
+
+      function createRefActionButton(action, label) {
+        const button = document.createElement('button');
+        button.className = 'ref-btn';
+        button.type = 'button';
+        button.dataset.refAction = action;
+        button.textContent = label;
+        return button;
+      }
+
+      function createReferenceCard(group, label, placeholder, editKeyBase) {
+        const safeKey = getSafeRefKey(editKeyBase || group);
+        const card = document.createElement('div');
+        card.className = 'reference-card';
+        card.dataset.refGroup = group;
+        card.dataset.refIndex = '0';
+        card.dataset.autoRefPanel = 'extra';
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'reference-toolbar';
+
+        const labelNode = document.createElement('span');
+        labelNode.className = 'ref-label';
+        labelNode.dataset.editKey = `${safeKey}-label`;
+        labelNode.contentEditable = 'true';
+        labelNode.textContent = label;
+
+        const actions = document.createElement('div');
+        actions.className = 'ref-actions';
+        actions.appendChild(createRefActionButton('prev', '이전'));
+        actions.appendChild(createRefActionButton('next', '다음'));
+        actions.appendChild(createRefActionButton('add', '추가'));
+        actions.appendChild(createRefActionButton('delete', '삭제'));
+
+        toolbar.appendChild(labelNode);
+        toolbar.appendChild(actions);
+
+        const frame = document.createElement('div');
+        frame.className = 'reference-frame';
+
+        const strip = document.createElement('div');
+        strip.className = 'reference-strip';
+
+        const placeholderNode = document.createElement('div');
+        placeholderNode.className = 'reference-placeholder';
+        placeholderNode.textContent = placeholder;
+
+        frame.appendChild(strip);
+        frame.appendChild(placeholderNode);
+
+        const meta = document.createElement('div');
+        meta.className = 'reference-meta';
+
+        const counter = document.createElement('span');
+        counter.className = 'ref-counter';
+        counter.textContent = '0 / 0';
+        meta.appendChild(counter);
+
+        const input = document.createElement('input');
+        input.className = 'ref-file-input';
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.multiple = true;
+
+        card.appendChild(toolbar);
+        card.appendChild(frame);
+        card.appendChild(meta);
+        card.appendChild(input);
+        return card;
+      }
+
+      function ensureExtraReferencePanels() {
+        document.querySelectorAll('.dossier-panel').forEach((panel) => {
+          const directCards = Array.from(panel.children).filter((child) => child.classList?.contains('reference-card'));
+          if (!directCards.length) return;
+          if (directCards.some((card) => card.dataset.autoRefPanel === 'extra')) return;
+
+          const baseGroup = directCards[0].dataset.refGroup;
+          if (!baseGroup) return;
+
+          const extraGroup = `${baseGroup}-extra`;
+          if (document.querySelector(`.reference-card[data-ref-group="${extraGroup}"]`)) return;
+
+          const title = panel.querySelector('.dossier-header h2')?.textContent?.trim() || '도감';
+          const extraCard = createReferenceCard(
+            extraGroup,
+            '추가 이미지',
+            `${title} 추가 이미지를 이 영역에 추가`,
+            `${extraGroup}-panel`
+          );
+          directCards[directCards.length - 1].after(extraCard);
+        });
+      }
+
+      function setReferenceCardCollapsed(card, collapsed) {
+        if (!(card instanceof HTMLElement)) return;
+        const isCollapsed = Boolean(collapsed);
+        card.classList.toggle('is-collapsed', isCollapsed);
+        card.dataset.refCollapsed = String(isCollapsed);
+
+        const frame = card.querySelector('.reference-frame');
+        const meta = card.querySelector('.reference-meta');
+        const toggle = card.querySelector('[data-ref-toggle]');
+        const input = card.querySelector('.ref-collapse-input');
+
+        if (frame instanceof HTMLElement) {
+          frame.hidden = isCollapsed;
+          frame.setAttribute('aria-hidden', String(isCollapsed));
+        }
+        if (meta instanceof HTMLElement) {
+          meta.hidden = isCollapsed;
+          meta.setAttribute('aria-hidden', String(isCollapsed));
+        }
+        if (input instanceof HTMLInputElement && input.checked !== isCollapsed) {
+          input.checked = isCollapsed;
+        }
+        if (toggle instanceof HTMLElement) {
+          toggle.setAttribute('aria-expanded', String(!isCollapsed));
+          toggle.setAttribute('aria-label', isCollapsed ? '열기' : '닫기');
+        }
+
+        if (!isCollapsed) {
+          const strip = card.querySelector('.reference-strip');
+          if (strip instanceof HTMLElement) layoutReferenceMosaic(strip);
+          queueReferenceMosaicLayout(card);
+        }
+      }
+
+      function initReferenceCardCollapse(card) {
+        if (!(card instanceof HTMLElement)) return;
+        if (card.dataset.refCollapse === 'disabled') return;
+        const actions = card.querySelector('.ref-actions');
+        if (!(actions instanceof HTMLElement)) return;
+        const toolbar = card.querySelector('.reference-toolbar');
+        if (!(toolbar instanceof HTMLElement)) return;
+
+        let input = toolbar.querySelector('.ref-collapse-input');
+        if (!(input instanceof HTMLInputElement)) {
+          input = document.createElement('input');
+          input.className = 'ref-collapse-input';
+          input.type = 'checkbox';
+          input.id = `ref-collapse-${Math.random().toString(36).slice(2, 10)}`;
+          input.setAttribute('aria-hidden', 'true');
+          toolbar.appendChild(input);
+        } else if (!input.id) {
+          input.id = `ref-collapse-${Math.random().toString(36).slice(2, 10)}`;
+        }
+
+        let toggleSlot = toolbar.querySelector('.reference-toggle-slot');
+        if (!(toggleSlot instanceof HTMLElement)) {
+          toggleSlot = document.createElement('div');
+          toggleSlot.className = 'reference-toggle-slot';
+          toolbar.appendChild(toggleSlot);
+        }
+
+        let toggle = card.querySelector('[data-ref-toggle]');
+        if (!(toggle instanceof HTMLLabelElement)) {
+          const oldToggle = toggle;
+          toggle = document.createElement('label');
+          toggle.className = 'ref-btn ref-toggle-btn';
+          toggle.dataset.refToggle = 'panel';
+          toggle.innerHTML = '<span class="ref-toggle-close">닫기</span><span class="ref-toggle-open">열기</span>';
+          if (oldToggle) oldToggle.replaceWith(toggle);
+        }
+        toggle.htmlFor = input.id;
+        if (toggle.parentElement !== toggleSlot) {
+          toggleSlot.appendChild(toggle);
+        }
+
+        if (input.dataset.refCollapseBound !== 'true') {
+          input.addEventListener('change', () => {
+            setReferenceCardCollapsed(card, input.checked);
+          });
+          input.dataset.refCollapseBound = 'true';
+        }
+
+        setReferenceCardCollapsed(card, card.classList.contains('is-collapsed'));
+      }
+
       function queueReferenceMosaicLayout(scope = document) {
         requestAnimationFrame(() => {
           const target = scope instanceof HTMLElement || scope === document ? scope : document;
           target.querySelectorAll('.reference-strip').forEach(layoutReferenceMosaic);
+          requestAnimationFrame(() => {
+            target.querySelectorAll('.reference-strip').forEach(layoutReferenceMosaic);
+          });
         });
+      }
+
+      function isVisibleReferenceStrip(strip) {
+        if (!(strip instanceof HTMLElement) || !strip.isConnected) return false;
+        if (strip.closest('.reference-card.is-collapsed')) return false;
+        let node = strip;
+        while (node && node !== document.documentElement) {
+          if (node instanceof HTMLElement && node.hidden) return false;
+          node = node.parentElement;
+        }
+        return strip.getClientRects().length > 0 && strip.clientWidth > 0;
       }
 
       function layoutReferenceMosaic(strip) {
         if (!(strip instanceof HTMLElement)) return;
+        if (!isVisibleReferenceStrip(strip)) {
+          strip.dataset.mosaicState = 'hidden';
+          return;
+        }
         const styles = getComputedStyle(strip);
         const rowHeight = Number.parseFloat(styles.getPropertyValue('--mosaic-row-height')) || 8;
         const gap = Number.parseFloat(styles.rowGap || styles.gap) || 14;
         const thumbs = Array.from(strip.querySelectorAll('.reference-thumb'));
+        if (!thumbs.length) {
+          strip.dataset.mosaicState = 'empty';
+          return;
+        }
+        strip.dataset.mosaicState = 'measuring';
 
         thumbs.forEach((thumb) => {
           if (!(thumb instanceof HTMLElement)) return;
           thumb.style.gridRowEnd = 'auto';
         });
 
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            thumbs.forEach((thumb) => {
-              if (!(thumb instanceof HTMLElement)) return;
-              const height = thumb.scrollHeight;
-              const span = Math.max(1, Math.ceil((height + gap) / (rowHeight + gap)));
-              thumb.style.gridRowEnd = `span ${span}`;
-            });
+        const applyMosaicSpans = () => {
+          if (!isVisibleReferenceStrip(strip)) {
+            strip.dataset.mosaicState = 'hidden';
+            return;
+          }
+          thumbs.forEach((thumb) => {
+            if (!(thumb instanceof HTMLElement)) return;
+            const height = thumb.scrollHeight;
+            const span = Math.max(1, Math.ceil((height + gap) / (rowHeight + gap)));
+            thumb.style.gridRowEnd = `span ${span}`;
           });
-        });
+          strip.dataset.mosaicState = 'ready';
+          strip.dataset.mosaicItems = String(thumbs.length);
+        };
+
+        applyMosaicSpans();
+        requestAnimationFrame(applyMosaicSpans);
       }
 
       function renderReferenceCard(card, store) {
@@ -675,10 +1013,16 @@
           preview.setAttribute('aria-label', `${group} reference ${realIndex + 1}`);
 
           const img = document.createElement('img');
-          img.addEventListener('load', () => layoutReferenceMosaic(strip), { once: true });
+          img.addEventListener('load', () => {
+            layoutReferenceMosaic(strip);
+            queueReferenceMosaicLayout(card);
+          }, { once: true });
           img.alt = item.name || `${group} reference ${realIndex + 1}`;
           img.src = item.src;
-          if (img.complete) requestAnimationFrame(() => layoutReferenceMosaic(strip));
+          if (img.complete) {
+            layoutReferenceMosaic(strip);
+            queueReferenceMosaicLayout(card);
+          }
           preview.appendChild(img);
 
           const badge = document.createElement('span');
@@ -731,9 +1075,10 @@
 
         counter.textContent = `${index + 1} / ${items.length}`;
         layoutReferenceMosaic(strip);
+        queueReferenceMosaicLayout(card);
 
         const activeThumb = strip.querySelector(`.reference-thumb-preview[data-ref-thumb-index="${index}"]`);
-        if (activeThumb instanceof HTMLElement) {
+        if (activeThumb instanceof HTMLElement && isVisibleReferenceStrip(strip)) {
           activeThumb.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
       }
@@ -813,11 +1158,15 @@
       }
 
       function initReferenceCards() {
+        ensureExtraReferencePanels();
         const cards = Array.from(document.querySelectorAll('.reference-card[data-ref-group]'));
         if (!cards.length) return;
 
         const store = getReferenceStore();
-        cards.forEach((card) => renderReferenceCard(card, store));
+        cards.forEach((card) => {
+          initReferenceCardCollapse(card);
+          renderReferenceCard(card, store);
+        });
 
         if (!initReferenceCards.hasMosaicResizeListener) {
           let mosaicResizeTimer = null;
@@ -831,6 +1180,8 @@
         }
 
         cards.forEach((card) => {
+          if (card.dataset.refBound === 'true') return;
+          card.dataset.refBound = 'true';
           const fileInput = card.querySelector('.ref-file-input');
           card.addEventListener('input', (event) => {
             const target = event.target;
@@ -979,7 +1330,9 @@
                 src: await optimizeImageFile(file),
                 caption: ''
               })));
-              currentStore[group] = [...items, ...dataList];
+              currentStore[group] = card.dataset.refSingle === 'true'
+                ? dataList.slice(0, 1)
+                : [...items, ...dataList];
               const saved = saveReferenceStore(currentStore);
               if (saved) {
                 card.dataset.refIndex = String(Math.max(0, currentStore[group].length - 1));
@@ -1555,7 +1908,7 @@
 
       function runSelfChecks() {
         const checks = [
-          ['탭 버튼 수', document.querySelectorAll('.tab-btn[data-screen-target]').length === 4],
+          ['탭 버튼 수', document.querySelectorAll('.tab-btn[data-screen-target]').length === 5],
           ['워크스페이스 탭', document.querySelectorAll('.workspace-tab[data-workspace-target]').length >= 2],
           ['워크스페이스 추가 버튼', !!byId('add-workspace-btn')],
           ['관계 루프', !!byId('relationship-loop')],
@@ -1581,7 +1934,10 @@
       }
 
       function init() {
+        safeStep('reference workspace layout', ensureReferenceWorkspaceLayout);
+        safeStep('sticky header sizing', initStickyHeaderSizing);
         safeStep('workspace tabs', initWorkspaceTabs);
+        safeStep('extra reference panels', ensureExtraReferencePanels);
         safeStep('editable content load', loadEditableContent);
         safeStep('brief character content', applyBriefCharacterContent);
         safeStep('merge loop sections', mergeLoopSectionsIntoRelationships);

@@ -3,30 +3,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Character Codex</title>
-  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/main.css?v=20260430-menu-row">
 </head>
 <body>
   <div class="shell">
     <div class="workspace-layout">
-      <aside class="workspace-sidebar" aria-label="전역 탭">
-        <div class="workspace-sidebar-title">워크스페이스</div>
-        <button class="workspace-tab active" type="button" data-workspace-target="character">Character</button>
-        <button class="workspace-tab" type="button" data-workspace-target="environment">Environment</button>
-        <button class="workspace-tab" type="button" data-workspace-target="workspace-3">새 탭 1</button><button class="workspace-tab is-add" id="add-workspace-btn" type="button" aria-label="탭 추가">+</button>
-      </aside>
       <div class="workspace-content">
     <header class="topbar topnav">
-      <div class="topnav-identity">
-        <span class="eyebrow" id="brand-eyebrow-text" data-edit-key="brand-eyebrow" contenteditable="true">Capital 기록</span>
-        <strong id="brand-title-text" data-edit-key="brand-title" contenteditable="true">Character Codex</strong>
-      </div>
+      <div class="topnav-main">
+        <div class="topnav-identity">
+          <span class="eyebrow" id="brand-eyebrow-text" data-edit-key="brand-eyebrow" contenteditable="true">Capital 기록</span>
+          <strong id="brand-title-text" data-edit-key="brand-title" contenteditable="true">Character Codex</strong>
+        </div>
 
-      <nav class="tabs topnav-tabs" aria-label="Codex Sections">
-        <button class="tab-btn active" data-screen-target="overview">개요</button>
-        <button class="tab-btn" data-screen-target="relationships">관계</button>
-        <button class="tab-btn" data-screen-target="dossiers">도감</button>
-        <button class="tab-btn" data-screen-target="behaviors">행동 패턴</button>
-      </nav>
+        <details class="workspace-menu" id="workspace-menu">
+          <summary class="workspace-menu-summary">
+            <span class="workspace-menu-kicker">워크스페이스</span>
+            <strong id="active-workspace-label">Character</strong>
+            <span id="active-section-label">개요</span>
+          </summary>
+          <div class="workspace-menu-panel">
+            <aside class="workspace-sidebar" aria-label="워크스페이스 메뉴">
+              <div class="workspace-sidebar-title">워크스페이스</div>
+              <button class="workspace-tab active" type="button" data-workspace-target="character">Character</button>
+              <button class="workspace-tab" type="button" data-workspace-target="environment">Environment</button>
+              <button class="workspace-tab" type="button" data-workspace-target="workspace-3">새 탭 1</button><button class="workspace-tab is-add" id="add-workspace-btn" type="button" aria-label="탭 추가">+ 새 워크스페이스</button>
+            </aside>
+
+            <div class="workspace-subnav">
+              <div class="workspace-sidebar-title">페이지</div>
+              <nav class="tabs topnav-tabs" aria-label="Codex Sections">
+                <button class="tab-btn active" data-screen-target="overview">개요</button>
+                <button class="tab-btn" data-screen-target="relationships">관계</button>
+                <button class="tab-btn" data-screen-target="dossiers">도감</button>
+                <button class="tab-btn" data-screen-target="growth">성장</button>
+                <button class="tab-btn" data-screen-target="behaviors">행동 패턴</button>
+              </nav>
+            </div>
+          </div>
+        </details>
+      </div>
 
       <div class="toolbar-panel topnav-tools">
         <div class="status topnav-status">
@@ -431,6 +447,90 @@
         </div>
       </section>
 
+      <section class="screen" id="growth" data-screen="growth">
+        <div class="growth-layout">
+          <div class="growth-intro-grid">
+            <section class="panel growth-brief">
+              <div class="section-head">
+                <h2 data-edit-key="character-growth-title" contenteditable="true">LYRA 성장 시스템</h2>
+                <span class="caption" data-edit-key="character-growth-caption" contenteditable="true">Parts Replacement Blueprint</span>
+              </div>
+              <p class="sub" data-edit-key="character-growth-summary" contenteditable="true">LYRA의 신체는 모듈형이며, 부위별 파츠를 교체하고 보정하면서 Outland에 적응한다. 성장은 레벨업보다 파츠 선택, 장착 슬롯, 시너지와 충돌을 관리하는 방식에 가깝다.</p>
+              <div class="growth-part-grid">
+                <article class="growth-part-card theme-head"><span data-edit-key="character-growth-part-1-k" contenteditable="true">HEAD</span><h3 data-edit-key="character-growth-part-1-title" contenteditable="true">지능</h3><p data-edit-key="character-growth-part-1-body" contenteditable="true">탐지, 예측, 정보 해석을 강화한다.</p></article>
+                <article class="growth-part-card theme-body"><span data-edit-key="character-growth-part-2-k" contenteditable="true">BODY</span><h3 data-edit-key="character-growth-part-2-title" contenteditable="true">체력</h3><p data-edit-key="character-growth-part-2-body" contenteditable="true">생존력, 저항, 소모 관리에 관여한다.</p></article>
+                <article class="growth-part-card theme-arm"><span data-edit-key="character-growth-part-3-k" contenteditable="true">ARM L / R</span><h3 data-edit-key="character-growth-part-3-title" contenteditable="true">전투</h3><p data-edit-key="character-growth-part-3-body" contenteditable="true">근접, 조준, 처치 흐름을 확장한다.</p></article>
+                <article class="growth-part-card theme-lower"><span data-edit-key="character-growth-part-4-k" contenteditable="true">LOWER BODY</span><h3 data-edit-key="character-growth-part-4-title" contenteditable="true">이동</h3><p data-edit-key="character-growth-part-4-body" contenteditable="true">질주, 회피, 수직 이동을 담당한다.</p></article>
+              </div>
+            </section>
+
+            <div class="reference-card growth-part-map-card" data-ref-group="lyra-part-map" data-ref-index="0" data-ref-collapse="disabled" data-ref-single="true">
+              <div class="reference-toolbar">
+                <span class="ref-label" data-edit-key="character-growth-part-map-label" contenteditable="true">LYRA Part Map</span>
+                <div class="ref-actions">
+                  <button class="ref-btn" type="button" data-ref-action="add">추가</button>
+                  <button class="ref-btn" type="button" data-ref-action="delete">삭제</button>
+                </div>
+              </div>
+              <div class="reference-frame">
+                <div class="reference-strip"></div>
+                <div class="reference-placeholder">LYRA Part Map 이미지를 이 영역에 추가</div>
+              </div>
+              <div class="reference-meta"><span class="ref-counter" data-edit-key="character-growth-part-map-counter" contenteditable="true">0 / 0</span></div>
+              <input class="ref-file-input" type="file" accept="image/*">
+            </div>
+          </div>
+
+          <section class="panel growth-upgrade">
+            <div class="section-head">
+              <h2 data-edit-key="character-growth-tree-title" contenteditable="true">부위별 업그레이드 트리</h2>
+              <span class="caption" data-edit-key="character-growth-tree-caption" contenteditable="true">T1 Basic · T2 Advanced · T3 Special · T4 Unique</span>
+            </div>
+            <figure class="growth-blueprint-figure">
+              <img class="growth-blueprint-image" src="assets/img/parts-upgrade-blueprint.svg" alt="LYRA 부위별 업그레이드 트리 도면">
+            </figure>
+            <div class="growth-tree-grid">
+              <article class="growth-tree theme-head">
+                <h3 data-edit-key="character-growth-head-title" contenteditable="true">HEAD / 지능</h3>
+                <div class="tier-row"><b>T1</b><div><span data-edit-key="character-growth-head-t1a" contenteditable="true">스캔 모듈</span><span data-edit-key="character-growth-head-t1b" contenteditable="true">신호 증폭기</span></div></div>
+                <div class="tier-row"><b>T2</b><div><span data-edit-key="character-growth-head-t2a" contenteditable="true">위협 예측</span><span data-edit-key="character-growth-head-t2b" contenteditable="true">기억 판독</span></div></div>
+                <div class="tier-row"><b>T3</b><div><span data-edit-key="character-growth-head-t3a" contenteditable="true">장치 해킹</span><span data-edit-key="character-growth-head-t3b" contenteditable="true">데이터 분석</span></div></div>
+                <div class="tier-row"><b>T4</b><div><span data-edit-key="character-growth-head-t4a" contenteditable="true">루프 인식</span></div></div>
+              </article>
+              <article class="growth-tree theme-body">
+                <h3 data-edit-key="character-growth-body-title" contenteditable="true">BODY / 체력</h3>
+                <div class="tier-row"><b>T1</b><div><span data-edit-key="character-growth-body-t1a" contenteditable="true">HP 부스트</span><span data-edit-key="character-growth-body-t1b" contenteditable="true">독 저항</span></div></div>
+                <div class="tier-row"><b>T2</b><div><span data-edit-key="character-growth-body-t2a" contenteditable="true">환경 방어막</span><span data-edit-key="character-growth-body-t2b" contenteditable="true">스태미나 회복</span></div></div>
+                <div class="tier-row"><b>T3</b><div><span data-edit-key="character-growth-body-t3a" contenteditable="true">최후 저항</span><span data-edit-key="character-growth-body-t3b" contenteditable="true">통증 억제</span></div></div>
+                <div class="tier-row"><b>T4</b><div><span data-edit-key="character-growth-body-t4a" contenteditable="true">오버로드 코어</span></div></div>
+              </article>
+              <article class="growth-tree theme-arm">
+                <h3 data-edit-key="character-growth-arm-title" contenteditable="true">ARM L / R / 전투</h3>
+                <div class="tier-row"><b>T1</b><div><span data-edit-key="character-growth-arm-t1a" contenteditable="true">근접 강화</span><span data-edit-key="character-growth-arm-t1b" contenteditable="true">조준 안정</span></div></div>
+                <div class="tier-row"><b>T2</b><div><span data-edit-key="character-growth-arm-t2a" contenteditable="true">재장전 속도</span><span data-edit-key="character-growth-arm-t2b" contenteditable="true">약점 포착</span></div></div>
+                <div class="tier-row"><b>T3</b><div><span data-edit-key="character-growth-arm-t3a" contenteditable="true">이중 기능</span><span data-edit-key="character-growth-arm-t3b" contenteditable="true">피니셔</span></div></div>
+                <div class="tier-row"><b>T4</b><div><span data-edit-key="character-growth-arm-t4a" contenteditable="true">적응형 무기</span></div></div>
+              </article>
+              <article class="growth-tree theme-lower">
+                <h3 data-edit-key="character-growth-lower-title" contenteditable="true">LOWER BODY / 이동</h3>
+                <div class="tier-row"><b>T1</b><div><span data-edit-key="character-growth-lower-t1a" contenteditable="true">질주 속도</span><span data-edit-key="character-growth-lower-t1b" contenteditable="true">등반 속도</span></div></div>
+                <div class="tier-row"><b>T2</b><div><span data-edit-key="character-growth-lower-t2a" contenteditable="true">회피 구르기</span><span data-edit-key="character-growth-lower-t2b" contenteditable="true">은밀 이동</span></div></div>
+                <div class="tier-row"><b>T3</b><div><span data-edit-key="character-growth-lower-t3a" contenteditable="true">대시</span><span data-edit-key="character-growth-lower-t3b" contenteditable="true">수직 점프</span></div></div>
+                <div class="tier-row"><b>T4</b><div><span data-edit-key="character-growth-lower-t4a" contenteditable="true">공중 제어</span></div></div>
+              </article>
+            </div>
+          </section>
+
+          <div class="growth-bottom-grid growth-bottom-grid-single">
+            <section class="panel growth-rule-panel">
+              <div class="section-head"><h2 data-edit-key="character-growth-synergy-title" contenteditable="true">시너지와 충돌</h2><span class="caption" data-edit-key="character-growth-synergy-caption" contenteditable="true">build result</span></div>
+              <article class="growth-combo is-good"><strong data-edit-key="character-growth-synergy-good-title" contenteditable="true">전술 우위</strong><span data-edit-key="character-growth-synergy-good-body" contenteditable="true">위협 예측 + 약점 포착 + 회피 구르기</span></article>
+              <article class="growth-combo is-bad"><strong data-edit-key="character-growth-synergy-bad-title" contenteditable="true">이동 페널티</strong><span data-edit-key="character-growth-synergy-bad-body" contenteditable="true">오버로드 코어 + 질주 속도</span></article>
+            </section>
+          </div>
+        </div>
+      </section>
+
       <section class="screen" id="behaviors" data-screen="behaviors">
         <div class="dossier-layout">
           <aside class="side-nav">
@@ -620,13 +720,38 @@
           <div class="dossier-layout">
             <aside class="side-nav">
               <h3 data-edit-key="environment-56" contenteditable="true">도감 선택</h3>
-              <button class="nav-btn active" data-dossier-target="env-capital-panel"><small>내부 허브</small>CAPITAL</button>
+              <button class="nav-btn active" data-dossier-target="env-worldmap-panel"><small>전체 지도</small>WORLDMAP</button>
+              <button class="nav-btn" data-dossier-target="env-capital-panel"><small>내부 허브</small>CAPITAL</button>
               <button class="nav-btn" data-dossier-target="env-outland-panel"><small>외부 필드</small>OUTLAND</button>
               <button class="nav-btn" data-dossier-target="env-hazard-panel"><small>위협 구조</small>HAZARD</button>
             </aside>
             <section class="dossier-view panel">
               <div class="dossier-scroll">
-                <article class="dossier-panel active" id="env-capital-panel">
+                <article class="dossier-panel active" id="env-worldmap-panel">
+                  <div class="dossier-header"><h2 data-edit-key="environment-worldmap-title" contenteditable="true">WORLDMAP</h2><div class="badge-stack"><span class="badge" data-edit-key="environment-worldmap-badge-1" contenteditable="true">전체 지도</span><span class="badge" data-edit-key="environment-worldmap-badge-2" contenteditable="true">동선 기준</span><span class="badge" data-edit-key="environment-worldmap-badge-3" contenteditable="true">위험 분포</span></div><p data-edit-key="environment-worldmap-desc" contenteditable="true">Worldmap은 Capital, Outland, Hazard의 관계와 이동 경로를 한눈에 파악하는 환경 전체 지도다.</p></div>
+                  <div class="reference-card" data-ref-group="env-worldmap" data-ref-index="0">
+                    <div class="reference-toolbar">
+                      <span class="ref-label" data-edit-key="environment-worldmap-ref-label" contenteditable="true">레퍼런스 이미지</span>
+                      <div class="ref-actions">
+                        <button class="ref-btn" type="button" data-ref-action="prev">이전</button>
+                        <button class="ref-btn" type="button" data-ref-action="next">다음</button>
+                        <button class="ref-btn" type="button" data-ref-action="add">추가</button>
+                        <button class="ref-btn" type="button" data-ref-action="delete">삭제</button>
+                      </div>
+                    </div>
+                    <div class="reference-frame">
+                      <div class="reference-strip"></div>
+                      <div class="reference-placeholder">WORLDMAP 레퍼런스 이미지를 이 영역에 추가</div>
+                    </div>
+                    <div class="reference-meta"><span class="ref-counter" data-edit-key="environment-worldmap-counter" contenteditable="true">0 / 0</span></div>
+                    <input class="ref-file-input" type="file" accept="image/*" multiple="">
+                  </div>
+                  <div class="dossier-grid">
+                    <div class="feature-card"><span class="k" data-edit-key="environment-worldmap-card-1-k" contenteditable="true">역할</span><h4 data-edit-key="environment-worldmap-card-1-title" contenteditable="true">환경 구조의 기준 지도</h4><p data-edit-key="environment-worldmap-card-1-body" contenteditable="true">플레이어가 Capital, Outland, Hazard의 위치 관계와 주요 이동 동선을 읽는 기준 화면이다.</p></div>
+                    <div class="feature-card"><span class="k" data-edit-key="environment-worldmap-card-2-k" contenteditable="true">인상</span><h4 data-edit-key="environment-worldmap-card-2-title" contenteditable="true">안전과 위험의 거리감</h4><p data-edit-key="environment-worldmap-card-2-body" contenteditable="true">안전지대와 외부 위험 구역의 대비가 명확해야 하며, 어디로 갈수록 압박이 커지는지 직관적으로 보여야 한다.</p></div>
+                  </div>
+                </article>
+                <article class="dossier-panel" id="env-capital-panel" hidden="">
                   <div class="dossier-header"><h2 data-edit-key="environment-57" contenteditable="true">CAPITAL</h2><div class="badge-stack"><span class="badge" data-edit-key="environment-58" contenteditable="true">지하 거점</span><span class="badge" data-edit-key="environment-59" contenteditable="true">정비 공간</span><span class="badge" data-edit-key="environment-60" contenteditable="true">복귀 지점</span></div><p data-edit-key="env-dossier-capital-desc" contenteditable="true">Capital은 플레이어가 숨을 고르고, 정리하고, 다음 루프를 준비하는 내부 허브다.</p></div>
                   <div class="reference-card" data-ref-group="env-capital" data-ref-index="0">
                     <div class="reference-toolbar">
@@ -703,6 +828,58 @@
           </div>
         </section>
 
+        <section class="screen" data-screen="growth">
+          <div class="growth-layout">
+            <section class="panel growth-brief">
+              <div class="section-head">
+                <h2 data-edit-key="environment-growth-title" contenteditable="true">환경 성장 구조</h2>
+                <span class="caption" data-edit-key="environment-growth-caption" contenteditable="true">Outland Adaptation</span>
+              </div>
+              <p class="sub" data-edit-key="environment-growth-summary" contenteditable="true">환경의 성장은 공간이 직접 강해지는 것이 아니라, Capital의 정비 수준, Outland의 개척도, Hazard 대응 능력이 누적되며 다음 탐색의 선택지를 넓히는 방식으로 정리한다.</p>
+              <div class="growth-part-grid">
+                <article class="growth-part-card theme-head"><span data-edit-key="environment-growth-part-1-k" contenteditable="true">CAPITAL</span><h3 data-edit-key="environment-growth-part-1-title" contenteditable="true">정비</h3><p data-edit-key="environment-growth-part-1-body" contenteditable="true">복귀 후 장비와 기록을 정리한다.</p></article>
+                <article class="growth-part-card theme-body"><span data-edit-key="environment-growth-part-2-k" contenteditable="true">OUTLAND</span><h3 data-edit-key="environment-growth-part-2-title" contenteditable="true">개척</h3><p data-edit-key="environment-growth-part-2-body" contenteditable="true">탐색 경로와 회수 자원이 확장된다.</p></article>
+                <article class="growth-part-card theme-arm"><span data-edit-key="environment-growth-part-3-k" contenteditable="true">HAZARD</span><h3 data-edit-key="environment-growth-part-3-title" contenteditable="true">대응</h3><p data-edit-key="environment-growth-part-3-body" contenteditable="true">위협의 패턴을 읽고 압박을 줄인다.</p></article>
+                <article class="growth-part-card theme-lower"><span data-edit-key="environment-growth-part-4-k" contenteditable="true">LOOP</span><h3 data-edit-key="environment-growth-part-4-title" contenteditable="true">회수</h3><p data-edit-key="environment-growth-part-4-body" contenteditable="true">남긴 기록이 다음 진입의 기준이 된다.</p></article>
+              </div>
+            </section>
+
+            <section class="panel growth-flow">
+              <div class="section-head">
+                <h2 data-edit-key="environment-growth-flow-title" contenteditable="true">환경 적응 절차</h2>
+                <span class="caption" data-edit-key="environment-growth-flow-caption" contenteditable="true">prepare to recover</span>
+              </div>
+              <div class="growth-flow-list">
+                <article class="growth-step" data-step="01"><strong data-edit-key="environment-growth-flow-1-title" contenteditable="true">준비</strong><span data-edit-key="environment-growth-flow-1-body" contenteditable="true">Capital에서 목표와 장비를 정한다.</span></article>
+                <article class="growth-step" data-step="02"><strong data-edit-key="environment-growth-flow-2-title" contenteditable="true">진입</strong><span data-edit-key="environment-growth-flow-2-body" contenteditable="true">Outland의 위험 구역으로 들어간다.</span></article>
+                <article class="growth-step" data-step="03"><strong data-edit-key="environment-growth-flow-3-title" contenteditable="true">회수</strong><span data-edit-key="environment-growth-flow-3-body" contenteditable="true">자원, 지형 정보, 흔적을 얻는다.</span></article>
+                <article class="growth-step" data-step="04"><strong data-edit-key="environment-growth-flow-4-title" contenteditable="true">압박</strong><span data-edit-key="environment-growth-flow-4-body" contenteditable="true">Hazard가 체류 시간을 제한한다.</span></article>
+                <article class="growth-step" data-step="05"><strong data-edit-key="environment-growth-flow-5-title" contenteditable="true">복귀</strong><span data-edit-key="environment-growth-flow-5-body" contenteditable="true">획득한 것을 정리하고 다음 루프에 반영한다.</span></article>
+              </div>
+            </section>
+
+            <div class="growth-bottom-grid">
+              <section class="panel growth-rule-panel">
+                <div class="section-head"><h2 data-edit-key="environment-growth-rule-title" contenteditable="true">누적 규칙</h2><span class="caption" data-edit-key="environment-growth-rule-caption" contenteditable="true">field memory</span></div>
+                <ul class="growth-rule-list">
+                  <li data-edit-key="environment-growth-rule-1" contenteditable="true">안전지대의 정비 수준은 다음 탐색의 시작 조건을 바꾼다.</li>
+                  <li data-edit-key="environment-growth-rule-2" contenteditable="true">외부에서 확보한 기록은 경로, 위험, 회수 목표를 갱신한다.</li>
+                  <li data-edit-key="environment-growth-rule-3" contenteditable="true">Hazard 대응은 위협을 제거하기보다 견딜 시간을 늘린다.</li>
+                </ul>
+              </section>
+              <section class="panel growth-rule-panel">
+                <div class="section-head"><h2 data-edit-key="environment-growth-synergy-title" contenteditable="true">환경 시너지</h2><span class="caption" data-edit-key="environment-growth-synergy-caption" contenteditable="true">route result</span></div>
+                <article class="growth-combo is-good"><strong data-edit-key="environment-growth-synergy-good-title" contenteditable="true">안정적인 원정</strong><span data-edit-key="environment-growth-synergy-good-body" contenteditable="true">정비 완료 + 위험 경로 기록 + 독성 대응</span></article>
+                <article class="growth-combo is-bad"><strong data-edit-key="environment-growth-synergy-bad-title" contenteditable="true">회수 실패 위험</strong><span data-edit-key="environment-growth-synergy-bad-body" contenteditable="true">장비 부족 + 장기 체류 + Hazard 노출</span></article>
+              </section>
+              <section class="panel growth-rule-panel">
+                <div class="section-head"><h2 data-edit-key="environment-growth-loop-title" contenteditable="true">루프 반영</h2><span class="caption" data-edit-key="environment-growth-loop-caption" contenteditable="true">partial map update</span></div>
+                <p data-edit-key="environment-growth-loop-note" contenteditable="true">모든 경로가 영구적으로 안전해지는 것은 아니다. 플레이어가 얻은 기록만 다음 준비 단계에 남고, 환경은 다시 위험한 상태로 갱신된다.</p>
+              </section>
+            </div>
+          </div>
+        </section>
+
         <section class="screen" data-screen="loop">
           <section class="loop-flow-card">
             <div class="loop-flow-head">
@@ -752,8 +929,8 @@
             <section class="panel">
               <div class="chip">새 워크스페이스 개요</div>
               <h1 class="hero-title" data-edit-key="workspace-workspace-3-0" contenteditable="true">ABC<div><br></div></h1>
-              <p class="sub" data-edit-key="workspace-workspace-3-1" contenteditable="true">이 워크스페이스는 새 탭 1 설정을 위한 기본 문서이다. 개요, 관계, 도감, 루프 구조를 자유롭게 편집할 수 있다.</p>
-              <div class="label-row"><span class="chip" data-edit-key="workspace-workspace-3-2" contenteditable="true">개요</span><span class="chip" data-edit-key="workspace-workspace-3-3" contenteditable="true">관계</span><span class="chip" data-edit-key="workspace-workspace-3-4" contenteditable="true">도감</span><span class="chip" data-edit-key="workspace-workspace-3-5" contenteditable="true">루프</span></div>
+              <p class="sub" data-edit-key="workspace-workspace-3-1" contenteditable="true">이 워크스페이스는 새 탭 1 설정을 위한 기본 문서이다. 개요, 관계, 도감, 성장, 행동 패턴, 루프 구조를 자유롭게 편집할 수 있다.</p>
+              <div class="label-row"><span class="chip" data-edit-key="workspace-workspace-3-2" contenteditable="true">개요</span><span class="chip" data-edit-key="workspace-workspace-3-3" contenteditable="true">관계</span><span class="chip" data-edit-key="workspace-workspace-3-4" contenteditable="true">도감</span><span class="chip" data-edit-key="workspace-workspace-3-growth-chip" contenteditable="true">성장</span><span class="chip" data-edit-key="workspace-workspace-3-5" contenteditable="true">루프</span></div>
             </section>
             <aside class="hero-side">
               <div class="stat-box"><div class="k">핵심 규칙</div><div class="v">새 워크스페이스</div><p data-edit-key="workspace-workspace-3-6" contenteditable="true">이 영역을 클릭해서 텍스트를 자유롭게 수정할 수 있다.</p></div>
@@ -808,6 +985,20 @@
             </section>
           </div>
         </section>
+        <section class="screen" data-screen="growth">
+          <div class="growth-layout">
+            <section class="panel growth-brief">
+              <div class="section-head"><h2 data-edit-key="workspace-workspace-3-growth-title" contenteditable="true">성장 구조</h2><span class="caption" data-edit-key="workspace-workspace-3-growth-caption" contenteditable="true">기본 성장 탭</span></div>
+              <p class="sub" data-edit-key="workspace-workspace-3-growth-summary" contenteditable="true">새 워크스페이스의 성장, 강화, 누적 규칙을 정리하는 영역이다. 도감 항목이 어떤 방식으로 변화하고 다음 루프에 무엇이 남는지 간략하게 기록한다.</p>
+              <div class="growth-part-grid">
+                <article class="growth-part-card theme-head"><span data-edit-key="workspace-workspace-3-growth-part-1-k" contenteditable="true">STEP 1</span><h3 data-edit-key="workspace-workspace-3-growth-part-1-title" contenteditable="true">선택</h3><p data-edit-key="workspace-workspace-3-growth-part-1-body" contenteditable="true">성장시킬 대상을 고른다.</p></article>
+                <article class="growth-part-card theme-body"><span data-edit-key="workspace-workspace-3-growth-part-2-k" contenteditable="true">STEP 2</span><h3 data-edit-key="workspace-workspace-3-growth-part-2-title" contenteditable="true">획득</h3><p data-edit-key="workspace-workspace-3-growth-part-2-body" contenteditable="true">필요한 자원이나 조건을 확보한다.</p></article>
+                <article class="growth-part-card theme-arm"><span data-edit-key="workspace-workspace-3-growth-part-3-k" contenteditable="true">STEP 3</span><h3 data-edit-key="workspace-workspace-3-growth-part-3-title" contenteditable="true">적용</h3><p data-edit-key="workspace-workspace-3-growth-part-3-body" contenteditable="true">새 능력이나 상태를 반영한다.</p></article>
+                <article class="growth-part-card theme-lower"><span data-edit-key="workspace-workspace-3-growth-part-4-k" contenteditable="true">STEP 4</span><h3 data-edit-key="workspace-workspace-3-growth-part-4-title" contenteditable="true">반복</h3><p data-edit-key="workspace-workspace-3-growth-part-4-body" contenteditable="true">다음 루프에 남길 요소를 정한다.</p></article>
+              </div>
+            </section>
+          </div>
+        </section>
         <section class="screen" data-screen="behaviors">
           <div class="panel">
             <div class="section-head"><h2 data-edit-key="env-behaviors-title" contenteditable="true">행동 패턴</h2><span class="caption" data-edit-key="env-behaviors-caption" contenteditable="true">환경 placeholder</span></div>
@@ -830,5 +1021,5 @@
     </div>
   </div>
 
-  <script src="assets/js/app.js"></script>
+  <script src="assets/js/app.js?v=20260430-sticky-1600"></script>
 </body></html>
