@@ -4301,3 +4301,89 @@
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
       }
     }
+
+    /* ===== FINAL THEME: SINGLE PAPER BACKGROUND ===== */
+    :root {
+      --bg: #f5f1e9;
+      --panel: #f5f1e9;
+      --panel-strong: #f5f1e9;
+      --studio-bg: #f5f1e9;
+      --studio-surface: #f5f1e9;
+      --studio-surface-2: #f5f1e9;
+    }
+
+    html,
+    body,
+    .shell,
+    .workspace-layout,
+    .workspace-content,
+    .workspace-sidebar,
+    .topbar,
+    .topbar.topnav,
+    .panel,
+    .info-card,
+    .matrix-card,
+    .detail-card,
+    .signal-card,
+    .timeline-card,
+    .side-nav,
+    .stat-box,
+    .relationship-card,
+    .feature-card,
+    .timeline-step,
+    .rule,
+    .detail-item,
+    .signal,
+    .footer-note,
+    .reference-card,
+    .dossier-view,
+    .growth-part-card,
+    .loop-flow-card,
+    .data-table,
+    .codex-table,
+    .empty-state {
+      background: #f5f1e9 !important;
+      background-color: #f5f1e9 !important;
+    }
+
+    body::before {
+      opacity: 0 !important;
+    }
+
+    .nav-btn,
+    .tab-btn,
+    .workspace-tab,
+    .ref-btn,
+    .topnav-actions button,
+    .reference-caption-input,
+    input,
+    textarea,
+    select {
+      background: transparent !important;
+      background-color: transparent !important;
+    }
+
+    .nav-btn:hover,
+    .nav-btn:active,
+    .nav-btn.active,
+    .tab-btn:hover,
+    .tab-btn.active,
+    .workspace-tab:hover,
+    .workspace-tab.active,
+    .ref-btn:hover,
+    .topnav-actions button:hover,
+    [contenteditable="true"]:hover,
+    [contenteditable="true"]:focus {
+      background: rgba(17,17,15,.055) !important;
+      background-color: rgba(17,17,15,.055) !important;
+    }
+
+    .reference-card:not(.growth-part-map-card) .reference-thumb {
+      background: #f5f1e9 !important;
+      background-color: #f5f1e9 !important;
+    }
+
+    .reference-card:not(.growth-part-map-card) .reference-thumb-preview {
+      background: rgba(17,17,15,.045) !important;
+      background-color: rgba(17,17,15,.045) !important;
+    }
