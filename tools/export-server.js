@@ -4,7 +4,8 @@ const fsp = require('fs/promises');
 const path = require('path');
 
 const rootDir = path.resolve(__dirname, '..');
-const exportDir = path.resolve(process.env.EXPORT_DIR || 'C:\\Users\\factoy\\Documents\\ProjectC\\Export');
+const exportDir = path.resolve(process.env.EXPORT_DIR || path.join(rootDir, 'exports'));
+const imageDir = path.resolve(process.env.IMAGE_DIR || path.join(rootDir, 'img'));
 const port = Number(process.env.EXPORT_PORT || 53175);
 const host = '127.0.0.1';
 
@@ -26,6 +27,7 @@ function send(res, status, body, headers = {}) {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, X-Export-Filename',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Private-Network': 'true',
     ...headers
   });
   if (body && typeof body.pipe === 'function') {
@@ -101,7 +103,12 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     if (req.method === 'GET' && req.url === '/health') {
-      send(res, 200, JSON.stringify({ ok: true }), {
+      send(res, 200, JSON.stringify({
+        ok: true,
+        rootDir,
+        exportDir,
+        imageDir
+      }), {
         'Content-Type': 'application/json; charset=utf-8'
       });
       return;
@@ -122,7 +129,22 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(port, host, () => {
-  console.log(`Export server running at http://${host}:${port}`);
-  console.log(`Exports will be saved to ${exportDir}`);
-});
+async function ensureProjectFolders() {
+  await Promise.all([
+    fsp.mkdir(exportDir, { recursive: true }),
+    fsp.mkdir(imageDir, { recursive: true })
+  ]);
+}
+
+ensureProjectFolders()
+  .then(() => {
+    server.listen(port, host, () => {
+      console.log(`Export server running at http://${host}:${port}`);
+      console.log(`Exports will be saved to ${exportDir}`);
+      console.log(`Place source/reference images in ${imageDir}`);
+    });
+  })
+  .catch((error) => {
+    console.error(`Export server failed to prepare folders: ${error.message}`);
+    process.exitCode = 1;
+  });

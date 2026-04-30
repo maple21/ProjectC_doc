@@ -284,6 +284,20 @@
       text-underline-offset: 3px;
     }
 
+    button.export-ready-link {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+      padding: 0;
+    }
+
+    button.export-ready-link:disabled {
+      cursor: wait;
+      opacity: .55;
+    }
+
     .status {
       display: flex;
       align-items: center;

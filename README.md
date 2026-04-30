@@ -11,7 +11,15 @@
 │  ├─ css/
 │  │  └─ main.css
 │  └─ js/
-│     └─ app.js
+│     ├─ app.js
+│     └─ reference-store.js
+├─ img/
+│  └─ README.md
+├─ exports/
+│  └─ 내보내기 ZIP 저장 위치
+├─ tools/
+│  └─ export-server.js
+├─ start-export-server.bat
 └─ README.md
 ```
 
@@ -20,6 +28,11 @@
 - `index.html`: 화면 구조와 문서 콘텐츠를 담는 진입 파일
 - `assets/css/main.css`: 전체 스타일
 - `assets/js/app.js`: 탭 전환, 편집 저장, 레퍼런스 이미지, 내보내기 로직
+- `assets/js/reference-store.js`: `img/` 폴더에 있는 기본 레퍼런스 이미지 상대경로 목록
+- `img/`: 프로젝트에서 사용할 원본 이미지나 공유용 레퍼런스 이미지를 모아두는 폴더
+- `exports/`: 내보내기 ZIP 파일이 저장되는 폴더
+- `tools/export-server.js`: 로컬 내보내기 저장 서버
+- `start-export-server.bat`: 내보내기 서버 실행 파일
 
 ## 다음 분리 방향
 
@@ -41,4 +54,5 @@ pages/
 1. 저장소를 내려받습니다.
 2. `index.html`을 브라우저에서 엽니다.
 3. 페이지 안의 편집 가능한 텍스트를 직접 수정합니다.
-4. 필요하면 `저장` 또는 `내보내기` 기능을 사용합니다.
+4. 지정 폴더로 내보내려면 `start-export-server.bat`을 실행한 뒤 `http://127.0.0.1:53175/index.html`을 엽니다.
+5. 필요하면 `저장` 또는 `내보내기` 기능을 사용합니다.

@@ -685,7 +685,12 @@
         try {
           const raw = localStorage.getItem(REF_STORAGE_KEY);
           const parsed = raw ? JSON.parse(raw) : {};
-          if (parsed && typeof parsed === 'object' && Object.keys(parsed).length) return parsed;
+          if (parsed && typeof parsed === 'object' && Object.keys(parsed).length) {
+            const imageCount = Object.values(parsed)
+              .filter(Array.isArray)
+              .reduce((total, items) => total + items.filter((item) => item?.src).length, 0);
+            if (imageCount) return parsed;
+          }
           return embeddedStore;
         } catch (error) {
           console.error('레퍼런스 데이터 복원 실패', error);
@@ -706,14 +711,17 @@
       }
 
       function getEmbeddedReferenceStore(root = document) {
+        const defaultStore = window.DEFAULT_REFERENCE_STORE && typeof window.DEFAULT_REFERENCE_STORE === 'object'
+          ? window.DEFAULT_REFERENCE_STORE
+          : {};
         const node = root.querySelector('#embedded-reference-store');
-        if (!node) return {};
+        if (!node) return defaultStore;
         try {
           const parsed = JSON.parse(node.textContent || '{}');
-          return parsed && typeof parsed === 'object' ? parsed : {};
+          return parsed && typeof parsed === 'object' && Object.keys(parsed).length ? parsed : defaultStore;
         } catch (error) {
           console.error('내장 레퍼런스 데이터 복원 실패', error);
-          return {};
+          return defaultStore;
         }
       }
 
@@ -1713,10 +1721,10 @@
           return `${(bytes / 1024 / 1024).toFixed(1)}MB`;
         }
 
-        function showDownloadFallbackLink(blob, filename) {
+        function showDownloadFallbackLink(blob, filename, label = 'ZIP 준비 완료') {
           clearPendingExportDownload();
           pendingExportDownloadUrl = URL.createObjectURL(blob);
-          saveStatus.textContent = `ZIP 준비 완료 100% · ${formatBytes(blob.size)} · `;
+          saveStatus.textContent = `${label} 100% · ${formatBytes(blob.size)} · `;
           const link = document.createElement('a');
           link.className = 'export-ready-link';
           link.href = pendingExportDownloadUrl;
@@ -1725,22 +1733,129 @@
           saveStatus.appendChild(link);
         }
 
+        async function fetchWithTimeout(url, options = {}, timeoutMs = 3000) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+          try {
+            return await fetch(url, {
+              ...options,
+              signal: controller.signal
+            });
+          } finally {
+            clearTimeout(timeoutId);
+          }
+        }
+
         async function saveZipViaLocalServer(blob, filename) {
           try {
-            const response = await fetch(LOCAL_EXPORT_ENDPOINT, {
+            const response = await fetchWithTimeout(LOCAL_EXPORT_ENDPOINT, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/zip',
                 'X-Export-Filename': encodeURIComponent(filename)
               },
               body: blob
-            });
+            }, 15000);
             if (!response.ok) throw new Error(`Local export server returned ${response.status}`);
             return await response.json();
           } catch (error) {
             console.warn('Local export server unavailable', error);
             return null;
           }
+        }
+
+        async function isLocalExportServerAvailable() {
+          try {
+            const healthUrl = LOCAL_EXPORT_ENDPOINT.replace(/\/export$/, '/health');
+            const response = await fetchWithTimeout(healthUrl, { cache: 'no-store' }, 1200);
+            return response.ok;
+          } catch {
+            return false;
+          }
+        }
+
+        async function writeExportEntryToDirectory(rootHandle, entry) {
+          const parts = entry.path.replace(/\\/g, '/').split('/').filter(Boolean);
+          if (!parts.length) return;
+
+          let directoryHandle = rootHandle;
+          for (const folderName of parts.slice(0, -1)) {
+            directoryHandle = await directoryHandle.getDirectoryHandle(folderName, { create: true });
+          }
+
+          const fileHandle = await directoryHandle.getFileHandle(parts[parts.length - 1], { create: true });
+          const writable = await fileHandle.createWritable();
+          await writable.write(entry.blob);
+          await writable.close();
+        }
+
+        async function saveEntriesViaDirectoryPicker(entries, exportFolderName, onProgress = async () => {}) {
+          if (typeof window.showDirectoryPicker !== 'function') return null;
+
+          try {
+            const baseHandle = await window.showDirectoryPicker({
+              id: 'character-codex-export',
+              mode: 'readwrite',
+              startIn: 'documents'
+            });
+            await onProgress(0, '폴더 저장 중');
+            const exportHandle = await baseHandle.getDirectoryHandle(exportFolderName, { create: true });
+            const folderPrefix = `${exportFolderName}/`;
+            let processedEntries = 0;
+
+            for (const entry of entries) {
+              const normalizedPath = entry.path.replace(/\\/g, '/');
+              const localPath = normalizedPath.startsWith(folderPrefix)
+                ? normalizedPath.slice(folderPrefix.length)
+                : normalizedPath;
+              await writeExportEntryToDirectory(exportHandle, { ...entry, path: localPath });
+              processedEntries += 1;
+              await onProgress((processedEntries / entries.length) * 100, '폴더 저장 중');
+            }
+
+            return {
+              ok: true,
+              relativePath: `${baseHandle.name || '선택한 폴더'}/${exportFolderName}`
+            };
+          } catch (error) {
+            if (error?.name === 'AbortError') throw error;
+            console.warn('Directory export unavailable', error);
+            return null;
+          }
+        }
+
+        function showManualFolderExportButton(entries, exportFolderName, rememberExport) {
+          if (typeof window.showDirectoryPicker !== 'function') return;
+
+          const button = document.createElement('button');
+          button.className = 'export-ready-link export-folder-save-btn';
+          button.type = 'button';
+          button.textContent = '폴더 저장';
+          button.addEventListener('click', async () => {
+            button.disabled = true;
+            try {
+              const directoryExport = await saveEntriesViaDirectoryPicker(
+                entries,
+                exportFolderName,
+                (percent, label) => updateExportProgress(percent, label)
+              );
+              if (directoryExport?.ok) {
+                await updateExportProgress(100, `내보내기 완료: ${directoryExport.relativePath || exportFolderName}`);
+                rememberExport();
+              }
+            } catch (error) {
+              if (error?.name === 'AbortError') {
+                saveStatus.textContent = '폴더 저장 취소';
+              } else {
+                console.error('Manual folder export failed', error);
+                saveStatus.textContent = '폴더 저장 실패';
+              }
+            } finally {
+              button.disabled = false;
+            }
+          });
+
+          saveStatus.append(' · ', button);
         }
 
         async function createAssetExportEntries() {
@@ -1829,6 +1944,13 @@
             ...(await createAssetExportEntries()).map((entry) => ({ ...entry, path: `${exportFolderName}/${entry.path}` })),
             ...imageFiles.map((file) => ({ path: `${exportFolderName}/${file.path}`, blob: file.blob }))
           ];
+          const rememberExport = () => {
+            localStorage.setItem(LAST_EXPORT_STORAGE_KEY, htmlContent);
+            localStorage.setItem('character-codex-last-export-filename-v1', `${exportFolderName}/index.html`);
+          };
+
+          await updateExportProgress(54, '로컬 저장 확인 중');
+          const localServerAvailable = await isLocalExportServerAvailable();
 
           const zipBlob = await createZipBlob(
             entries,
@@ -1848,17 +1970,18 @@
           }
 
           await updateExportProgress(92, '로컬 저장 시도 중');
-          const localExport = await saveZipViaLocalServer(zipBlob, zipFileName);
+          const localExport = localServerAvailable ? await saveZipViaLocalServer(zipBlob, zipFileName) : null;
           if (localExport?.ok) {
             await updateExportProgress(100, `내보내기 완료: ${localExport.relativePath || zipFileName}`);
           } else {
-            await updateExportProgress(94, '다운로드 준비 중');
+            await updateExportProgress(94, 'ZIP 다운로드 준비 중');
             downloadBlob(zipBlob, zipFileName);
-            showDownloadFallbackLink(zipBlob, zipFileName);
+            const fallbackLabel = localServerAvailable ? '로컬 저장 실패 · ZIP 준비 완료' : '로컬 저장 서버 꺼짐 · ZIP 준비 완료';
+            showDownloadFallbackLink(zipBlob, zipFileName, fallbackLabel);
+            showManualFolderExportButton(entries, exportFolderName, rememberExport);
           }
 
-          localStorage.setItem(LAST_EXPORT_STORAGE_KEY, htmlContent);
-          localStorage.setItem('character-codex-last-export-filename-v1', `${exportFolderName}/index.html`);
+          rememberExport();
         }
 
         async function exportCodex() {
