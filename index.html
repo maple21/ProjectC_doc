@@ -3,7 +3,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Character Codex</title>
-  <link rel="stylesheet" href="assets/css/main.css?v=20260430-single-bg">
+  <link rel="stylesheet" href="assets/css/main.css?v=20260430-devour-behavior-tabs">
 </head>
 <body>
   <div class="shell">
@@ -131,6 +131,18 @@
             </div>
           </section>
         </div>
+        <section class="info-card character-devour-card">
+          <div class="section-head">
+            <h2 data-edit-key="character-devour-title" contenteditable="true">Devour 연결 구조</h2>
+            <span class="caption" data-edit-key="character-devour-caption" contenteditable="true">character system link</span>
+          </div>
+          <p class="sub" data-edit-key="character-devour-summary" contenteditable="true">Devour는 캐릭터를 외부 위험에 반응하게 만드는 핵심 환경 규칙이다. LYRA는 Devour 안에서 선택하고, PIP은 방향과 긴급도를 행동으로 전달하며, RELAY는 Devour의 타이밍과 위험 신호만 최소 정보로 남긴다.</p>
+          <div class="character-devour-grid">
+            <article class="feature-card"><span class="k" data-edit-key="character-devour-lyra-k" contenteditable="true">LYRA</span><h4 data-edit-key="character-devour-lyra-title" contenteditable="true">복귀 판단의 주체</h4><p data-edit-key="character-devour-lyra-body" contenteditable="true">Devour가 다가오면 LYRA는 더 깊이 들어갈지, 즉시 Capital로 돌아갈지 선택해야 한다. 이 판단이 생존, 실패, 회수 루프의 출발점이 된다.</p></article>
+            <article class="feature-card"><span class="k" data-edit-key="character-devour-pip-k" contenteditable="true">PIP</span><h4 data-edit-key="character-devour-pip-title" contenteditable="true">위험 방향을 행동으로 표시</h4><p data-edit-key="character-devour-pip-body" contenteditable="true">PIP은 Devour의 방향을 응시, 반복 이동, SIGNAL 상태로 전달한다. UI 대신 행동이 경고가 되며, 플레이어는 PIP의 긴장도를 읽고 복귀 시점을 판단한다.</p></article>
+            <article class="feature-card"><span class="k" data-edit-key="character-devour-relay-k" contenteditable="true">RELAY</span><h4 data-edit-key="character-devour-relay-title" contenteditable="true">저용량 경고 신호의 출처</h4><p data-edit-key="character-devour-relay-body" contenteditable="true">RELAY는 대량 데이터를 보내지 못한다. 대신 Devour의 방향, 접근 타이밍, 위험 신호만 압축해 PIP에게 넘기고, 실패 후에는 회수에 필요한 기록 일부를 남긴다.</p></article>
+          </div>
+        </section>
       </section>
 
       <section class="screen" id="relationships" data-screen="relationships">
@@ -182,6 +194,7 @@
                   <div class="detail-item"><strong data-edit-key="character-58" contenteditable="true">세계 역할</strong><span data-edit-key="aria-detail-2" contenteditable="true">LYRA는 외부 세계를 탐색하고 위험 지역에 진입하는 유일한 적응 가능한 존재이며, 모든 감정과 선택의 출발점이다.</span></div>
                   <div class="detail-item"><strong data-edit-key="character-60" contenteditable="true">기억 상태</strong><span data-edit-key="aria-detail-3" contenteditable="true">기억은 일부만 유지되고 일부는 손실된다. 반복될수록 왜곡되며, 이 구조가 플레이어 경험과 정확히 맞물린다.</span></div>
                   <div class="detail-item"><strong data-edit-key="character-62" contenteditable="true">최종 정의</strong><span data-edit-key="aria-detail-4" contenteditable="true">LYRA는 인간을 모방하는 존재가 아니라, 살아간다는 상태를 반복하는 구조다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="aria-devour-title" contenteditable="true">Devour 반응</strong><span data-edit-key="aria-devour-body" contenteditable="true">Devour가 접근하면 LYRA는 탐험을 지속할지 복귀할지 선택한다. 이 선택은 플레이어가 직접 감당하는 생존 판단으로 작동한다.</span></div>
                 </div>
               </div>
 
@@ -200,6 +213,7 @@
                   <div class="detail-item"><strong data-edit-key="character-71" contenteditable="true">행동 규칙</strong><span data-edit-key="trace-detail-2" contenteditable="true">특정 위치를 반복해서 맴돌고, 이유 없이 멈추며, 같은 경로를 되짚는다. 설명되지 않는 행동 자체가 메시지다.</span></div>
                   <div class="detail-item"><strong data-edit-key="character-73" contenteditable="true">기억 방식</strong><span data-edit-key="trace-detail-3" contenteditable="true">PIP은 언어도 데이터도 쓰지 않는다. 동선, 시선, 정지, 반복 행동 그 자체가 기억이다.</span></div>
                   <div class="detail-item"><strong data-edit-key="character-75" contenteditable="true">최종 정의</strong><span data-edit-key="trace-detail-4" contenteditable="true">PIP은 길을 안내하지 않는다. 지나간 선택의 흔적을 현재에 남길 뿐이다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="trace-devour-title" contenteditable="true">Devour 신호</strong><span data-edit-key="trace-devour-body" contenteditable="true">Devour의 방향과 긴급도는 PIP의 시선, 몸 긴장, 반복 이동, SIGNAL 분리 행동으로 전달된다. 플레이어는 PIP을 보고 위험 방향을 읽는다.</span></div>
                 </div>
               </div>
 
@@ -218,6 +232,7 @@
                   <div class="detail-item"><strong data-edit-key="character-84" contenteditable="true">기억 시스템</strong><span data-edit-key="vault-detail-2" contenteditable="true">사건은 저장되고, 압축되며, 일부만 복원된다. 이 과정에서는 항상 손실이 발생하고 완전한 복원은 불가능하다.</span></div>
                   <div class="detail-item"><strong data-edit-key="character-86" contenteditable="true">행동 원칙</strong><span data-edit-key="vault-detail-3" contenteditable="true">감정 없이 최소한의 정보만 제공하고 해석은 하지 않는다. 구조를 유지하는 데 필요한 사실만 남긴다.</span></div>
                   <div class="detail-item"><strong data-edit-key="character-88" contenteditable="true">최종 정의</strong><span data-edit-key="vault-detail-4" contenteditable="true">RELAY는 기억을 되돌리지 않는다. 사라지는 경험을 이어 붙이는 장치다.</span></div>
+                  <div class="detail-item"><strong data-edit-key="vault-devour-title" contenteditable="true">Devour 기록</strong><span data-edit-key="vault-devour-body" contenteditable="true">RELAY는 Devour의 전체 정보를 복원하지 않고 방향, 타이밍, 실패 위치 같은 최소 기록만 유지한다. 완전한 지도보다 다음 루프에 필요한 단서만 남긴다.</span></div>
                 </div>
               </div>
             </section>
@@ -557,6 +572,7 @@
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-13" contenteditable="true">social read</span><h4 data-edit-key="character-behavior-14" contenteditable="true">인간처럼 반응하지만 미세하게 어긋난다</h4><p data-edit-key="character-behavior-15" contenteditable="true">상황을 감정적으로 받아들이지만, 기억의 결손 때문에 익숙한 장면에서 반 박자 늦거나 잘못된 확신을 보일 수 있다.</p></div>
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-16" contenteditable="true">loop cue</span><h4 data-edit-key="character-behavior-17" contenteditable="true">데자뷰에 끌리듯 움직인다</h4><p data-edit-key="character-behavior-18" contenteditable="true">정확한 이유는 모르지만 이전 반복의 일부 흔적이 남은 장소나 선택지에 더 오래 머무르고, 설명되지 않는 기시감을 행동으로 드러낸다.</p></div>
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-19" contenteditable="true">failure state</span><h4 data-edit-key="character-behavior-20" contenteditable="true">죽음은 중단이 아니라 전환이다</h4><p data-edit-key="character-behavior-21" contenteditable="true">행동의 끝은 소멸처럼 보이지만 실제로는 구조가 다음 LYRA로 넘어가는 지점이다. 마지막 선택은 기록과 흔적을 남기는 사건으로 읽혀야 한다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-lyra-devour-k" contenteditable="true">DEVOUR</span><h4 data-edit-key="character-behavior-lyra-devour-title" contenteditable="true">욕심과 복귀 사이에서 흔들린다</h4><p data-edit-key="character-behavior-lyra-devour-body" contenteditable="true">Devour 경고 이후 LYRA의 행동은 빨라지고 시야 확인이 잦아진다. 더 얻고 싶은 목표와 Capital로 돌아가야 하는 압박이 동시에 드러나야 한다.</p></div>
                 </div>
               </article>
 
@@ -577,6 +593,8 @@
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-36" contenteditable="true">OBSERVE</span><h4 data-edit-key="character-behavior-37" contenteditable="true">타겟 관찰</h4><p data-edit-key="character-behavior-38" contenteditable="true">고개만 부분 노출한 채 특정 대상을 계속 추적한다. 적을 오래 응시하고 공격 직전에는 미세하게 움찔하지만 전체 움직임은 최소화된다.</p></div>
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-39" contenteditable="true">SIGNAL</span><h4 data-edit-key="character-behavior-40" contenteditable="true">중요 위치 확정</h4><p data-edit-key="character-behavior-41" contenteditable="true">목 뒤에서 이상 반응을 보인 뒤 LYRA 몸을 따라 이동하고, 몸에서 분리되어 주변을 제한적으로 움직이며 특정 위치에 고정된다. 반복 응시, 바닥 집중, 짧은 원형 이동, 긁기와 탐색 행동으로 여기라는 신호를 만든다.</p></div>
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-42" contenteditable="true">RESOLVE / RETURN</span><h4 data-edit-key="character-behavior-43" contenteditable="true">상황 종료와 복귀</h4><p data-edit-key="character-behavior-44" contenteditable="true">상황이 끝나면 노출이 늘고 주변을 천천히 확인하면서 긴장을 푼다. 이후 백팩에서 어깨를 거쳐 다시 목 뒤로 이동해 안정된 리듬으로 돌아간다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-pip-devour-k" contenteditable="true">DEVOUR ALERT</span><h4 data-edit-key="character-behavior-pip-devour-title" contenteditable="true">방향 경고를 단계적으로 강화한다</h4><p data-edit-key="character-behavior-pip-devour-body" contenteditable="true">초기에는 Devour가 오는 방향을 응시하고, 경고가 강해지면 같은 방향을 반복 확인한다. 긴급 상태에서는 몸에서 분리되어 Capital 방향으로 이동한 뒤 멈춘다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-pip-devour-recovery-k" contenteditable="true">DEVOUR RECOVERY</span><h4 data-edit-key="character-behavior-pip-devour-recovery-title" contenteditable="true">굴을 파고 기록을 회수한다</h4><p data-edit-key="character-behavior-pip-devour-recovery-body" contenteditable="true">Devour로 LYRA의 탐험이 실패하면 PIP은 즉시 땅속에 굴을 파고 들어가 안전을 확보한다. 이후 남은 기록과 사망 위치 신호를 보존한 채 Capital 방향으로 복귀해 다음 LYRA가 회수 루프를 시작할 단서를 남긴다.</p></div>
                 </div>
               </article>
 
@@ -597,6 +615,7 @@
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-59" contenteditable="true">Compress</span><h4 data-edit-key="character-behavior-60" contenteditable="true">손실 / 왜곡</h4><p data-edit-key="character-behavior-61" contenteditable="true">저장된 기록을 압축한다. 코어가 불규칙하게 깜빡이고, 이 과정에서 일부 정보가 사라지거나 왜곡된다.</p></div>
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-62" contenteditable="true">Transfer</span><h4 data-edit-key="character-behavior-63" contenteditable="true">다음 LYRA로 전달</h4><p data-edit-key="character-behavior-64" contenteditable="true">새로운 LYRA가 생성되거나 루프가 재시작될 때 강한 pulse를 낸다. 저장된 기록 중 일부만 LYRA에게 전달된다.</p></div>
                   <div class="feature-card"><span class="k" data-edit-key="character-behavior-65" contenteditable="true">Stable</span><h4 data-edit-key="character-behavior-66" contenteditable="true">안정화</h4><p data-edit-key="character-behavior-67" contenteditable="true">전달이 끝나면 코어가 안정되고 다시 대기 상태로 돌아간다. 반복 구조가 유지되고 있다는 안정감만 남긴다.</p></div>
+                  <div class="feature-card"><span class="k" data-edit-key="character-behavior-relay-devour-k" contenteditable="true">Devour Signal</span><h4 data-edit-key="character-behavior-relay-devour-title" contenteditable="true">필요한 경고만 압축해 보낸다</h4><p data-edit-key="character-behavior-relay-devour-body" contenteditable="true">RELAY는 Devour의 전체 환경 데이터를 전송하지 않는다. 방향, 접근 시간, 사망 위치처럼 다음 행동에 필요한 신호만 PIP에게 넘기고 나머지는 손실된다.</p></div>
                 </div>
               </article>
             </div>
@@ -654,24 +673,24 @@
             <section class="panel">
               <div class="chip" data-edit-key="env-overview-chip" contenteditable="true">환경 개요</div>
               <h1 class="hero-title" data-edit-key="env-overview-title" contenteditable="true">CAPITAL · OUTLAND · HAZARD</h1>
-              <p class="sub" data-edit-key="env-overview-description" contenteditable="true">이 페이지는 환경 설정, 공간 관계, 생존 루프의 무대를 정리하는 인터랙티브 Codex이다. 중심 개념은 Capital이 보호하고, Outland가 시험하며, Hazard가 구조를 압박한다는 흐름이다.</p>
+              <p class="sub" data-edit-key="env-overview-description-devour" contenteditable="true">환경은 단순한 배경이 아니라 탐험 범위, 복귀 판단, 실패 루프를 동시에 만드는 시스템이다. 중심 개념은 Capital이 기준점이 되고, Outland가 선택을 요구하며, Devour가 시간과 방향으로 탐험을 제한한다는 흐름이다.</p>
               <div class="label-row">
                 <span class="chip" data-edit-key="env-overview-label-1" contenteditable="true">대피 공간</span>
                 <span class="chip" data-edit-key="env-overview-label-2" contenteditable="true">외부 환경</span>
-                <span class="chip" data-edit-key="env-overview-label-3" contenteditable="true">기후 위험</span>
+                <span class="chip" data-edit-key="env-overview-label-3-devour" contenteditable="true">Devour</span>
                 <span class="chip" data-edit-key="env-overview-label-4" contenteditable="true">생존 루프</span>
               </div>
             </section>
             <aside class="hero-side">
               <div class="stat-box">
                 <div class="k" data-edit-key="env-stat-1-k" contenteditable="true">핵심 규칙</div>
-                <div class="v" data-edit-key="env-stat-1-v" contenteditable="true">안전은 내부에만 존재한다</div>
-                <p data-edit-key="env-stat-1-p" contenteditable="true">Capital은 유일한 복귀 지점이며, 외부는 언제나 손실과 소모를 전제로 작동한다.</p>
+                <div class="v" data-edit-key="env-stat-1-v-devour" contenteditable="true">탐험은 시간과 방향으로 제한된다</div>
+                <p data-edit-key="env-stat-1-p-devour" contenteditable="true">Capital은 유일한 안전 기준점이며, Outland는 Devour의 방향에 따라 매번 다른 위험 범위를 만든다.</p>
               </div>
               <div class="stat-box">
                 <div class="k" data-edit-key="env-stat-2-k" contenteditable="true">플레이어 인식</div>
-                <div class="v" data-edit-key="env-stat-2-v" contenteditable="true">안정 → 긴장 → 복귀</div>
-                <p data-edit-key="env-stat-2-p" contenteditable="true">플레이어는 내부에서 정비하고, 외부에서 긴장하며, 복귀를 통해 루프의 의미를 체감한다.</p>
+                <div class="v" data-edit-key="env-stat-2-v-devour" contenteditable="true">정비 → 탐험 → 경고 → 복귀</div>
+                <p data-edit-key="env-stat-2-p-devour" contenteditable="true">플레이어는 더 깊이 들어갈지, PIP의 신호를 믿고 돌아갈지 매 탐험마다 선택한다.</p>
               </div>
             </aside>
           </div>
@@ -694,11 +713,28 @@
               <div class="section-head"><h2 data-edit-key="env-rules-title" contenteditable="true">핵심 규칙</h2><span class="caption" data-edit-key="env-rules-caption" contenteditable="true">이해 가이드</span></div>
               <div class="rule-list">
                 <div class="rule"><strong data-edit-key="env-rule-1-title" contenteditable="true">보호는 제한적이다</strong><span data-edit-key="env-rule-1-body" contenteditable="true">Capital은 안전하지만 충분하지 않다. 자원과 정보는 결국 외부에서 가져와야 한다.</span></div>
-                <div class="rule"><strong data-edit-key="env-rule-2-title" contenteditable="true">위험은 형태를 바꾼다</strong><span data-edit-key="env-rule-2-body" contenteditable="true">Hazard는 적만을 뜻하지 않는다. 기후, 독성, 시야 방해, 붕괴 구조 모두가 위험의 일부다.</span></div>
-                <div class="rule"><strong data-edit-key="env-rule-3-title" contenteditable="true">환경은 서사를 만든다</strong><span data-edit-key="env-rule-3-body" contenteditable="true">플레이어는 공간의 배치와 상태 변화를 통해 세계관의 압박을 직접 읽게 된다.</span></div>
+                <div class="rule"><strong data-edit-key="env-rule-2-title-devour" contenteditable="true">위험은 방향을 가진다</strong><span data-edit-key="env-rule-2-body-devour" contenteditable="true">Devour는 N, NE, E, SE, S, SW, W, NW 중 하나의 방향에서 오며, 위험 방향과 안전 방향을 동시에 만든다.</span></div>
+                <div class="rule"><strong data-edit-key="env-rule-3-title-devour" contenteditable="true">환경은 선택을 만든다</strong><span data-edit-key="env-rule-3-body-devour" contenteditable="true">같은 맵도 Devour 방향과 복귀 시간에 따라 안전 루트, 고위험 루트, 회수 실패 루프로 다르게 플레이된다.</span></div>
               </div>
             </section>
           </div>
+          <section class="info-card env-system-card">
+            <div class="section-head"><h2 data-edit-key="env-devour-title" contenteditable="true">Devour System</h2><span class="caption" data-edit-key="env-devour-caption" contenteditable="true">time + direction</span></div>
+            <p class="sub" data-edit-key="env-devour-summary" contenteditable="true">Devour는 단순한 재해가 아니라 탐험 범위, 리스크, 플레이 선택을 결정하는 세계 규칙이다. Devour 전에 Capital로 돌아와야 생존하며, 멀리 갈수록 복귀 시간과 실패 확률이 함께 증가한다.</p>
+            <div class="env-system-grid">
+              <article class="feature-card"><span class="k" data-edit-key="env-devour-card-1-k" contenteditable="true">SAFE CORE</span><h4 data-edit-key="env-devour-card-1-title" contenteditable="true">Capital은 중심 기준점</h4><p data-edit-key="env-devour-card-1-body" contenteditable="true">모든 탐험은 중심에서 바깥으로 확장된다. Capital과의 거리는 곧 리스크이며, 안전은 복귀에 성공했을 때만 확정된다.</p></article>
+              <article class="feature-card"><span class="k" data-edit-key="env-devour-card-2-k" contenteditable="true">DIRECTION</span><h4 data-edit-key="env-devour-card-2-title" contenteditable="true">Devour는 8방향에서 온다</h4><p data-edit-key="env-devour-card-2-body" contenteditable="true">Devour 방향은 위험 방향이 되고, 반대편은 상대적으로 더 넓게 탐험 가능한 안전 방향이 된다. 이 구조가 매번 다른 루트를 만든다.</p></article>
+              <article class="feature-card"><span class="k" data-edit-key="env-devour-card-3-k" contenteditable="true">PIP SIGNAL</span><h4 data-edit-key="env-devour-card-3-title" contenteditable="true">PIP가 위험을 행동으로 전달</h4><p data-edit-key="env-devour-card-3-body" contenteditable="true">Relay는 Devour 방향과 타이밍 같은 저용량 신호만 보내고, PIP는 응시, 반복 이동, SIGNAL 상태로 Lyra와 플레이어에게 복귀 방향을 알린다.</p></article>
+              <article class="feature-card"><span class="k" data-edit-key="env-devour-card-4-k" contenteditable="true">RECOVERY LOOP</span><h4 data-edit-key="env-devour-card-4-title" contenteditable="true">실패는 회수 루프로 이어진다</h4><p data-edit-key="env-devour-card-4-body" contenteditable="true">복귀 실패 시 Lyra는 사망하고, 새로운 Lyra가 생성된다. PIP는 사망 위치를 신호로 남기며 다음 루프의 회수 목표를 만든다.</p></article>
+            </div>
+            <div class="env-loop-line" aria-label="Devour exploration loop">
+              <span data-edit-key="env-devour-loop-1" contenteditable="true">Capital 출발</span>
+              <span data-edit-key="env-devour-loop-2" contenteditable="true">Outland 탐험</span>
+              <span data-edit-key="env-devour-loop-3" contenteditable="true">Devour 경고</span>
+              <span data-edit-key="env-devour-loop-4" contenteditable="true">복귀 또는 욕심</span>
+              <span data-edit-key="env-devour-loop-5" contenteditable="true">생존 / 실패 / 회수</span>
+            </div>
+          </section>
         </section>
 
         <section class="screen" data-screen="relationships">
