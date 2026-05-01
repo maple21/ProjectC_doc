@@ -4598,3 +4598,46 @@
         margin: 0 0 2px !important;
       }
     }
+
+    /* ===== FINAL FIX: DOSSIER IMAGE SCROLL ===== */
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .dossier-view,
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .dossier-view {
+      height: calc(100vh - var(--sticky-header-height) - 56px) !important;
+      min-height: 620px !important;
+      overflow: hidden !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .dossier-scroll,
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .dossier-scroll {
+      height: 100% !important;
+      min-height: 0 !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain !important;
+      padding-right: 8px !important;
+      scrollbar-width: thin !important;
+      scrollbar-color: rgba(17,17,15,.28) transparent !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .dossier-scroll::-webkit-scrollbar,
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .dossier-scroll::-webkit-scrollbar {
+      width: 8px !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .dossier-scroll::-webkit-scrollbar-track,
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .dossier-scroll::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .dossier-scroll::-webkit-scrollbar-thumb,
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .dossier-scroll::-webkit-scrollbar-thumb {
+      background: rgba(17,17,15,.28) !important;
+      border-radius: 999px !important;
+    }
+
+    .workspace-pane[data-workspace-pane="character"] .screen[data-screen="dossiers"] .dossier-panel.active,
+    .workspace-pane[data-workspace-pane="environment"] .screen[data-screen="dossiers"] .dossier-panel.active {
+      height: auto !important;
+      min-height: 100% !important;
+      overflow: visible !important;
+    }
